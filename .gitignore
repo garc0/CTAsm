@@ -349,5 +349,8 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-main.cpp
-main
+.vscode/*
+
+headonlyx86asm.cpp
+build/*
+zydis/*

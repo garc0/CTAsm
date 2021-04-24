@@ -233,7 +233,7 @@ typedef zip<reg_k>::with<reg<7>>::type k7;
 
 template <typename... T> struct ptr {};
 
-template <uint8_t D> struct ul {
+template <uint8_t D> struct ub {
   using value = byte_seq<D>;
 };
 
@@ -255,47 +255,27 @@ template <uint64_t D> struct uq {
       (uint8_t)((D >> 48) & 0xFF), (uint8_t)((D >> 56) & 0xFF)>;
 };
 
-template <uint8_t N> using disp8 = ul<N>;
+template <int8_t N>  struct ib : ub<static_cast<uint8_t>(N)> {};
+template <int16_t N> struct iw : uw<static_cast<uint16_t>(N)> {};
+template <int32_t N> struct id : ud<static_cast<uint32_t>(N)> {};
+template <int64_t N> struct iq : uq<static_cast<uint64_t>(N)> {};
 
+template <uint8_t N>  using disp8  = ub<N>;
 template <uint16_t N> using disp16 = uw<N>;
-
 template <uint32_t N> using disp32 = ud<N>;
-
 template <uint64_t N> using disp64 = uq<N>;
 
-template <uint8_t m> struct rel8 {
-  using value = typename disp8<m>::value;
-};
-
-template <uint16_t m> struct rel16 {
-  using value = typename disp16<m>::value;
-};
-
-template <uint32_t m> struct rel32 {
-  using value = typename disp32<m>::value;
-};
+template <uint8_t m>  struct rel8:  ub<m> {};
+template <uint16_t m> struct rel16: uw<m> {};
+template <uint32_t m> struct rel32: ud<m> {};
+template <uint32_t m> struct rel64: uq<m> {};
 
 template <typename... T> struct disp_reg {};
 
-template <typename... T, uint8_t N> struct disp_reg<hold<T...>, disp8<N>> {
-  using value = typename disp8<N>::value;
-};
-
-template <typename... T, uint16_t N> struct disp_reg<hold<T...>, disp16<N>> {
-  using value = typename disp16<N>::value;
-};
-
-template <typename... T, uint32_t N> struct disp_reg<hold<T...>, disp32<N>> {
-  using value = typename disp32<N>::value;
-};
-
-template <typename... T, uint64_t N> struct disp_reg<hold<T...>, disp64<N>> {
-  using value = typename disp64<N>::value;
-};
-
-//template <typename T> constexpr T Log2(T n) {
-//  return ((n < 2) ? 0 : 1 + Log2(n / 2));
-//}
+template <typename... T, uint8_t N>  struct disp_reg<hold<T...>, ub<N>> : ub<N> {};
+template <typename... T, uint16_t N> struct disp_reg<hold<T...>, uw<N>> : uw<N> {};
+template <typename... T, uint32_t N> struct disp_reg<hold<T...>, ud<N>> : ud<N> {};
+template <typename... T, uint64_t N> struct disp_reg<hold<T...>, uq<N>> : uq<N> {};
 
 template<uint64_t N>
 struct _log2{
@@ -312,21 +292,21 @@ struct _log2<0>{
   static constexpr uint64_t value = 0; 
 };
 
-template <typename... T> static constexpr uint8_t is_ext = 0;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_ext<reg<N>, ext, T...> = 1;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_ext<hold<reg<N>, ext, T...>> = 1;
+template <typename... T> struct is_ext: std::false_type {};
+template <uint8_t N, typename... T> struct is_ext<reg<N>, ext, T...> : std::true_type {};
+template <typename... T> struct is_ext<hold<T...>> : std::true_type {};
 
-template <typename... T> static constexpr uint8_t is_avx_ext = 0;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_avx_ext<reg<N>, avx_ext, T...> = 1;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_avx_ext<reg<N>, ext, avx_ext, T...> = 1;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_avx_ext<hold<reg<N>, avx_ext, T...>> = 1;
-template <uint8_t N, typename... T>
-static constexpr uint8_t is_avx_ext<hold<reg<N>, ext, avx_ext, T...>> = 1;
+template<typename... T>
+static constexpr auto is_ext_v = is_ext<T...>::value;
+
+template <typename... T> struct is_avx_ext: std::false_type {};
+template <uint8_t N, typename... T> struct is_avx_ext<reg<N>, avx_ext, T...> : std::true_type {};
+template <uint8_t N, typename... T> struct is_avx_ext<reg<N>, ext, avx_ext, T...> : std::true_type {};
+template <uint8_t N, typename... T> struct is_avx_ext<hold<reg<N>, avx_ext, T...>>: std::true_type {};
+template <uint8_t N, typename... T> struct is_avx_ext<hold<reg<N>, ext, avx_ext, T...>>: std::true_type {};
+
+template<typename... T>
+static constexpr auto is_avx_ext_v = is_avx_ext<T...>::value;
 
 template <uint8_t W, uint8_t R, uint8_t X, uint8_t B> struct REX {
   using value = byte_seq<B | (X << 1) | (R << 2) | (W << 3) | (0b0100 << 4)>;
@@ -342,7 +322,7 @@ template <uint8_t R, uint8_t X, uint8_t B, uint8_t m, uint8_t W, typename... T,
           uint16_t length, uint8_t pp>
 struct XOP<disp8<R>, disp8<X>, disp8<B>, disp8<m>, disp8<W>, hold<T...>,
            disp16<length>, disp8<pp>> {
-  static constexpr auto vvvv = reg_n<hold<T...>>::value | (is_ext<hold<T...>> << 3);
+  static constexpr auto vvvv = reg_n<hold<T...>>::value | (is_ext_v<hold<T...>> << 3);
 
   using value = byte_seq<
       0x8f, 
@@ -360,7 +340,7 @@ struct VEX<disp8<R>, hold<T...>, disp16<length>, disp8<pp_byte>> {
                                                   : 0;
 
   static constexpr auto vvvv =
-      reg_n<hold<T...>>::value | (is_ext<hold<T...>> << 3);
+      reg_n<hold<T...>>::value | (is_ext_v<hold<T...>> << 3);
 
   using value = byte_seq<
       0b11000101, uint8_t((~R & 1) << 7 | (~vvvv & 0b1111) << 3 |
@@ -377,7 +357,7 @@ struct VEX<disp8<R>, disp8<X>, disp8<B>, disp8<m>, disp8<W>, hold<T...>,
                                                   : 0;
 
   static constexpr auto vvvv =
-      reg_n<hold<T...>>::value | (is_ext<hold<T...>> << 3);
+      reg_n<hold<T...>>::value | (is_ext_v<hold<T...>> << 3);
 
   using value = byte_seq<
       0b11000100, uint8_t((~R & 1) << 7 | (~X & 1) << 6 | (~B & 1) << 5 | m),
@@ -401,8 +381,8 @@ struct EVEX<disp8<R>, disp8<X>, disp8<B>, disp8<R1>, disp8<m>, disp8<W>,
                                                   : 0;
 
   static constexpr auto vvvv =
-      reg_n<hold<T...>>::value | (is_ext<hold<T...>> << 3);
-  static constexpr auto V1 = is_avx_ext<hold<T...>>;
+      reg_n<hold<T...>>::value | (is_ext_v<hold<T...>> << 3);
+  static constexpr auto V1 = is_avx_ext_v<T...>;
   static constexpr auto a = reg_n<T...>::value;
   static constexpr auto L1 = length == 512;
   static constexpr auto L = length == 256;
@@ -571,7 +551,7 @@ struct mrm<Y> {
       modrm<ptr<extract_args_v<typename Y::type>>, T>::value;
 
     static constexpr auto R = 0;
-    static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
+    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
     static constexpr auto B = 0;
 
     static constexpr auto _67h = std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
@@ -586,7 +566,7 @@ struct mrm<Y, plus, disp8<N>> {
             T>::value;
 
     static constexpr auto R = 0;
-    static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
+    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
     static constexpr auto B = 0;
 
     static constexpr auto _67h = std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
@@ -601,7 +581,7 @@ struct mrm<Y, plus, disp32<N>> {
             T>::value;
 
     static constexpr auto R = 0;
-    static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
+    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
     static constexpr auto B = 0;
 
     static constexpr auto _67h = std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
@@ -615,8 +595,8 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z> {
       modrm<SIB<disp8<Scale>, extract_args_v<typename Y::type>, extract_args_v<typename Z::type>>, T>::value;
 
     static constexpr auto R = 0;
-    static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
-    static constexpr auto B = is_ext<extract_args_v<typename Z::type>>;
+    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
+    static constexpr auto B = is_ext_v<extract_args_v<typename Z::type>>;
 
     static constexpr auto _67h = std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
                        std::true_type>;
@@ -629,8 +609,8 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp8<D>> {
         modrm<disp_SIB<disp8<Scale>, disp8<D>, extract_args_v<typename Y::type>, extract_args_v<typename Z::type>>, T>::value;
 
     static constexpr auto R = 0;
-    static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
-    static constexpr auto B = is_ext<extract_args_v<typename Z::type>>;
+    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
+    static constexpr auto B = is_ext_v<extract_args_v<typename Z::type>>;
 
     static constexpr auto _67h = std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
                        std::true_type>;
@@ -645,8 +625,8 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp32<D>> {
             T>::value;
 
   static constexpr auto R = 0;
-  static constexpr auto X = is_ext<extract_args_v<typename Y::type>>;
-  static constexpr auto B = is_ext<extract_args_v<typename Z::type>>;
+  static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
+  static constexpr auto B = is_ext_v<extract_args_v<typename Z::type>>;
 
   static constexpr auto _67h =
       std::is_same_v<is_67h_needed<extract_head_v<typename Y::type>>,
@@ -1203,7 +1183,7 @@ namespace {
     } // namespace
 } // namespace
 
-template <std::size_t N, const char (&s)[N], typename T>
+template <std::size_t N, const char (&s)[N], typename T>  
 struct make_char_sequence_impl;
 
 template <std::size_t N, const char (&s)[N], std::size_t... i>
