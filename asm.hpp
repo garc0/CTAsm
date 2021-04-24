@@ -293,10 +293,24 @@ template <typename... T, uint64_t N> struct disp_reg<hold<T...>, disp64<N>> {
   using value = typename disp64<N>::value;
 };
 
-template <typename T> constexpr T Log2(T n) {
-  assert(n);
-  return ((n < 2) ? 0 : 1 + Log2(n / 2));
-}
+//template <typename T> constexpr T Log2(T n) {
+//  return ((n < 2) ? 0 : 1 + Log2(n / 2));
+//}
+
+template<uint64_t N>
+struct _log2{
+  static constexpr uint64_t value = 1 + _log2<N / 2>::value;
+};
+
+template<>
+struct _log2<1>{
+  static constexpr uint64_t value = 0; 
+};
+
+template<>
+struct _log2<0>{
+  static constexpr uint64_t value = 0; 
+};
 
 template <typename... T> static constexpr uint8_t is_ext = 0;
 template <uint8_t N, typename... T>
@@ -410,7 +424,7 @@ struct SIB<disp8<scale>, hold<T...>, hold<Y...>> {
   static const uint8_t index = reg_n<T...>::value;
   static const uint8_t base = reg_n<Y...>::value;
   using value = byte_seq<uint8_t(
-      (Log2(scale & 0xFF) << 6) | ((index & 0xFF) << 3) | (base & 0xFF))>;
+      (_log2<scale & 0xFF>::value << 6) | ((index & 0xFF) << 3) | (base & 0xFF))>;
 };
 
 template <typename... T> struct disp_SIB {};
@@ -420,14 +434,14 @@ struct disp_SIB<disp8<scale>, disp8<D>, hold<T...>, hold<Y...>> {
   static const uint8_t index = reg_n<T...>::value;
   static const uint8_t base = reg_n<Y...>::value;
   using value = expand_byte_seq_v<
-      byte_seq<uint8_t((Log2(scale) << 6) | (index << 3) | (base))>, typename disp8<D>::value>;
+      byte_seq<uint8_t((_log2<scale & 0xFF>::value << 6) | (index << 3) | (base))>, typename disp8<D>::value>;
 };
 
 template <uint8_t scale, uint32_t D, typename... T, typename... Y>
 struct disp_SIB<disp8<scale>, disp32<D>, hold<T...>, hold<Y...>> {
   static const uint8_t index = reg_n<T...>::value;
   static const uint8_t base = reg_n<Y...>::value;
-  using value = expand_byte_seq_v<byte_seq<uint8_t((Log2(scale) << 6) | (index << 3) | (base))>,
+  using value = expand_byte_seq_v<byte_seq<uint8_t((_log2<scale & 0xFF>::value << 6) | (index << 3) | (base))>,
       typename disp32<D>::value>;
 };
 
@@ -753,6 +767,32 @@ namespace {
           using value = bh;
         };
 
+        
+        template <> struct parse_instr_register<char_seq<'r', '8', 'l'>> {
+          using value = r8l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '9', 'l'>> {
+          using value = r9l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '0', 'l'>> {
+          using value = r10l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '1', 'l'>> {
+          using value = r11l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '2', 'l'>> {
+          using value = r12l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '3', 'l'>> {
+          using value = r13l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '4', 'l'>> {
+          using value = r14l;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '5', 'l'>> {
+          using value = r15l;
+        };
+
         template <> struct parse_instr_register<char_seq<'a', 'x'>> {
           using value = ax;
         };
@@ -776,6 +816,31 @@ namespace {
         };
         template <> struct parse_instr_register<char_seq<'b', 'p'>> {
           using value = bp;
+        };
+
+        template <> struct parse_instr_register<char_seq<'r', '8', 'w'>> {
+          using value = r8w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '9', 'w'>> {
+          using value = r9w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '0', 'w'>> {
+          using value = r10w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '1', 'w'>> {
+          using value = r11w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '2', 'w'>> {
+          using value = r12w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '3', 'w'>> {
+          using value = r13w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '4', 'w'>> {
+          using value = r14w;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '5', 'w'>> {
+          using value = r15w;
         };
 
         template <> struct parse_instr_register<char_seq<'e', 'a', 'x'>> {
@@ -826,6 +891,31 @@ namespace {
         };
         template <> struct parse_instr_register<char_seq<'z', 'b', 'p'>> {
           using value = zbp;
+        };
+
+        template <> struct parse_instr_register<char_seq<'r', '8', 'd'>> {
+          using value = r8d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '9', 'd'>> {
+          using value = r9d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '0', 'd'>> {
+          using value = r10d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '1', 'd'>> {
+          using value = r11d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '2', 'd'>> {
+          using value = r12d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '3', 'd'>> {
+          using value = r13d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '4', 'd'>> {
+          using value = r14d;
+        };
+        template <> struct parse_instr_register<char_seq<'r', '1', '5', 'd'>> {
+          using value = r15d;
         };
 
         template <> struct parse_instr_register<char_seq<'r', 'a', 'x'>> {
@@ -947,7 +1037,7 @@ namespace {
         struct parse_instr_ptr<hold<acc_types...>, char_seq<acc_str...>,
                                char_seq<f_symb, str...>> {
           using value = typename parse_instr_ptr<hold<acc_types...>,char_seq<acc_str..., f_symb>, char_seq<str...>>::value;
-        };//*/
+        };
 
         template <typename... acc_types, char... acc_str, char... str>
         struct parse_instr_ptr<hold<acc_types...>, char_seq<acc_str...>,
