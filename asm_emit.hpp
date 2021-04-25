@@ -6,7 +6,7 @@ struct parse_instr_name<char_seq<'a','a','a', str...>, hold<T...>> {
     static constexpr auto value = asm_aaa<T...>;
 };
 template <>
-constexpr auto asm_aaa<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x37>>>::value;
+constexpr auto asm_aaa<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x37>>>::value;
 //  aad X86 [I]   [] D5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_aad = {};
 template <char... str, typename... T>
@@ -15,7 +15,7 @@ struct parse_instr_name<char_seq<'a','a','d', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_aad<ax, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xD5>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xD5>, typename disp8<Y>::value>>::value;
 //  aam X86 [I]   [] D4 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_aam = {};
 template <char... str, typename... T>
@@ -24,7 +24,7 @@ struct parse_instr_name<char_seq<'a','a','m', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_aam<ax, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xD4>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xD4>, typename disp8<Y>::value>>::value;
 //  aas X86 [NONE]   [] 3F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_aas = {};
 template <char... str, typename... T>
@@ -32,7 +32,7 @@ struct parse_instr_name<char_seq<'a','a','s', str...>, hold<T...>> {
     static constexpr auto value = asm_aas<T...>;
 };
 template <>
-constexpr auto asm_aas<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x3F>>>::value;
+constexpr auto asm_aas<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x3F>>>::value;
 //  adc ANY [I]   [] 14 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_adc = {};
 template <char... str, typename... T>
@@ -41,17 +41,17 @@ struct parse_instr_name<char_seq<'a','d','c', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_adc<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x14>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x14>, typename disp8<Y>::value>>::value;
 //  adc ANY [I]   [66] 15 
 
 template <uint16_t Y> 
 constexpr auto asm_adc<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x15>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x15>, typename disp16<Y>::value>>::value;
 //  adc ANY [I]   [] 15 
 
 template <uint32_t Y> 
 constexpr auto asm_adc<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x15>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x15>, typename disp32<Y>::value>>::value;
 //  adc X64 [I]   [] 15 
 
 template <uint32_t Y> 
@@ -195,17 +195,17 @@ struct parse_instr_name<char_seq<'a','d','d', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_add<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x04>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x04>, typename disp8<Y>::value>>::value;
 //  add ANY [I]   [66] 05 
 
 template <uint16_t Y> 
 constexpr auto asm_add<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x05>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x05>, typename disp16<Y>::value>>::value;
 //  add ANY [I]   [] 05 
 
 template <uint32_t Y> 
 constexpr auto asm_add<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x05>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x05>, typename disp32<Y>::value>>::value;
 //  add X64 [I]   [] 05 
 
 template <uint32_t Y> 
@@ -517,22 +517,22 @@ struct parse_instr_name<char_seq<'a','n','d', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_and<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x24>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x24>, typename disp8<Y>::value>>::value;
 //  and ANY [I]   [66] 25 
 
 template <uint16_t Y> 
 constexpr auto asm_and<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x25>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x25>, typename disp16<Y>::value>>::value;
 //  and ANY [I]   [] 25 
 
 template <uint32_t Y> 
 constexpr auto asm_and<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x25>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x25>, typename disp32<Y>::value>>::value;
 //  and X64 [I]   [] 25 
 
 template <uint32_t Y> 
 constexpr auto asm_and<rax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x25>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x25>, typename disp32<Y>::value>>::value;
 //  and X64 [I]   [] 25 
 
 template <uint32_t Y> 
@@ -732,6 +732,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'a','r','p','l', str...>, hold<T...>> {
     static constexpr auto value = asm_arpl<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_arpl<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x63>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_arpl<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x63>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -1007,16 +1011,28 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  bt ANY [MR] r  [66] A3 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_bt<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_bt<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xA3>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  bt ANY [MR] r  [] A3 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_bt<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_bt<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xA3>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  bt X64 [MR] r  [] A3 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_bt<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_bt<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -1047,16 +1063,28 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  btc ANY [MR] r  [66] BB 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_btc<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xBB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_btc<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xBB>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  btc ANY [MR] r  [] BB 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_btc<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xBB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_btc<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xBB>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  btc X64 [MR] r  [] BB 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_btc<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xBB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_btc<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -1087,16 +1115,28 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  btr ANY [MR] r  [66] B3 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_btr<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_btr<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xB3>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  btr ANY [MR] r  [] B3 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_btr<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_btr<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xB3>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  btr X64 [MR] r  [] B3 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_btr<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_btr<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -1127,16 +1167,28 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  bts ANY [MR] r  [66] AB 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_bts<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_bts<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xAB>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  bts ANY [MR] r  [] AB 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_bts<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_bts<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xAB>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  bts X64 [MR] r  [] AB 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_bts<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAB>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_bts<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -1157,11 +1209,11 @@ struct parse_instr_name<char_seq<'c','a','l','l', str...>, hold<T...>> {
     static constexpr auto value = asm_call<T...>;
 };
 template<uint16_t N>
-constexpr auto asm_call<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>, typename rel16<N>::value>>::value;
+constexpr auto asm_call<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xE8>, typename rel16<N>::value>>::value;
 //  call ANY [D]   [] E8 
 
 template<uint32_t N>
-constexpr auto asm_call<rel32<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>, typename rel32<N>::value>>::value;
+constexpr auto asm_call<rel32<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0xE8>, typename rel32<N>::value>>::value;
 //  call X86 [M] 2  [66] FF 
 
 template<typename ...T>
@@ -1199,7 +1251,7 @@ struct parse_instr_name<char_seq<'c','b','w', str...>, hold<T...>> {
     static constexpr auto value = asm_cbw<T...>;
 };
 template <>
-constexpr auto asm_cbw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x98>>>::value;
+constexpr auto asm_cbw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x98>>>::value;
 //  cdq ANY [NONE]   [] 99 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cdq = {};
 template <char... str, typename... T>
@@ -1207,7 +1259,7 @@ struct parse_instr_name<char_seq<'c','d','q', str...>, hold<T...>> {
     static constexpr auto value = asm_cdq<T...>;
 };
 template <>
-constexpr auto asm_cdq<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x99>>>::value;
+constexpr auto asm_cdq<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x99>>>::value;
 //  cdqe X64 [NONE]   [] 98 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cdqe = {};
 template <char... str, typename... T>
@@ -1223,7 +1275,7 @@ struct parse_instr_name<char_seq<'c','l','a','c', str...>, hold<T...>> {
     static constexpr auto value = asm_clac<T...>;
 };
 template <>
-constexpr auto asm_clac<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCA>>>::value;
+constexpr auto asm_clac<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xCA>>>::value;
 //  clc ANY [NONE]   [] F8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_clc = {};
 template <char... str, typename... T>
@@ -1231,7 +1283,7 @@ struct parse_instr_name<char_seq<'c','l','c', str...>, hold<T...>> {
     static constexpr auto value = asm_clc<T...>;
 };
 template <>
-constexpr auto asm_clc<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xF8>>>::value;
+constexpr auto asm_clc<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xF8>>>::value;
 //  cld ANY [NONE]   [] FC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cld = {};
 template <char... str, typename... T>
@@ -1239,7 +1291,7 @@ struct parse_instr_name<char_seq<'c','l','d', str...>, hold<T...>> {
     static constexpr auto value = asm_cld<T...>;
 };
 template <>
-constexpr auto asm_cld<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xFC>>>::value;
+constexpr auto asm_cld<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xFC>>>::value;
 //  cldemote ANY [M] 0  [] 1C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cldemote = {};
 template <char... str, typename... T>
@@ -1277,7 +1329,7 @@ struct parse_instr_name<char_seq<'c','l','g','i', str...>, hold<T...>> {
     static constexpr auto value = asm_clgi<T...>;
 };
 template <>
-constexpr auto asm_clgi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDD>>>::value;
+constexpr auto asm_clgi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDD>>>::value;
 //  cli ANY [NONE]   [] FA 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cli = {};
 template <char... str, typename... T>
@@ -1285,7 +1337,7 @@ struct parse_instr_name<char_seq<'c','l','i', str...>, hold<T...>> {
     static constexpr auto value = asm_cli<T...>;
 };
 template <>
-constexpr auto asm_cli<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xFA>>>::value;
+constexpr auto asm_cli<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xFA>>>::value;
 //  clrssbsy ANY [M] 6  [F3] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_clrssbsy = {};
 template <char... str, typename... T>
@@ -1307,7 +1359,7 @@ struct parse_instr_name<char_seq<'c','l','t','s', str...>, hold<T...>> {
     static constexpr auto value = asm_clts<T...>;
 };
 template <>
-constexpr auto asm_clts<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x06>>>::value;
+constexpr auto asm_clts<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x06>>>::value;
 //  clui X64 [NONE]   [F3] EE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_clui = {};
 template <char... str, typename... T>
@@ -1315,7 +1367,7 @@ struct parse_instr_name<char_seq<'c','l','u','i', str...>, hold<T...>> {
     static constexpr auto value = asm_clui<T...>;
 };
 template <>
-constexpr auto asm_clui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEE>>>::value;
+constexpr auto asm_clui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xEE>>>::value;
 //  clwb ANY [M] 6  [66] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_clwb = {};
 template <char... str, typename... T>
@@ -1333,7 +1385,7 @@ struct parse_instr_name<char_seq<'c','l','z','e','r','o', str...>, hold<T...>> {
     static constexpr auto value = asm_clzero<T...>;
 };
 template <>
-constexpr auto asm_clzero<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFC>>>::value;
+constexpr auto asm_clzero<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xFC>>>::value;
 //  cmc ANY [NONE]   [] F5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cmc = {};
 template <char... str, typename... T>
@@ -1341,7 +1393,7 @@ struct parse_instr_name<char_seq<'c','m','c', str...>, hold<T...>> {
     static constexpr auto value = asm_cmc<T...>;
 };
 template <>
-constexpr auto asm_cmc<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xF5>>>::value;
+constexpr auto asm_cmc<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xF5>>>::value;
 //  cmova ANY [RM] r  [66] 47 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cmova = {};
 template <char... str, typename... T>
@@ -2370,17 +2422,17 @@ struct parse_instr_name<char_seq<'c','m','p', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_cmp<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x3C>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x3C>, typename disp8<Y>::value>>::value;
 //  cmp ANY [I]   [66] 3D 
 
 template <uint16_t Y> 
 constexpr auto asm_cmp<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x3D>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x3D>, typename disp16<Y>::value>>::value;
 //  cmp ANY [I]   [] 3D 
 
 template <uint32_t Y> 
 constexpr auto asm_cmp<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x3D>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x3D>, typename disp32<Y>::value>>::value;
 //  cmp X64 [I]   [] 3D 
 
 template <uint32_t Y> 
@@ -2527,7 +2579,7 @@ struct parse_instr_name<char_seq<'c','m','p','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_cmpsb<T...>;
 };
 template <>
-constexpr auto asm_cmpsb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA6>>>::value;
+constexpr auto asm_cmpsb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xA6>>>::value;
 //  cmpsd ANY [NONE]   [] A7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cmpsd = {};
 template <char... str, typename... T>
@@ -2535,7 +2587,7 @@ struct parse_instr_name<char_seq<'c','m','p','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_cmpsd<T...>;
 };
 template <>
-constexpr auto asm_cmpsd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA7>>>::value;
+constexpr auto asm_cmpsd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xA7>>>::value;
 //  cmpsd ANY [RMI] r  [F2] C2 
 
 template<typename ...T, typename ...Y, uint8_t Z>
@@ -2575,7 +2627,7 @@ struct parse_instr_name<char_seq<'c','m','p','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_cmpsw<T...>;
 };
 template <>
-constexpr auto asm_cmpsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xA7>>>::value;
+constexpr auto asm_cmpsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xA7>>>::value;
 //  cmpxchg ANY [MR] r  [] B0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cmpxchg = {};
 template <char... str, typename... T>
@@ -2583,10 +2635,18 @@ struct parse_instr_name<char_seq<'c','m','p','x','c','h','g', str...>, hold<T...
     static constexpr auto value = asm_cmpxchg<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_cmpxchg<zip<reg8>::with<T...>, zip<reg8>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB0>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_cmpxchg<ptr<reg8, T...>, zip<reg8>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xB0>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  cmpxchg ANY [MR] r  [66] B1 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_cmpxchg<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_cmpxchg<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
@@ -2595,10 +2655,18 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  cmpxchg ANY [MR] r  [] B1 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_cmpxchg<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_cmpxchg<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xB1>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  cmpxchg X64 [MR] r  [] B1 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_cmpxchg<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xB1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_cmpxchg<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -2667,7 +2735,7 @@ struct parse_instr_name<char_seq<'c','p','u','i','d', str...>, hold<T...>> {
     static constexpr auto value = asm_cpuid<T...>;
 };
 template <>
-constexpr auto asm_cpuid<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xA2>>>::value;
+constexpr auto asm_cpuid<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xA2>>>::value;
 //  cqo X64 [NONE]   [] 99 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cqo = {};
 template <char... str, typename... T>
@@ -3105,7 +3173,7 @@ struct parse_instr_name<char_seq<'c','w','d', str...>, hold<T...>> {
     static constexpr auto value = asm_cwd<T...>;
 };
 template <>
-constexpr auto asm_cwd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x99>>>::value;
+constexpr auto asm_cwd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x99>>>::value;
 //  cwde ANY [NONE]   [] 98 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_cwde = {};
 template <char... str, typename... T>
@@ -3113,7 +3181,7 @@ struct parse_instr_name<char_seq<'c','w','d','e', str...>, hold<T...>> {
     static constexpr auto value = asm_cwde<T...>;
 };
 template <>
-constexpr auto asm_cwde<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x98>>>::value;
+constexpr auto asm_cwde<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x98>>>::value;
 //  daa X86 [NONE]   [] 27 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_daa = {};
 template <char... str, typename... T>
@@ -3121,7 +3189,7 @@ struct parse_instr_name<char_seq<'d','a','a', str...>, hold<T...>> {
     static constexpr auto value = asm_daa<T...>;
 };
 template <>
-constexpr auto asm_daa<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x27>>>::value;
+constexpr auto asm_daa<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x27>>>::value;
 //  das X86 [NONE]   [] 2F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_das = {};
 template <char... str, typename... T>
@@ -3129,7 +3197,7 @@ struct parse_instr_name<char_seq<'d','a','s', str...>, hold<T...>> {
     static constexpr auto value = asm_das<T...>;
 };
 template <>
-constexpr auto asm_das<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x2F>>>::value;
+constexpr auto asm_das<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x2F>>>::value;
 //  dec X86 [O]   [66] 48 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_dec = {};
 template <char... str, typename... T>
@@ -3313,7 +3381,7 @@ struct parse_instr_name<char_seq<'e','m','m','s', str...>, hold<T...>> {
     static constexpr auto value = asm_emms<T...>;
 };
 template <>
-constexpr auto asm_emms<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x77>>>::value;
+constexpr auto asm_emms<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x77>>>::value;
 //  endbr32 ANY [NONE] 7 3 [F3] FB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_endbr32 = {};
 template <char... str, typename... T>
@@ -3321,7 +3389,7 @@ struct parse_instr_name<char_seq<'e','n','d','b','r','3','2', str...>, hold<T...
     static constexpr auto value = asm_endbr32<T...>;
 };
 template <>
-constexpr auto asm_endbr32<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFB>>>::value;
+constexpr auto asm_endbr32<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>,  byte_seq<0xFB>>>::value;
 //  endbr64 ANY [NONE] 7 2 [F3] FA 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_endbr64 = {};
 template <char... str, typename... T>
@@ -3329,7 +3397,7 @@ struct parse_instr_name<char_seq<'e','n','d','b','r','6','4', str...>, hold<T...
     static constexpr auto value = asm_endbr64<T...>;
 };
 template <>
-constexpr auto asm_endbr64<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFA>>>::value;
+constexpr auto asm_endbr64<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>,  byte_seq<0xFA>>>::value;
 //  enqcmd X86 [RM] r  [F2] F8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_enqcmd = {};
 template <char... str, typename... T>
@@ -3386,7 +3454,7 @@ struct parse_instr_name<char_seq<'e','n','t','e','r', str...>, hold<T...>> {
 };
 template <uint16_t T, uint8_t Y> 
 constexpr auto asm_enter<disp16<T>, disp8<Y>> =
-  seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xC8>, typename disp16<T>::value, typename disp8<Y>::value>>::value;
+  seq_to_arr<expand_byte_seq_v< byte_seq<0xC8>, typename disp16<T>::value, typename disp8<Y>::value>>::value;
 //  extractps ANY [MRI] r  [66] 17 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_extractps = {};
 template <char... str, typename... T>
@@ -3416,7 +3484,7 @@ struct parse_instr_name<char_seq<'f','2','x','m','1', str...>, hold<T...>> {
     static constexpr auto value = asm_f2xm1<T...>;
 };
 template <>
-constexpr auto asm_f2xm1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0>>>::value;
+constexpr auto asm_f2xm1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF0>>>::value;
 //  fabs ANY [NONE]   [] E1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fabs = {};
 template <char... str, typename... T>
@@ -3424,7 +3492,7 @@ struct parse_instr_name<char_seq<'f','a','b','s', str...>, hold<T...>> {
     static constexpr auto value = asm_fabs<T...>;
 };
 template <>
-constexpr auto asm_fabs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE1>>>::value;
+constexpr auto asm_fabs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE1>>>::value;
 //  fadd ANY [M] 0  [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fadd = {};
 template <char... str, typename... T>
@@ -3452,11 +3520,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fadd ANY [O]   [] C0 
 
 template<typename ...Y>
-constexpr auto asm_fadd<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fadd<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xC0 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fadd ANY [O]   [] C0 
 
 template<typename ...T>
-constexpr auto asm_fadd<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fadd<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  faddp ANY [NONE]   [] C1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_faddp = {};
 template <char... str, typename... T>
@@ -3464,11 +3532,11 @@ struct parse_instr_name<char_seq<'f','a','d','d','p', str...>, hold<T...>> {
     static constexpr auto value = asm_faddp<T...>;
 };
 template <>
-constexpr auto asm_faddp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC1>>>::value;
+constexpr auto asm_faddp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xC1>>>::value;
 //  faddp ANY [O]   [] C0 
 
 template<typename ...T>
-constexpr auto asm_faddp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_faddp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fbld ANY [M] 4  [] DF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fbld = {};
 template <char... str, typename... T>
@@ -3504,7 +3572,7 @@ struct parse_instr_name<char_seq<'f','c','h','s', str...>, hold<T...>> {
     static constexpr auto value = asm_fchs<T...>;
 };
 template <>
-constexpr auto asm_fchs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0>>>::value;
+constexpr auto asm_fchs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE0>>>::value;
 //  fclex ANY [NONE]   [9B] E2 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fclex = {};
 template <char... str, typename... T>
@@ -3512,7 +3580,7 @@ struct parse_instr_name<char_seq<'f','c','l','e','x', str...>, hold<T...>> {
     static constexpr auto value = asm_fclex<T...>;
 };
 template <>
-constexpr auto asm_fclex<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE2>>>::value;
+constexpr auto asm_fclex<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDB>,  byte_seq<0xE2>>>::value;
 //  fcmovb ANY [O]   [] C0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovb = {};
 template <char... str, typename... T>
@@ -3520,7 +3588,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','b', str...>, hold<T...>> {
     static constexpr auto value = asm_fcmovb<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovb<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovb<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovbe ANY [O]   [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovbe = {};
 template <char... str, typename... T>
@@ -3528,7 +3596,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','b','e', str...>, hold<T...
     static constexpr auto value = asm_fcmovbe<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovbe<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovbe<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>,  byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmove ANY [O]   [] C8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmove = {};
 template <char... str, typename... T>
@@ -3536,7 +3604,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','e', str...>, hold<T...>> {
     static constexpr auto value = asm_fcmove<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmove<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmove<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>,  byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovnb ANY [O]   [] C0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovnb = {};
 template <char... str, typename... T>
@@ -3544,7 +3612,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','n','b', str...>, hold<T...
     static constexpr auto value = asm_fcmovnb<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovnb<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovnb<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovnbe ANY [O]   [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovnbe = {};
 template <char... str, typename... T>
@@ -3552,7 +3620,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','n','b','e', str...>, hold<
     static constexpr auto value = asm_fcmovnbe<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovnbe<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovnbe<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovne ANY [O]   [] C8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovne = {};
 template <char... str, typename... T>
@@ -3560,7 +3628,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','n','e', str...>, hold<T...
     static constexpr auto value = asm_fcmovne<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovne<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovne<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovnu ANY [O]   [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovnu = {};
 template <char... str, typename... T>
@@ -3568,7 +3636,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','n','u', str...>, hold<T...
     static constexpr auto value = asm_fcmovnu<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovnu<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovnu<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcmovu ANY [O]   [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcmovu = {};
 template <char... str, typename... T>
@@ -3576,7 +3644,7 @@ struct parse_instr_name<char_seq<'f','c','m','o','v','u', str...>, hold<T...>> {
     static constexpr auto value = asm_fcmovu<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcmovu<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcmovu<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>,  byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcom ANY [NONE]   [] D1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcom = {};
 template <char... str, typename... T>
@@ -3584,7 +3652,7 @@ struct parse_instr_name<char_seq<'f','c','o','m', str...>, hold<T...>> {
     static constexpr auto value = asm_fcom<T...>;
 };
 template <>
-constexpr auto asm_fcom<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD1>>>::value;
+constexpr auto asm_fcom<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xD1>>>::value;
 //  fcom ANY [M] 2  [] D8 
 
 template<typename ...T>
@@ -3608,7 +3676,7 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fcom ANY [O]   [] D0 
 
 template<typename ...T>
-constexpr auto asm_fcom<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcom<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcomi ANY [O]   [] F0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcomi = {};
 template <char... str, typename... T>
@@ -3616,7 +3684,7 @@ struct parse_instr_name<char_seq<'f','c','o','m','i', str...>, hold<T...>> {
     static constexpr auto value = asm_fcomi<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcomi<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcomi<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcomip ANY [O]   [] F0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcomip = {};
 template <char... str, typename... T>
@@ -3624,7 +3692,7 @@ struct parse_instr_name<char_seq<'f','c','o','m','i','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fcomip<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fcomip<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcomip<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>,  byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcomp ANY [NONE]   [] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcomp = {};
 template <char... str, typename... T>
@@ -3632,7 +3700,7 @@ struct parse_instr_name<char_seq<'f','c','o','m','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fcomp<T...>;
 };
 template <>
-constexpr auto asm_fcomp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD9>>>::value;
+constexpr auto asm_fcomp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xD9>>>::value;
 //  fcomp ANY [M] 3  [] D8 
 
 template<typename ...T>
@@ -3656,7 +3724,7 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fcomp ANY [O]   [] D8 
 
 template<typename ...T>
-constexpr auto asm_fcomp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fcomp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fcompp ANY [NONE]   [] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcompp = {};
 template <char... str, typename... T>
@@ -3664,7 +3732,7 @@ struct parse_instr_name<char_seq<'f','c','o','m','p','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fcompp<T...>;
 };
 template <>
-constexpr auto asm_fcompp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD9>>>::value;
+constexpr auto asm_fcompp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xD9>>>::value;
 //  fcos ANY [NONE]   [] FF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fcos = {};
 template <char... str, typename... T>
@@ -3672,7 +3740,7 @@ struct parse_instr_name<char_seq<'f','c','o','s', str...>, hold<T...>> {
     static constexpr auto value = asm_fcos<T...>;
 };
 template <>
-constexpr auto asm_fcos<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFF>>>::value;
+constexpr auto asm_fcos<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFF>>>::value;
 //  fdecstp ANY [NONE]   [] F6 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fdecstp = {};
 template <char... str, typename... T>
@@ -3680,7 +3748,7 @@ struct parse_instr_name<char_seq<'f','d','e','c','s','t','p', str...>, hold<T...
     static constexpr auto value = asm_fdecstp<T...>;
 };
 template <>
-constexpr auto asm_fdecstp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF6>>>::value;
+constexpr auto asm_fdecstp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF6>>>::value;
 //  fdiv ANY [M] 6  [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fdiv = {};
 template <char... str, typename... T>
@@ -3708,11 +3776,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fdiv ANY [O]   [] F0 
 
 template<typename ...Y>
-constexpr auto asm_fdiv<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fdiv<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xF0 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fdiv ANY [O]   [] F8 
 
 template<typename ...T>
-constexpr auto asm_fdiv<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fdiv<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xF8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fdivp ANY [NONE]   [] F9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fdivp = {};
 template <char... str, typename... T>
@@ -3720,11 +3788,11 @@ struct parse_instr_name<char_seq<'f','d','i','v','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fdivp<T...>;
 };
 template <>
-constexpr auto asm_fdivp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF9>>>::value;
+constexpr auto asm_fdivp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xF9>>>::value;
 //  fdivp ANY [O]   [] F8 
 
 template<typename ...T>
-constexpr auto asm_fdivp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fdivp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xF8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fdivr ANY [M] 7  [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fdivr = {};
 template <char... str, typename... T>
@@ -3752,11 +3820,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fdivr ANY [O]   [] F8 
 
 template<typename ...Y>
-constexpr auto asm_fdivr<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fdivr<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xF8 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fdivr ANY [O]   [] F0 
 
 template<typename ...T>
-constexpr auto asm_fdivr<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fdivr<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fdivrp ANY [NONE]   [] F1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fdivrp = {};
 template <char... str, typename... T>
@@ -3764,11 +3832,11 @@ struct parse_instr_name<char_seq<'f','d','i','v','r','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fdivrp<T...>;
 };
 template <>
-constexpr auto asm_fdivrp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF1>>>::value;
+constexpr auto asm_fdivrp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xF1>>>::value;
 //  fdivrp ANY [O]   [] F0 
 
 template<typename ...T>
-constexpr auto asm_fdivrp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fdivrp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xF0 + reg<reg_n<T...>::value>::value>>>::value;
 //  femms ANY [NONE]   [] 0E 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_femms = {};
 template <char... str, typename... T>
@@ -3776,7 +3844,7 @@ struct parse_instr_name<char_seq<'f','e','m','m','s', str...>, hold<T...>> {
     static constexpr auto value = asm_femms<T...>;
 };
 template <>
-constexpr auto asm_femms<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x0E>>>::value;
+constexpr auto asm_femms<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x0E>>>::value;
 //  ffree ANY [O]   [] C0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_ffree = {};
 template <char... str, typename... T>
@@ -3784,7 +3852,7 @@ struct parse_instr_name<char_seq<'f','f','r','e','e', str...>, hold<T...>> {
     static constexpr auto value = asm_ffree<T...>;
 };
 template<typename ...T>
-constexpr auto asm_ffree<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_ffree<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fiadd ANY [M] 0  [] DE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fiadd = {};
 template <char... str, typename... T>
@@ -3970,7 +4038,7 @@ struct parse_instr_name<char_seq<'f','i','n','c','s','t','p', str...>, hold<T...
     static constexpr auto value = asm_fincstp<T...>;
 };
 template <>
-constexpr auto asm_fincstp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF7>>>::value;
+constexpr auto asm_fincstp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF7>>>::value;
 //  finit ANY [NONE]   [9B] E3 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_finit = {};
 template <char... str, typename... T>
@@ -3978,7 +4046,7 @@ struct parse_instr_name<char_seq<'f','i','n','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_finit<T...>;
 };
 template <>
-constexpr auto asm_finit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE3>>>::value;
+constexpr auto asm_finit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDB>,  byte_seq<0xE3>>>::value;
 //  fist ANY [M] 2  [] DF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fist = {};
 template <char... str, typename... T>
@@ -4156,7 +4224,7 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fld ANY [O]   [] C0 
 
 template<typename ...T>
-constexpr auto asm_fld<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fld<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xC0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fld1 ANY [NONE]   [] E8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fld1 = {};
 template <char... str, typename... T>
@@ -4164,7 +4232,7 @@ struct parse_instr_name<char_seq<'f','l','d','1', str...>, hold<T...>> {
     static constexpr auto value = asm_fld1<T...>;
 };
 template <>
-constexpr auto asm_fld1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>>>::value;
+constexpr auto asm_fld1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE8>>>::value;
 //  fldcw ANY [M] 5  [] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldcw = {};
 template <char... str, typename... T>
@@ -4196,7 +4264,7 @@ struct parse_instr_name<char_seq<'f','l','d','l','2','e', str...>, hold<T...>> {
     static constexpr auto value = asm_fldl2e<T...>;
 };
 template <>
-constexpr auto asm_fldl2e<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEA>>>::value;
+constexpr auto asm_fldl2e<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xEA>>>::value;
 //  fldl2t ANY [NONE]   [] E9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldl2t = {};
 template <char... str, typename... T>
@@ -4204,7 +4272,7 @@ struct parse_instr_name<char_seq<'f','l','d','l','2','t', str...>, hold<T...>> {
     static constexpr auto value = asm_fldl2t<T...>;
 };
 template <>
-constexpr auto asm_fldl2t<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>>>::value;
+constexpr auto asm_fldl2t<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE9>>>::value;
 //  fldlg2 ANY [NONE]   [] EC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldlg2 = {};
 template <char... str, typename... T>
@@ -4212,7 +4280,7 @@ struct parse_instr_name<char_seq<'f','l','d','l','g','2', str...>, hold<T...>> {
     static constexpr auto value = asm_fldlg2<T...>;
 };
 template <>
-constexpr auto asm_fldlg2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEC>>>::value;
+constexpr auto asm_fldlg2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xEC>>>::value;
 //  fldln2 ANY [NONE]   [] ED 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldln2 = {};
 template <char... str, typename... T>
@@ -4220,7 +4288,7 @@ struct parse_instr_name<char_seq<'f','l','d','l','n','2', str...>, hold<T...>> {
     static constexpr auto value = asm_fldln2<T...>;
 };
 template <>
-constexpr auto asm_fldln2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xED>>>::value;
+constexpr auto asm_fldln2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xED>>>::value;
 //  fldpi ANY [NONE]   [] EB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldpi = {};
 template <char... str, typename... T>
@@ -4228,7 +4296,7 @@ struct parse_instr_name<char_seq<'f','l','d','p','i', str...>, hold<T...>> {
     static constexpr auto value = asm_fldpi<T...>;
 };
 template <>
-constexpr auto asm_fldpi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEB>>>::value;
+constexpr auto asm_fldpi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xEB>>>::value;
 //  fldz ANY [NONE]   [] EE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fldz = {};
 template <char... str, typename... T>
@@ -4236,7 +4304,7 @@ struct parse_instr_name<char_seq<'f','l','d','z', str...>, hold<T...>> {
     static constexpr auto value = asm_fldz<T...>;
 };
 template <>
-constexpr auto asm_fldz<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEE>>>::value;
+constexpr auto asm_fldz<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xEE>>>::value;
 //  fmul ANY [M] 1  [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fmul = {};
 template <char... str, typename... T>
@@ -4264,11 +4332,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fmul ANY [O]   [] C8 
 
 template<typename ...Y>
-constexpr auto asm_fmul<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fmul<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xC8 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fmul ANY [O]   [] C8 
 
 template<typename ...T>
-constexpr auto asm_fmul<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fmul<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fmulp ANY [NONE]   [] C9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fmulp = {};
 template <char... str, typename... T>
@@ -4276,11 +4344,11 @@ struct parse_instr_name<char_seq<'f','m','u','l','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fmulp<T...>;
 };
 template <>
-constexpr auto asm_fmulp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC9>>>::value;
+constexpr auto asm_fmulp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xC9>>>::value;
 //  fmulp ANY [O]   [] C8 
 
 template<typename ...T>
-constexpr auto asm_fmulp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fmulp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fnclex ANY [NONE]   [] E2 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fnclex = {};
 template <char... str, typename... T>
@@ -4288,7 +4356,7 @@ struct parse_instr_name<char_seq<'f','n','c','l','e','x', str...>, hold<T...>> {
     static constexpr auto value = asm_fnclex<T...>;
 };
 template <>
-constexpr auto asm_fnclex<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE2>>>::value;
+constexpr auto asm_fnclex<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xE2>>>::value;
 //  fninit ANY [NONE]   [] E3 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fninit = {};
 template <char... str, typename... T>
@@ -4296,7 +4364,7 @@ struct parse_instr_name<char_seq<'f','n','i','n','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_fninit<T...>;
 };
 template <>
-constexpr auto asm_fninit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE3>>>::value;
+constexpr auto asm_fninit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xE3>>>::value;
 //  fnop ANY [NONE]   [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fnop = {};
 template <char... str, typename... T>
@@ -4304,7 +4372,7 @@ struct parse_instr_name<char_seq<'f','n','o','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fnop<T...>;
 };
 template <>
-constexpr auto asm_fnop<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0>>>::value;
+constexpr auto asm_fnop<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xD0>>>::value;
 //  fnsave ANY [M] 6  [] DD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fnsave = {};
 template <char... str, typename... T>
@@ -4346,7 +4414,7 @@ struct parse_instr_name<char_seq<'f','n','s','t','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_fnstsw<T...>;
 };
 template <>
-constexpr auto asm_fnstsw<ax> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0>>>::value;
+constexpr auto asm_fnstsw<ax> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>,  byte_seq<0xE0>>>::value;
 //  fnstsw ANY [M] 7  [] DD 
 
 template<typename ...T>
@@ -4364,7 +4432,7 @@ struct parse_instr_name<char_seq<'f','p','a','t','a','n', str...>, hold<T...>> {
     static constexpr auto value = asm_fpatan<T...>;
 };
 template <>
-constexpr auto asm_fpatan<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD9>>>::value;
+constexpr auto asm_fpatan<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>,  byte_seq<0xD9>>>::value;
 //  fprem ANY [NONE]   [] F8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fprem = {};
 template <char... str, typename... T>
@@ -4372,7 +4440,7 @@ struct parse_instr_name<char_seq<'f','p','r','e','m', str...>, hold<T...>> {
     static constexpr auto value = asm_fprem<T...>;
 };
 template <>
-constexpr auto asm_fprem<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8>>>::value;
+constexpr auto asm_fprem<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF8>>>::value;
 //  fprem1 ANY [NONE]   [] F5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fprem1 = {};
 template <char... str, typename... T>
@@ -4380,7 +4448,7 @@ struct parse_instr_name<char_seq<'f','p','r','e','m','1', str...>, hold<T...>> {
     static constexpr auto value = asm_fprem1<T...>;
 };
 template <>
-constexpr auto asm_fprem1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF5>>>::value;
+constexpr auto asm_fprem1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF5>>>::value;
 //  fptan ANY [NONE]   [F2] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fptan = {};
 template <char... str, typename... T>
@@ -4388,7 +4456,7 @@ struct parse_instr_name<char_seq<'f','p','t','a','n', str...>, hold<T...>> {
     static constexpr auto value = asm_fptan<T...>;
 };
 template <>
-constexpr auto asm_fptan<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD9>>>::value;
+constexpr auto asm_fptan<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>,  byte_seq<0xD9>>>::value;
 //  frndint ANY [NONE]   [] FC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_frndint = {};
 template <char... str, typename... T>
@@ -4396,7 +4464,7 @@ struct parse_instr_name<char_seq<'f','r','n','d','i','n','t', str...>, hold<T...
     static constexpr auto value = asm_frndint<T...>;
 };
 template <>
-constexpr auto asm_frndint<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFC>>>::value;
+constexpr auto asm_frndint<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFC>>>::value;
 //  frstor ANY [M] 4  [] DD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_frstor = {};
 template <char... str, typename... T>
@@ -4424,7 +4492,7 @@ struct parse_instr_name<char_seq<'f','s','c','a','l','e', str...>, hold<T...>> {
     static constexpr auto value = asm_fscale<T...>;
 };
 template <>
-constexpr auto asm_fscale<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFD>>>::value;
+constexpr auto asm_fscale<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFD>>>::value;
 //  fsin ANY [NONE]   [] FE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsin = {};
 template <char... str, typename... T>
@@ -4432,7 +4500,7 @@ struct parse_instr_name<char_seq<'f','s','i','n', str...>, hold<T...>> {
     static constexpr auto value = asm_fsin<T...>;
 };
 template <>
-constexpr auto asm_fsin<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFE>>>::value;
+constexpr auto asm_fsin<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFE>>>::value;
 //  fsincos ANY [NONE]   [] FB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsincos = {};
 template <char... str, typename... T>
@@ -4440,7 +4508,7 @@ struct parse_instr_name<char_seq<'f','s','i','n','c','o','s', str...>, hold<T...
     static constexpr auto value = asm_fsincos<T...>;
 };
 template <>
-constexpr auto asm_fsincos<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFB>>>::value;
+constexpr auto asm_fsincos<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFB>>>::value;
 //  fsqrt ANY [NONE]   [] FE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsqrt = {};
 template <char... str, typename... T>
@@ -4448,7 +4516,7 @@ struct parse_instr_name<char_seq<'f','s','q','r','t', str...>, hold<T...>> {
     static constexpr auto value = asm_fsqrt<T...>;
 };
 template <>
-constexpr auto asm_fsqrt<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFE>>>::value;
+constexpr auto asm_fsqrt<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xFE>>>::value;
 //  fst ANY [M] 2  [] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fst = {};
 template <char... str, typename... T>
@@ -4476,7 +4544,7 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fst ANY [O]   [] D0 
 
 template<typename ...T>
-constexpr auto asm_fst<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fst<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xD0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fstcw ANY [M] 7  [9B] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fstcw = {};
 template <char... str, typename... T>
@@ -4538,7 +4606,7 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fstp ANY [O]   [] D8 
 
 template<typename ...T>
-constexpr auto asm_fstp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fstp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xD8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fstsw ANY [NONE]   [9B] E0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fstsw = {};
 template <char... str, typename... T>
@@ -4546,7 +4614,7 @@ struct parse_instr_name<char_seq<'f','s','t','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_fstsw<T...>;
 };
 template <>
-constexpr auto asm_fstsw<ax> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDF>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0>>>::value;
+constexpr auto asm_fstsw<ax> = seq_to_arr<expand_byte_seq_v<byte_seq<0x9B>, byte_seq<0xDF>,  byte_seq<0xE0>>>::value;
 //  fstsw ANY [M] 7  [9B] DD 
 
 template<typename ...T>
@@ -4584,11 +4652,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fsub ANY [O]   [] E0 
 
 template<typename ...Y>
-constexpr auto asm_fsub<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fsub<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xE0 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fsub ANY [O]   [] E8 
 
 template<typename ...T>
-constexpr auto asm_fsub<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fsub<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fsubp ANY [NONE]   [] E9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsubp = {};
 template <char... str, typename... T>
@@ -4596,11 +4664,11 @@ struct parse_instr_name<char_seq<'f','s','u','b','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fsubp<T...>;
 };
 template <>
-constexpr auto asm_fsubp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>>>::value;
+constexpr auto asm_fsubp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xE9>>>::value;
 //  fsubp ANY [O]   [] E8 
 
 template<typename ...T>
-constexpr auto asm_fsubp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fsubp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fsubr ANY [M] 5  [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsubr = {};
 template <char... str, typename... T>
@@ -4628,11 +4696,11 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  fsubr ANY [O]   [] E8 
 
 template<typename ...Y>
-constexpr auto asm_fsubr<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<Y...>::value>::value>>>::value;
+constexpr auto asm_fsubr<st<0>, zip<reg80>::with<Y...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD8>,  byte_seq<0xE8 + reg<reg_n<Y...>::value>::value>>>::value;
 //  fsubr ANY [O]   [] E0 
 
 template<typename ...T>
-constexpr auto asm_fsubr<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fsubr<zip<reg80>::with<T...>, st<0>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDC>,  byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fsubrp ANY [NONE]   [] E1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fsubrp = {};
 template <char... str, typename... T>
@@ -4640,11 +4708,11 @@ struct parse_instr_name<char_seq<'f','s','u','b','r','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fsubrp<T...>;
 };
 template <>
-constexpr auto asm_fsubrp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE1>>>::value;
+constexpr auto asm_fsubrp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xE1>>>::value;
 //  fsubrp ANY [O]   [] E0 
 
 template<typename ...T>
-constexpr auto asm_fsubrp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fsubrp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDE>,  byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
 //  ftst ANY [NONE]   [] E4 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_ftst = {};
 template <char... str, typename... T>
@@ -4652,7 +4720,7 @@ struct parse_instr_name<char_seq<'f','t','s','t', str...>, hold<T...>> {
     static constexpr auto value = asm_ftst<T...>;
 };
 template <>
-constexpr auto asm_ftst<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE4>>>::value;
+constexpr auto asm_ftst<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE4>>>::value;
 //  fucom ANY [NONE]   [] E1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fucom = {};
 template <char... str, typename... T>
@@ -4660,11 +4728,11 @@ struct parse_instr_name<char_seq<'f','u','c','o','m', str...>, hold<T...>> {
     static constexpr auto value = asm_fucom<T...>;
 };
 template <>
-constexpr auto asm_fucom<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE1>>>::value;
+constexpr auto asm_fucom<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xE1>>>::value;
 //  fucom ANY [O]   [] E0 
 
 template<typename ...T>
-constexpr auto asm_fucom<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fucom<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xE0 + reg<reg_n<T...>::value>::value>>>::value;
 //  fucomi ANY [O]   [] E8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fucomi = {};
 template <char... str, typename... T>
@@ -4672,7 +4740,7 @@ struct parse_instr_name<char_seq<'f','u','c','o','m','i', str...>, hold<T...>> {
     static constexpr auto value = asm_fucomi<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fucomi<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fucomi<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDB>,  byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fucomip ANY [O]   [] E8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fucomip = {};
 template <char... str, typename... T>
@@ -4680,7 +4748,7 @@ struct parse_instr_name<char_seq<'f','u','c','o','m','i','p', str...>, hold<T...
     static constexpr auto value = asm_fucomip<T...>;
 };
 template<typename ...T>
-constexpr auto asm_fucomip<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fucomip<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDF>,  byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fucomp ANY [NONE]   [] E9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fucomp = {};
 template <char... str, typename... T>
@@ -4688,11 +4756,11 @@ struct parse_instr_name<char_seq<'f','u','c','o','m','p', str...>, hold<T...>> {
     static constexpr auto value = asm_fucomp<T...>;
 };
 template <>
-constexpr auto asm_fucomp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>>>::value;
+constexpr auto asm_fucomp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xE9>>>::value;
 //  fucomp ANY [O]   [] E8 
 
 template<typename ...T>
-constexpr auto asm_fucomp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fucomp<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDD>,  byte_seq<0xE8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fucompp ANY [NONE]   [] E9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fucompp = {};
 template <char... str, typename... T>
@@ -4700,7 +4768,7 @@ struct parse_instr_name<char_seq<'f','u','c','o','m','p','p', str...>, hold<T...
     static constexpr auto value = asm_fucompp<T...>;
 };
 template <>
-constexpr auto asm_fucompp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>>>::value;
+constexpr auto asm_fucompp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xDA>,  byte_seq<0xE9>>>::value;
 //  fwait ANY [NONE]   [] 9B 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fwait = {};
 template <char... str, typename... T>
@@ -4708,7 +4776,7 @@ struct parse_instr_name<char_seq<'f','w','a','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_fwait<T...>;
 };
 template <>
-constexpr auto asm_fwait<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9B>>>::value;
+constexpr auto asm_fwait<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9B>>>::value;
 //  fxam ANY [NONE]   [] E5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fxam = {};
 template <char... str, typename... T>
@@ -4716,7 +4784,7 @@ struct parse_instr_name<char_seq<'f','x','a','m', str...>, hold<T...>> {
     static constexpr auto value = asm_fxam<T...>;
 };
 template <>
-constexpr auto asm_fxam<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE5>>>::value;
+constexpr auto asm_fxam<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xE5>>>::value;
 //  fxch ANY [NONE]   [] C9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fxch = {};
 template <char... str, typename... T>
@@ -4724,11 +4792,11 @@ struct parse_instr_name<char_seq<'f','x','c','h', str...>, hold<T...>> {
     static constexpr auto value = asm_fxch<T...>;
 };
 template <>
-constexpr auto asm_fxch<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC9>>>::value;
+constexpr auto asm_fxch<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xC9>>>::value;
 //  fxch ANY [O]   [] C8 
 
 template<typename ...T>
-constexpr auto asm_fxch<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
+constexpr auto asm_fxch<zip<reg80>::with<T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xC8 + reg<reg_n<T...>::value>::value>>>::value;
 //  fxrstor ANY [NONE] 1  [] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fxrstor = {};
 template <char... str, typename... T>
@@ -4736,7 +4804,7 @@ struct parse_instr_name<char_seq<'f','x','r','s','t','o','r', str...>, hold<T...
     static constexpr auto value = asm_fxrstor<T...>;
 };
 template <typename... T>
-constexpr auto asm_fxrstor<ptr<reg64, T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAE>, typename mrm<T...>::template value<hold<reg<1>>>>>::value;
+constexpr auto asm_fxrstor<ptr<reg64, T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xAE>, typename mrm<T...>::template value<hold<reg<1>>>>>::value;
 //  fxrstor64 X64 [NONE] 1  [] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fxrstor64 = {};
 template <char... str, typename... T>
@@ -4752,7 +4820,7 @@ struct parse_instr_name<char_seq<'f','x','s','a','v','e', str...>, hold<T...>> {
     static constexpr auto value = asm_fxsave<T...>;
 };
 template <typename... T>
-constexpr auto asm_fxsave<ptr<reg64, T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAE>, typename mrm<T...>::template value<hold<reg<0>>>>>::value;
+constexpr auto asm_fxsave<ptr<reg64, T...>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xAE>, typename mrm<T...>::template value<hold<reg<0>>>>>::value;
 //  fxsave64 X64 [NONE] 0  [] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fxsave64 = {};
 template <char... str, typename... T>
@@ -4768,7 +4836,7 @@ struct parse_instr_name<char_seq<'f','x','t','r','a','c','t', str...>, hold<T...
     static constexpr auto value = asm_fxtract<T...>;
 };
 template <>
-constexpr auto asm_fxtract<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF4>>>::value;
+constexpr auto asm_fxtract<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF4>>>::value;
 //  fyl2x ANY [NONE]   [] F1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fyl2x = {};
 template <char... str, typename... T>
@@ -4776,7 +4844,7 @@ struct parse_instr_name<char_seq<'f','y','l','2','x', str...>, hold<T...>> {
     static constexpr auto value = asm_fyl2x<T...>;
 };
 template <>
-constexpr auto asm_fyl2x<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF1>>>::value;
+constexpr auto asm_fyl2x<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF1>>>::value;
 //  fyl2xp1 ANY [NONE]   [] F9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_fyl2xp1 = {};
 template <char... str, typename... T>
@@ -4784,7 +4852,7 @@ struct parse_instr_name<char_seq<'f','y','l','2','x','p','1', str...>, hold<T...
     static constexpr auto value = asm_fyl2xp1<T...>;
 };
 template <>
-constexpr auto asm_fyl2xp1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF9>>>::value;
+constexpr auto asm_fyl2xp1<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xD9>,  byte_seq<0xF9>>>::value;
 //  getsec ANY [NONE]   [] 37 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_getsec = {};
 template <char... str, typename... T>
@@ -4792,7 +4860,7 @@ struct parse_instr_name<char_seq<'g','e','t','s','e','c', str...>, hold<T...>> {
     static constexpr auto value = asm_getsec<T...>;
 };
 template <>
-constexpr auto asm_getsec<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x37>>>::value;
+constexpr auto asm_getsec<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x37>>>::value;
 //  gf2p8affineinvqb ANY [RMI] r  [66] CF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_gf2p8affineinvqb = {};
 template <char... str, typename... T>
@@ -4870,7 +4938,7 @@ struct parse_instr_name<char_seq<'h','l','t', str...>, hold<T...>> {
     static constexpr auto value = asm_hlt<T...>;
 };
 template <>
-constexpr auto asm_hlt<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xF4>>>::value;
+constexpr auto asm_hlt<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xF4>>>::value;
 //  hreset ANY [I] 0  [F3] F0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_hreset = {};
 template <char... str, typename... T>
@@ -4879,7 +4947,7 @@ struct parse_instr_name<char_seq<'h','r','e','s','e','t', str...>, hold<T...>> {
 };
 template <uint8_t T> 
 constexpr auto asm_hreset<disp8<T>, eax> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x3A>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x3A>,  byte_seq<0xF0>, typename disp8<T>::value>>::value;
 //  hsubpd ANY [RM] r  [66] 7D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_hsubpd = {};
 template <char... str, typename... T>
@@ -5094,17 +5162,17 @@ struct parse_instr_name<char_seq<'i','n', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_in<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE4>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xE4>, typename disp8<Y>::value>>::value;
 //  in ANY [I]   [66] E5 
 
 template <uint8_t Y> 
 constexpr auto asm_in<ax, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE5>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xE5>, typename disp8<Y>::value>>::value;
 //  in ANY [I]   [] E5 
 
 template <uint8_t Y> 
 constexpr auto asm_in<eax, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE5>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xE5>, typename disp8<Y>::value>>::value;
 //  inc X86 [O]   [66] 40 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_inc = {};
 template <char... str, typename... T>
@@ -5180,7 +5248,7 @@ struct parse_instr_name<char_seq<'i','n','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_insb<T...>;
 };
 template <>
-constexpr auto asm_insb<zdi, dx> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x6C>>>::value;
+constexpr auto asm_insb<zdi, dx> = seq_to_arr<expand_byte_seq_v< byte_seq<0x6C>>>::value;
 //  insd ANY [NONE]   [] 6D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_insd = {};
 template <char... str, typename... T>
@@ -5188,7 +5256,7 @@ struct parse_instr_name<char_seq<'i','n','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_insd<T...>;
 };
 template <>
-constexpr auto asm_insd<zdi, dx> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x6D>>>::value;
+constexpr auto asm_insd<zdi, dx> = seq_to_arr<expand_byte_seq_v< byte_seq<0x6D>>>::value;
 //  insertps ANY [RMI] r  [66] 21 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_insertps = {};
 template <char... str, typename... T>
@@ -5226,7 +5294,7 @@ struct parse_instr_name<char_seq<'i','n','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_insw<T...>;
 };
 template <>
-constexpr auto asm_insw<zdi, dx> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x6D>>>::value;
+constexpr auto asm_insw<zdi, dx> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x6D>>>::value;
 //  int ANY [I]   [] CD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_int = {};
 template <char... str, typename... T>
@@ -5235,7 +5303,7 @@ struct parse_instr_name<char_seq<'i','n','t', str...>, hold<T...>> {
 };
 template <uint8_t T> 
 constexpr auto asm_int<disp8<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCD>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xCD>, typename disp8<T>::value>>::value;
 //  int3 ANY [NONE]   [] CC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_int3 = {};
 template <char... str, typename... T>
@@ -5243,7 +5311,7 @@ struct parse_instr_name<char_seq<'i','n','t','3', str...>, hold<T...>> {
     static constexpr auto value = asm_int3<T...>;
 };
 template <>
-constexpr auto asm_int3<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCC>>>::value;
+constexpr auto asm_int3<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xCC>>>::value;
 //  into X86 [NONE]   [] CE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_into = {};
 template <char... str, typename... T>
@@ -5251,7 +5319,7 @@ struct parse_instr_name<char_seq<'i','n','t','o', str...>, hold<T...>> {
     static constexpr auto value = asm_into<T...>;
 };
 template <>
-constexpr auto asm_into<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCE>>>::value;
+constexpr auto asm_into<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xCE>>>::value;
 //  invd ANY [NONE]   [] 08 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_invd = {};
 template <char... str, typename... T>
@@ -5259,7 +5327,7 @@ struct parse_instr_name<char_seq<'i','n','v','d', str...>, hold<T...>> {
     static constexpr auto value = asm_invd<T...>;
 };
 template <>
-constexpr auto asm_invd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x08>>>::value;
+constexpr auto asm_invd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x08>>>::value;
 //  invept X86 [RM] r  [66] 80 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_invept = {};
 template <char... str, typename... T>
@@ -5301,7 +5369,7 @@ struct parse_instr_name<char_seq<'i','n','v','l','p','g','a', str...>, hold<T...
     static constexpr auto value = asm_invlpga<T...>;
 };
 template <>
-constexpr auto asm_invlpga<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDF>>>::value;
+constexpr auto asm_invlpga<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDF>>>::value;
 //  invpcid X86 [RM] r  [66] 82 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_invpcid = {};
 template <char... str, typename... T>
@@ -5357,7 +5425,7 @@ struct parse_instr_name<char_seq<'i','r','e','t', str...>, hold<T...>> {
     static constexpr auto value = asm_iret<T...>;
 };
 template <>
-constexpr auto asm_iret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCF>>>::value;
+constexpr auto asm_iret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xCF>>>::value;
 //  iretd ANY [NONE]   [] CF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_iretd = {};
 template <char... str, typename... T>
@@ -5365,7 +5433,7 @@ struct parse_instr_name<char_seq<'i','r','e','t','d', str...>, hold<T...>> {
     static constexpr auto value = asm_iretd<T...>;
 };
 template <>
-constexpr auto asm_iretd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCF>>>::value;
+constexpr auto asm_iretd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xCF>>>::value;
 //  iretq X64 [NONE]   [] CF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_iretq = {};
 template <char... str, typename... T>
@@ -5381,15 +5449,15 @@ struct parse_instr_name<char_seq<'j','a', str...>, hold<T...>> {
     static constexpr auto value = asm_ja<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_ja<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x77>, typename rel8<N>::value>>::value;
+constexpr auto asm_ja<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x77>, typename rel8<N>::value>>::value;
 //  ja X86 [D]   [66] 87 
 
 template<uint16_t N>
-constexpr auto asm_ja<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x87>, typename rel16<N>::value>>::value;
+constexpr auto asm_ja<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x87>, typename rel16<N>::value>>::value;
 //  ja ANY [D]   [] 87 
 
 template<uint32_t N>
-constexpr auto asm_ja<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x87>, typename rel32<N>::value>>::value;
+constexpr auto asm_ja<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x87>, typename rel32<N>::value>>::value;
 //  jae ANY [D]   [] 73 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jae = {};
 template <char... str, typename... T>
@@ -5397,15 +5465,15 @@ struct parse_instr_name<char_seq<'j','a','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jae<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jae<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x73>, typename rel8<N>::value>>::value;
+constexpr auto asm_jae<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x73>, typename rel8<N>::value>>::value;
 //  jae X86 [D]   [66] 83 
 
 template<uint16_t N>
-constexpr auto asm_jae<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel16<N>::value>>::value;
+constexpr auto asm_jae<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x83>, typename rel16<N>::value>>::value;
 //  jae ANY [D]   [] 83 
 
 template<uint32_t N>
-constexpr auto asm_jae<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel32<N>::value>>::value;
+constexpr auto asm_jae<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x83>, typename rel32<N>::value>>::value;
 //  jb ANY [D]   [] 72 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jb = {};
 template <char... str, typename... T>
@@ -5413,15 +5481,15 @@ struct parse_instr_name<char_seq<'j','b', str...>, hold<T...>> {
     static constexpr auto value = asm_jb<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jb<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x72>, typename rel8<N>::value>>::value;
+constexpr auto asm_jb<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x72>, typename rel8<N>::value>>::value;
 //  jb X86 [D]   [66] 82 
 
 template<uint16_t N>
-constexpr auto asm_jb<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel16<N>::value>>::value;
+constexpr auto asm_jb<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x82>, typename rel16<N>::value>>::value;
 //  jb ANY [D]   [] 82 
 
 template<uint32_t N>
-constexpr auto asm_jb<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel32<N>::value>>::value;
+constexpr auto asm_jb<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x82>, typename rel32<N>::value>>::value;
 //  jbe ANY [D]   [] 76 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jbe = {};
 template <char... str, typename... T>
@@ -5429,15 +5497,15 @@ struct parse_instr_name<char_seq<'j','b','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jbe<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jbe<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x76>, typename rel8<N>::value>>::value;
+constexpr auto asm_jbe<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x76>, typename rel8<N>::value>>::value;
 //  jbe X86 [D]   [66] 86 
 
 template<uint16_t N>
-constexpr auto asm_jbe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x86>, typename rel16<N>::value>>::value;
+constexpr auto asm_jbe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x86>, typename rel16<N>::value>>::value;
 //  jbe ANY [D]   [] 86 
 
 template<uint32_t N>
-constexpr auto asm_jbe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x86>, typename rel32<N>::value>>::value;
+constexpr auto asm_jbe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x86>, typename rel32<N>::value>>::value;
 //  jc ANY [D]   [] 72 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jc = {};
 template <char... str, typename... T>
@@ -5445,15 +5513,15 @@ struct parse_instr_name<char_seq<'j','c', str...>, hold<T...>> {
     static constexpr auto value = asm_jc<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jc<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x72>, typename rel8<N>::value>>::value;
+constexpr auto asm_jc<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x72>, typename rel8<N>::value>>::value;
 //  jc X86 [D]   [66] 82 
 
 template<uint16_t N>
-constexpr auto asm_jc<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel16<N>::value>>::value;
+constexpr auto asm_jc<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x82>, typename rel16<N>::value>>::value;
 //  jc ANY [D]   [] 82 
 
 template<uint32_t N>
-constexpr auto asm_jc<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel32<N>::value>>::value;
+constexpr auto asm_jc<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x82>, typename rel32<N>::value>>::value;
 //  je ANY [D]   [] 74 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_je = {};
 template <char... str, typename... T>
@@ -5461,15 +5529,15 @@ struct parse_instr_name<char_seq<'j','e', str...>, hold<T...>> {
     static constexpr auto value = asm_je<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_je<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x74>, typename rel8<N>::value>>::value;
+constexpr auto asm_je<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x74>, typename rel8<N>::value>>::value;
 //  je X86 [D]   [66] 84 
 
 template<uint16_t N>
-constexpr auto asm_je<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x84>, typename rel16<N>::value>>::value;
+constexpr auto asm_je<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x84>, typename rel16<N>::value>>::value;
 //  je ANY [D]   [] 84 
 
 template<uint32_t N>
-constexpr auto asm_je<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x84>, typename rel32<N>::value>>::value;
+constexpr auto asm_je<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x84>, typename rel32<N>::value>>::value;
 //  jecxz X86 [D]   [] E3 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jecxz = {};
 template <char... str, typename... T>
@@ -5477,7 +5545,7 @@ struct parse_instr_name<char_seq<'j','e','c','x','z', str...>, hold<T...>> {
     static constexpr auto value = asm_jecxz<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jecxz<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE3>, typename rel8<N>::value>>::value;
+constexpr auto asm_jecxz<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>,  byte_seq<0xE3>, typename rel8<N>::value>>::value;
 //  jg ANY [D]   [] 7F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jg = {};
 template <char... str, typename... T>
@@ -5485,15 +5553,15 @@ struct parse_instr_name<char_seq<'j','g', str...>, hold<T...>> {
     static constexpr auto value = asm_jg<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jg<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7F>, typename rel8<N>::value>>::value;
+constexpr auto asm_jg<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7F>, typename rel8<N>::value>>::value;
 //  jg X86 [D]   [66] 8F 
 
 template<uint16_t N>
-constexpr auto asm_jg<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8F>, typename rel16<N>::value>>::value;
+constexpr auto asm_jg<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8F>, typename rel16<N>::value>>::value;
 //  jg ANY [D]   [] 8F 
 
 template<uint32_t N>
-constexpr auto asm_jg<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8F>, typename rel32<N>::value>>::value;
+constexpr auto asm_jg<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8F>, typename rel32<N>::value>>::value;
 //  jge ANY [D]   [] 7D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jge = {};
 template <char... str, typename... T>
@@ -5501,15 +5569,15 @@ struct parse_instr_name<char_seq<'j','g','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jge<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jge<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7D>, typename rel8<N>::value>>::value;
+constexpr auto asm_jge<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7D>, typename rel8<N>::value>>::value;
 //  jge X86 [D]   [66] 8D 
 
 template<uint16_t N>
-constexpr auto asm_jge<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8D>, typename rel16<N>::value>>::value;
+constexpr auto asm_jge<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8D>, typename rel16<N>::value>>::value;
 //  jge ANY [D]   [] 8D 
 
 template<uint32_t N>
-constexpr auto asm_jge<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8D>, typename rel32<N>::value>>::value;
+constexpr auto asm_jge<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8D>, typename rel32<N>::value>>::value;
 //  jl ANY [D]   [] 7C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jl = {};
 template <char... str, typename... T>
@@ -5517,15 +5585,15 @@ struct parse_instr_name<char_seq<'j','l', str...>, hold<T...>> {
     static constexpr auto value = asm_jl<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jl<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7C>, typename rel8<N>::value>>::value;
+constexpr auto asm_jl<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7C>, typename rel8<N>::value>>::value;
 //  jl X86 [D]   [66] 8C 
 
 template<uint16_t N>
-constexpr auto asm_jl<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8C>, typename rel16<N>::value>>::value;
+constexpr auto asm_jl<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8C>, typename rel16<N>::value>>::value;
 //  jl ANY [D]   [] 8C 
 
 template<uint32_t N>
-constexpr auto asm_jl<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8C>, typename rel32<N>::value>>::value;
+constexpr auto asm_jl<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8C>, typename rel32<N>::value>>::value;
 //  jle ANY [D]   [] 7E 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jle = {};
 template <char... str, typename... T>
@@ -5533,15 +5601,15 @@ struct parse_instr_name<char_seq<'j','l','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jle<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jle<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7E>, typename rel8<N>::value>>::value;
+constexpr auto asm_jle<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7E>, typename rel8<N>::value>>::value;
 //  jle X86 [D]   [66] 8E 
 
 template<uint16_t N>
-constexpr auto asm_jle<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8E>, typename rel16<N>::value>>::value;
+constexpr auto asm_jle<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8E>, typename rel16<N>::value>>::value;
 //  jle ANY [D]   [] 8E 
 
 template<uint32_t N>
-constexpr auto asm_jle<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8E>, typename rel32<N>::value>>::value;
+constexpr auto asm_jle<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8E>, typename rel32<N>::value>>::value;
 //  jmp ANY [D]   [] EB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jmp = {};
 template <char... str, typename... T>
@@ -5549,26 +5617,34 @@ struct parse_instr_name<char_seq<'j','m','p', str...>, hold<T...>> {
     static constexpr auto value = asm_jmp<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jmp<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xEB>, typename rel8<N>::value>>::value;
+constexpr auto asm_jmp<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0xEB>, typename rel8<N>::value>>::value;
 //  jmp X86 [D]   [66] E9 
 
 template<uint16_t N>
-constexpr auto asm_jmp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>, typename rel16<N>::value>>::value;
+constexpr auto asm_jmp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xE9>, typename rel16<N>::value>>::value;
 //  jmp ANY [D]   [] E9 
 
 template<uint32_t N>
-constexpr auto asm_jmp<rel32<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>, typename rel32<N>::value>>::value;
+constexpr auto asm_jmp<rel32<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0xE9>, typename rel32<N>::value>>::value;
 //  jmp X86 [D] 4  [] FF 
 
 template<typename ...T>
 constexpr auto asm_jmp<zip<reg32>::with<T...>> = 
   seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<reg<4>>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xFF>, typename modrm<hold<T...>, hold<reg<4>>>::value>>::value;
 
+template<typename ...T>
+constexpr auto asm_jmp<ptr<reg32, T...>> = 
+seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<reg<4>>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xFF>, typename mrm<T...>::template value<hold<reg<4>>>>>::value;
+
 //  jmp X64 [D] 4  [] FF 
 
 template<typename ...T>
 constexpr auto asm_jmp<zip<reg64>::with<T...>> = 
   seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<reg<4>>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xFF>, typename modrm<hold<T...>, hold<reg<4>>>::value>>::value;
+
+template<typename ...T>
+constexpr auto asm_jmp<ptr<reg64, T...>> = 
+seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<reg<4>>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xFF>, typename mrm<T...>::template value<hold<reg<4>>>>>::value;
 
 //  jna ANY [D]   [] 76 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jna = {};
@@ -5577,15 +5653,15 @@ struct parse_instr_name<char_seq<'j','n','a', str...>, hold<T...>> {
     static constexpr auto value = asm_jna<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jna<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x76>, typename rel8<N>::value>>::value;
+constexpr auto asm_jna<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x76>, typename rel8<N>::value>>::value;
 //  jna X86 [D]   [66] 86 
 
 template<uint16_t N>
-constexpr auto asm_jna<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x86>, typename rel16<N>::value>>::value;
+constexpr auto asm_jna<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x86>, typename rel16<N>::value>>::value;
 //  jna ANY [D]   [] 86 
 
 template<uint32_t N>
-constexpr auto asm_jna<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x86>, typename rel32<N>::value>>::value;
+constexpr auto asm_jna<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x86>, typename rel32<N>::value>>::value;
 //  jnae ANY [D]   [] 72 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnae = {};
 template <char... str, typename... T>
@@ -5593,15 +5669,15 @@ struct parse_instr_name<char_seq<'j','n','a','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jnae<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnae<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x72>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnae<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x72>, typename rel8<N>::value>>::value;
 //  jnae X86 [D]   [66] 82 
 
 template<uint16_t N>
-constexpr auto asm_jnae<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnae<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x82>, typename rel16<N>::value>>::value;
 //  jnae ANY [D]   [] 82 
 
 template<uint32_t N>
-constexpr auto asm_jnae<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x82>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnae<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x82>, typename rel32<N>::value>>::value;
 //  jnb ANY [D]   [] 73 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnb = {};
 template <char... str, typename... T>
@@ -5609,15 +5685,15 @@ struct parse_instr_name<char_seq<'j','n','b', str...>, hold<T...>> {
     static constexpr auto value = asm_jnb<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnb<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x73>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnb<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x73>, typename rel8<N>::value>>::value;
 //  jnb X86 [D]   [66] 83 
 
 template<uint16_t N>
-constexpr auto asm_jnb<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnb<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x83>, typename rel16<N>::value>>::value;
 //  jnb ANY [D]   [] 83 
 
 template<uint32_t N>
-constexpr auto asm_jnb<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnb<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x83>, typename rel32<N>::value>>::value;
 //  jnbe ANY [D]   [] 77 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnbe = {};
 template <char... str, typename... T>
@@ -5625,15 +5701,15 @@ struct parse_instr_name<char_seq<'j','n','b','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jnbe<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnbe<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x77>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnbe<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x77>, typename rel8<N>::value>>::value;
 //  jnbe X86 [D]   [66] 87 
 
 template<uint16_t N>
-constexpr auto asm_jnbe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x87>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnbe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x87>, typename rel16<N>::value>>::value;
 //  jnbe ANY [D]   [] 87 
 
 template<uint32_t N>
-constexpr auto asm_jnbe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x87>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnbe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x87>, typename rel32<N>::value>>::value;
 //  jnc ANY [D]   [] 73 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnc = {};
 template <char... str, typename... T>
@@ -5641,15 +5717,15 @@ struct parse_instr_name<char_seq<'j','n','c', str...>, hold<T...>> {
     static constexpr auto value = asm_jnc<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnc<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x73>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnc<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x73>, typename rel8<N>::value>>::value;
 //  jnc X86 [D]   [66] 83 
 
 template<uint16_t N>
-constexpr auto asm_jnc<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnc<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x83>, typename rel16<N>::value>>::value;
 //  jnc ANY [D]   [] 83 
 
 template<uint32_t N>
-constexpr auto asm_jnc<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x83>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnc<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x83>, typename rel32<N>::value>>::value;
 //  jne ANY [D]   [] 75 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jne = {};
 template <char... str, typename... T>
@@ -5657,15 +5733,15 @@ struct parse_instr_name<char_seq<'j','n','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jne<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jne<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x75>, typename rel8<N>::value>>::value;
+constexpr auto asm_jne<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x75>, typename rel8<N>::value>>::value;
 //  jne X86 [D]   [66] 85 
 
 template<uint16_t N>
-constexpr auto asm_jne<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x85>, typename rel16<N>::value>>::value;
+constexpr auto asm_jne<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x85>, typename rel16<N>::value>>::value;
 //  jne ANY [D]   [] 85 
 
 template<uint32_t N>
-constexpr auto asm_jne<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x85>, typename rel32<N>::value>>::value;
+constexpr auto asm_jne<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x85>, typename rel32<N>::value>>::value;
 //  jng ANY [D]   [] 7E 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jng = {};
 template <char... str, typename... T>
@@ -5673,15 +5749,15 @@ struct parse_instr_name<char_seq<'j','n','g', str...>, hold<T...>> {
     static constexpr auto value = asm_jng<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jng<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7E>, typename rel8<N>::value>>::value;
+constexpr auto asm_jng<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7E>, typename rel8<N>::value>>::value;
 //  jng X86 [D]   [66] 8E 
 
 template<uint16_t N>
-constexpr auto asm_jng<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8E>, typename rel16<N>::value>>::value;
+constexpr auto asm_jng<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8E>, typename rel16<N>::value>>::value;
 //  jng ANY [D]   [] 8E 
 
 template<uint32_t N>
-constexpr auto asm_jng<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8E>, typename rel32<N>::value>>::value;
+constexpr auto asm_jng<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8E>, typename rel32<N>::value>>::value;
 //  jnge ANY [D]   [] 7C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnge = {};
 template <char... str, typename... T>
@@ -5689,15 +5765,15 @@ struct parse_instr_name<char_seq<'j','n','g','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jnge<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnge<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7C>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnge<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7C>, typename rel8<N>::value>>::value;
 //  jnge X86 [D]   [66] 8C 
 
 template<uint16_t N>
-constexpr auto asm_jnge<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8C>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnge<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8C>, typename rel16<N>::value>>::value;
 //  jnge ANY [D]   [] 8C 
 
 template<uint32_t N>
-constexpr auto asm_jnge<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8C>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnge<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8C>, typename rel32<N>::value>>::value;
 //  jnl ANY [D]   [] 7D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnl = {};
 template <char... str, typename... T>
@@ -5705,15 +5781,15 @@ struct parse_instr_name<char_seq<'j','n','l', str...>, hold<T...>> {
     static constexpr auto value = asm_jnl<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnl<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7D>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnl<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7D>, typename rel8<N>::value>>::value;
 //  jnl X86 [D]   [66] 8D 
 
 template<uint16_t N>
-constexpr auto asm_jnl<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8D>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnl<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8D>, typename rel16<N>::value>>::value;
 //  jnl ANY [D]   [] 8D 
 
 template<uint32_t N>
-constexpr auto asm_jnl<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8D>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnl<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8D>, typename rel32<N>::value>>::value;
 //  jnle ANY [D]   [] 7F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnle = {};
 template <char... str, typename... T>
@@ -5721,15 +5797,15 @@ struct parse_instr_name<char_seq<'j','n','l','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jnle<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnle<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7F>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnle<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7F>, typename rel8<N>::value>>::value;
 //  jnle X86 [D]   [66] 8F 
 
 template<uint16_t N>
-constexpr auto asm_jnle<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8F>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnle<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8F>, typename rel16<N>::value>>::value;
 //  jnle ANY [D]   [] 8F 
 
 template<uint32_t N>
-constexpr auto asm_jnle<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8F>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnle<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8F>, typename rel32<N>::value>>::value;
 //  jno ANY [D]   [] 71 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jno = {};
 template <char... str, typename... T>
@@ -5737,15 +5813,15 @@ struct parse_instr_name<char_seq<'j','n','o', str...>, hold<T...>> {
     static constexpr auto value = asm_jno<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jno<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x71>, typename rel8<N>::value>>::value;
+constexpr auto asm_jno<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x71>, typename rel8<N>::value>>::value;
 //  jno X86 [D]   [66] 81 
 
 template<uint16_t N>
-constexpr auto asm_jno<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x81>, typename rel16<N>::value>>::value;
+constexpr auto asm_jno<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x81>, typename rel16<N>::value>>::value;
 //  jno ANY [D]   [] 81 
 
 template<uint32_t N>
-constexpr auto asm_jno<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x81>, typename rel32<N>::value>>::value;
+constexpr auto asm_jno<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x81>, typename rel32<N>::value>>::value;
 //  jnp ANY [D]   [] 7B 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnp = {};
 template <char... str, typename... T>
@@ -5753,15 +5829,15 @@ struct parse_instr_name<char_seq<'j','n','p', str...>, hold<T...>> {
     static constexpr auto value = asm_jnp<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnp<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7B>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnp<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7B>, typename rel8<N>::value>>::value;
 //  jnp X86 [D]   [66] 8B 
 
 template<uint16_t N>
-constexpr auto asm_jnp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8B>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8B>, typename rel16<N>::value>>::value;
 //  jnp ANY [D]   [] 8B 
 
 template<uint32_t N>
-constexpr auto asm_jnp<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8B>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnp<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8B>, typename rel32<N>::value>>::value;
 //  jns ANY [D]   [] 79 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jns = {};
 template <char... str, typename... T>
@@ -5769,15 +5845,15 @@ struct parse_instr_name<char_seq<'j','n','s', str...>, hold<T...>> {
     static constexpr auto value = asm_jns<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jns<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x79>, typename rel8<N>::value>>::value;
+constexpr auto asm_jns<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x79>, typename rel8<N>::value>>::value;
 //  jns X86 [D]   [66] 89 
 
 template<uint16_t N>
-constexpr auto asm_jns<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x89>, typename rel16<N>::value>>::value;
+constexpr auto asm_jns<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x89>, typename rel16<N>::value>>::value;
 //  jns ANY [D]   [] 89 
 
 template<uint32_t N>
-constexpr auto asm_jns<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x89>, typename rel32<N>::value>>::value;
+constexpr auto asm_jns<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x89>, typename rel32<N>::value>>::value;
 //  jnz ANY [D]   [] 75 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jnz = {};
 template <char... str, typename... T>
@@ -5785,15 +5861,15 @@ struct parse_instr_name<char_seq<'j','n','z', str...>, hold<T...>> {
     static constexpr auto value = asm_jnz<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jnz<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x75>, typename rel8<N>::value>>::value;
+constexpr auto asm_jnz<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x75>, typename rel8<N>::value>>::value;
 //  jnz X86 [D]   [66] 85 
 
 template<uint16_t N>
-constexpr auto asm_jnz<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x85>, typename rel16<N>::value>>::value;
+constexpr auto asm_jnz<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x85>, typename rel16<N>::value>>::value;
 //  jnz ANY [D]   [] 85 
 
 template<uint32_t N>
-constexpr auto asm_jnz<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x85>, typename rel32<N>::value>>::value;
+constexpr auto asm_jnz<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x85>, typename rel32<N>::value>>::value;
 //  jo ANY [D]   [] 70 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jo = {};
 template <char... str, typename... T>
@@ -5801,15 +5877,15 @@ struct parse_instr_name<char_seq<'j','o', str...>, hold<T...>> {
     static constexpr auto value = asm_jo<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jo<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x70>, typename rel8<N>::value>>::value;
+constexpr auto asm_jo<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x70>, typename rel8<N>::value>>::value;
 //  jo X86 [D]   [66] 80 
 
 template<uint16_t N>
-constexpr auto asm_jo<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x80>, typename rel16<N>::value>>::value;
+constexpr auto asm_jo<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x80>, typename rel16<N>::value>>::value;
 //  jo ANY [D]   [] 80 
 
 template<uint32_t N>
-constexpr auto asm_jo<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x80>, typename rel32<N>::value>>::value;
+constexpr auto asm_jo<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x80>, typename rel32<N>::value>>::value;
 //  jp ANY [D]   [] 7A 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jp = {};
 template <char... str, typename... T>
@@ -5817,15 +5893,15 @@ struct parse_instr_name<char_seq<'j','p', str...>, hold<T...>> {
     static constexpr auto value = asm_jp<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jp<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7A>, typename rel8<N>::value>>::value;
+constexpr auto asm_jp<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7A>, typename rel8<N>::value>>::value;
 //  jp X86 [D]   [66] 8A 
 
 template<uint16_t N>
-constexpr auto asm_jp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8A>, typename rel16<N>::value>>::value;
+constexpr auto asm_jp<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8A>, typename rel16<N>::value>>::value;
 //  jp ANY [D]   [] 8A 
 
 template<uint32_t N>
-constexpr auto asm_jp<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8A>, typename rel32<N>::value>>::value;
+constexpr auto asm_jp<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8A>, typename rel32<N>::value>>::value;
 //  jpe ANY [D]   [] 7A 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jpe = {};
 template <char... str, typename... T>
@@ -5833,15 +5909,15 @@ struct parse_instr_name<char_seq<'j','p','e', str...>, hold<T...>> {
     static constexpr auto value = asm_jpe<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jpe<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7A>, typename rel8<N>::value>>::value;
+constexpr auto asm_jpe<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7A>, typename rel8<N>::value>>::value;
 //  jpe X86 [D]   [66] 8A 
 
 template<uint16_t N>
-constexpr auto asm_jpe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8A>, typename rel16<N>::value>>::value;
+constexpr auto asm_jpe<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8A>, typename rel16<N>::value>>::value;
 //  jpe ANY [D]   [] 8A 
 
 template<uint32_t N>
-constexpr auto asm_jpe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8A>, typename rel32<N>::value>>::value;
+constexpr auto asm_jpe<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8A>, typename rel32<N>::value>>::value;
 //  jpo ANY [D]   [] 7B 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jpo = {};
 template <char... str, typename... T>
@@ -5849,15 +5925,15 @@ struct parse_instr_name<char_seq<'j','p','o', str...>, hold<T...>> {
     static constexpr auto value = asm_jpo<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jpo<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x7B>, typename rel8<N>::value>>::value;
+constexpr auto asm_jpo<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x7B>, typename rel8<N>::value>>::value;
 //  jpo X86 [D]   [66] 8B 
 
 template<uint16_t N>
-constexpr auto asm_jpo<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8B>, typename rel16<N>::value>>::value;
+constexpr auto asm_jpo<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x8B>, typename rel16<N>::value>>::value;
 //  jpo ANY [D]   [] 8B 
 
 template<uint32_t N>
-constexpr auto asm_jpo<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x8B>, typename rel32<N>::value>>::value;
+constexpr auto asm_jpo<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x8B>, typename rel32<N>::value>>::value;
 //  js ANY [D]   [] 78 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_js = {};
 template <char... str, typename... T>
@@ -5865,15 +5941,15 @@ struct parse_instr_name<char_seq<'j','s', str...>, hold<T...>> {
     static constexpr auto value = asm_js<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_js<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x78>, typename rel8<N>::value>>::value;
+constexpr auto asm_js<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x78>, typename rel8<N>::value>>::value;
 //  js X86 [D]   [66] 88 
 
 template<uint16_t N>
-constexpr auto asm_js<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x88>, typename rel16<N>::value>>::value;
+constexpr auto asm_js<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x88>, typename rel16<N>::value>>::value;
 //  js ANY [D]   [] 88 
 
 template<uint32_t N>
-constexpr auto asm_js<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x88>, typename rel32<N>::value>>::value;
+constexpr auto asm_js<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x88>, typename rel32<N>::value>>::value;
 //  jz ANY [D]   [] 74 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_jz = {};
 template <char... str, typename... T>
@@ -5881,15 +5957,15 @@ struct parse_instr_name<char_seq<'j','z', str...>, hold<T...>> {
     static constexpr auto value = asm_jz<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_jz<rel8<N>> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x74>, typename rel8<N>::value>>::value;
+constexpr auto asm_jz<rel8<N>> = seq_to_arr<expand_byte_seq_v< byte_seq<0x74>, typename rel8<N>::value>>::value;
 //  jz X86 [D]   [66] 84 
 
 template<uint16_t N>
-constexpr auto asm_jz<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x84>, typename rel16<N>::value>>::value;
+constexpr auto asm_jz<rel16<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>,  byte_seq<0x84>, typename rel16<N>::value>>::value;
 //  jz ANY [D]   [] 84 
 
 template<uint32_t N>
-constexpr auto asm_jz<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x84>, typename rel32<N>::value>>::value;
+constexpr auto asm_jz<rel32<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x84>, typename rel32<N>::value>>::value;
 //  lahf ANY [NONE]   [] 9F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lahf = {};
 template <char... str, typename... T>
@@ -5897,7 +5973,7 @@ struct parse_instr_name<char_seq<'l','a','h','f', str...>, hold<T...>> {
     static constexpr auto value = asm_lahf<T...>;
 };
 template <>
-constexpr auto asm_lahf<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9F>>>::value;
+constexpr auto asm_lahf<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9F>>>::value;
 //  lar ANY [RM] r  [66] 02 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lar = {};
 template <char... str, typename... T>
@@ -5930,12 +6006,12 @@ struct parse_instr_name<char_seq<'l','c','a','l','l', str...>, hold<T...>> {
 };
 template <uint16_t T, uint16_t Y> 
 constexpr auto asm_lcall<disp16<T>, disp16<Y>> =
-  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x9A>, typename disp16<T>::value, typename disp16<Y>::value>>::value;
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x9A>, typename disp16<T>::value, typename disp16<Y>::value>>::value;
 //  lcall X86 [II]   [] 9A 
 
 template <uint16_t T, uint32_t Y> 
 constexpr auto asm_lcall<disp16<T>, disp32<Y>> =
-  seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9A>, typename disp16<T>::value, typename disp32<Y>::value>>::value;
+  seq_to_arr<expand_byte_seq_v< byte_seq<0x9A>, typename disp16<T>::value, typename disp32<Y>::value>>::value;
 //  lcall ANY [M] 3  [66] FF 
 
 template<typename ...T>
@@ -6046,6 +6122,16 @@ template<typename ...T, typename ...Y>
 constexpr auto asm_lea<zip<reg16>::with<T...>, ptr<reg64, Y...>> = 
 seq_to_arr<expand_byte_seq_v<byte_seq<0x67>, typename REX<0, is_ext_v<hold<T...>>, mrm<Y...>::X, mrm<Y...>::B>::value, byte_seq<0x8D>, typename mrm<Y...>::template value<hold<T...>>>>::value;
 
+//  lea ANY [RM] r  [] 8D 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_lea<zip<reg32>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<T...>>, is_ext_v<hold<Y...>>, 0>::value, byte_seq<0x8D>, typename modrm<hold<Y...>, hold<T...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_lea<zip<reg32>::with<T...>, ptr<reg64, Y...>> = 
+seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<Y...>::_67h>::value, typename REX<0, is_ext_v<hold<T...>>, mrm<Y...>::X, mrm<Y...>::B>::value, byte_seq<0x8D>, typename mrm<Y...>::template value<hold<T...>>>>::value;
+
 //  lea X64 [RM] r  [] 8D 
 
 template<typename ...T, typename ...Y>
@@ -6063,7 +6149,7 @@ struct parse_instr_name<char_seq<'l','e','a','v','e', str...>, hold<T...>> {
     static constexpr auto value = asm_leave<T...>;
 };
 template <>
-constexpr auto asm_leave<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xC9>>>::value;
+constexpr auto asm_leave<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xC9>>>::value;
 //  les X86 [RM] r  [66] C4 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_les = {};
 template <char... str, typename... T>
@@ -6095,7 +6181,7 @@ struct parse_instr_name<char_seq<'l','f','e','n','c','e', str...>, hold<T...>> {
     static constexpr auto value = asm_lfence<T...>;
 };
 template <>
-constexpr auto asm_lfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>>>::value;
+constexpr auto asm_lfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xE8>>>::value;
 //  lfs ANY [RM] r  [66] B4 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lfs = {};
 template <char... str, typename... T>
@@ -6192,12 +6278,12 @@ struct parse_instr_name<char_seq<'l','j','m','p', str...>, hold<T...>> {
 };
 template <uint16_t T, uint16_t Y> 
 constexpr auto asm_ljmp<disp16<T>, disp16<Y>> =
-  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEA>, typename disp16<T>::value, typename disp16<Y>::value>>::value;
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xEA>, typename disp16<T>::value, typename disp16<Y>::value>>::value;
 //  ljmp X86 [II]   [] EA 
 
 template <uint16_t T, uint32_t Y> 
 constexpr auto asm_ljmp<disp16<T>, disp32<Y>> =
-  seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xEA>, typename disp16<T>::value, typename disp32<Y>::value>>::value;
+  seq_to_arr<expand_byte_seq_v< byte_seq<0xEA>, typename disp16<T>::value, typename disp32<Y>::value>>::value;
 //  ljmp ANY [M] 5  [66] FF 
 
 template<typename ...T>
@@ -6279,7 +6365,7 @@ struct parse_instr_name<char_seq<'l','o','d','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_lodsb<T...>;
 };
 template <>
-constexpr auto asm_lodsb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAC>>>::value;
+constexpr auto asm_lodsb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAC>>>::value;
 //  lodsd ANY [NONE]   [] AD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lodsd = {};
 template <char... str, typename... T>
@@ -6287,7 +6373,7 @@ struct parse_instr_name<char_seq<'l','o','d','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_lodsd<T...>;
 };
 template <>
-constexpr auto asm_lodsd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAD>>>::value;
+constexpr auto asm_lodsd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAD>>>::value;
 //  lodsq X64 [NONE]   [] AD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lodsq = {};
 template <char... str, typename... T>
@@ -6303,7 +6389,7 @@ struct parse_instr_name<char_seq<'l','o','d','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_lodsw<T...>;
 };
 template <>
-constexpr auto asm_lodsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAD>>>::value;
+constexpr auto asm_lodsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xAD>>>::value;
 //  loop X86 [D]   [] E2 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_loop = {};
 template <char... str, typename... T>
@@ -6311,7 +6397,7 @@ struct parse_instr_name<char_seq<'l','o','o','p', str...>, hold<T...>> {
     static constexpr auto value = asm_loop<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_loop<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE2>, typename rel8<N>::value>>::value;
+constexpr auto asm_loop<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>,  byte_seq<0xE2>, typename rel8<N>::value>>::value;
 //  loope X86 [D]   [] E1 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_loope = {};
 template <char... str, typename... T>
@@ -6319,7 +6405,7 @@ struct parse_instr_name<char_seq<'l','o','o','p','e', str...>, hold<T...>> {
     static constexpr auto value = asm_loope<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_loope<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE1>, typename rel8<N>::value>>::value;
+constexpr auto asm_loope<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>,  byte_seq<0xE1>, typename rel8<N>::value>>::value;
 //  loopne X86 [D]   [] E0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_loopne = {};
 template <char... str, typename... T>
@@ -6327,7 +6413,7 @@ struct parse_instr_name<char_seq<'l','o','o','p','n','e', str...>, hold<T...>> {
     static constexpr auto value = asm_loopne<T...>;
 };
 template<uint8_t N>
-constexpr auto asm_loopne<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE0>, typename rel8<N>::value>>::value;
+constexpr auto asm_loopne<rel8<N>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x67>,  byte_seq<0xE0>, typename rel8<N>::value>>::value;
 //  lsl ANY [RM] r  [66] 03 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_lsl = {};
 template <char... str, typename... T>
@@ -6575,7 +6661,7 @@ struct parse_instr_name<char_seq<'m','c','o','m','m','i','t', str...>, hold<T...
     static constexpr auto value = asm_mcommit<T...>;
 };
 template <>
-constexpr auto asm_mcommit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFA>>>::value;
+constexpr auto asm_mcommit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xFA>>>::value;
 //  mfence ANY [NONE] 6 0 [] F0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_mfence = {};
 template <char... str, typename... T>
@@ -6583,7 +6669,7 @@ struct parse_instr_name<char_seq<'m','f','e','n','c','e', str...>, hold<T...>> {
     static constexpr auto value = asm_mfence<T...>;
 };
 template <>
-constexpr auto asm_mfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF0>>>::value;
+constexpr auto asm_mfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xF0>>>::value;
 //  minpd ANY [RM] r  [66] 5D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_minpd = {};
 template <char... str, typename... T>
@@ -6647,7 +6733,7 @@ struct parse_instr_name<char_seq<'m','o','n','i','t','o','r', str...>, hold<T...
     static constexpr auto value = asm_monitor<T...>;
 };
 template <>
-constexpr auto asm_monitor<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC8>>>::value;
+constexpr auto asm_monitor<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC8>>>::value;
 //  monitorx ANY [NONE]   [] FA 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_monitorx = {};
 template <char... str, typename... T>
@@ -6655,7 +6741,7 @@ struct parse_instr_name<char_seq<'m','o','n','i','t','o','r','x', str...>, hold<
     static constexpr auto value = asm_monitorx<T...>;
 };
 template <>
-constexpr auto asm_monitorx<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFA>>>::value;
+constexpr auto asm_monitorx<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xFA>>>::value;
 //  mov ANY [MR] r  [] 88 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_mov = {};
 template <char... str, typename... T>
@@ -6712,17 +6798,17 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 
 template <typename ...T, uint8_t Y> 
 constexpr auto asm_mov<zip<reg8>::with<T...>, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xB0>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xB0>, typename disp8<Y>::value>>::value;
 //  mov ANY [I]   [66] B8 
 
 template <typename ...T, uint16_t Y> 
 constexpr auto asm_mov<zip<reg16>::with<T...>, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xB8>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xB8>, typename disp16<Y>::value>>::value;
 //  mov ANY [I]   [] B8 
 
 template <typename ...T, uint32_t Y> 
 constexpr auto asm_mov<zip<reg32>::with<T...>, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xB8>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xB8>, typename disp32<Y>::value>>::value;
 //  mov X64 [I]   [] B8 
 
 template <typename ...T, uint64_t Y> 
@@ -6941,10 +7027,18 @@ struct parse_instr_name<char_seq<'m','o','v','d','i','r','i', str...>, hold<T...
     static constexpr auto value = asm_movdiri<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_movdiri<zip<reg64>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF9>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_movdiri<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xF9>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  movdiri X64 [MR] r  [] F9 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_movdiri<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x38>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF9>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_movdiri<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -7127,6 +7221,10 @@ struct parse_instr_name<char_seq<'m','o','v','n','t','d','q', str...>, hold<T...
     static constexpr auto value = asm_movntdq<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_movntdq<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xE7>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_movntdq<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xE7>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -7151,10 +7249,18 @@ struct parse_instr_name<char_seq<'m','o','v','n','t','i', str...>, hold<T...>> {
     static constexpr auto value = asm_movnti<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_movnti<zip<reg64>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_movnti<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xC3>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  movnti X64 [MR] r  [] C3 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_movnti<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC3>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_movnti<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -7167,6 +7273,10 @@ struct parse_instr_name<char_seq<'m','o','v','n','t','p','d', str...>, hold<T...
     static constexpr auto value = asm_movntpd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_movntpd<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_movntpd<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x2B>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -7177,6 +7287,10 @@ struct parse_instr_name<char_seq<'m','o','v','n','t','p','s', str...>, hold<T...
     static constexpr auto value = asm_movntps<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_movntps<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_movntps<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x2B>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -7186,6 +7300,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'m','o','v','n','t','q', str...>, hold<T...>> {
     static constexpr auto value = asm_movntq<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_movntq<zip<reg64>::with<T...>, zip<mmx>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xE7>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_movntq<ptr<reg64, T...>, zip<mmx>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xE7>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -7271,7 +7389,7 @@ struct parse_instr_name<char_seq<'m','o','v','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_movsb<T...>;
 };
 template <>
-constexpr auto asm_movsb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA4>>>::value;
+constexpr auto asm_movsb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xA4>>>::value;
 //  movsd ANY [NONE]   [] A5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_movsd = {};
 template <char... str, typename... T>
@@ -7279,7 +7397,7 @@ struct parse_instr_name<char_seq<'m','o','v','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_movsd<T...>;
 };
 template <>
-constexpr auto asm_movsd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA5>>>::value;
+constexpr auto asm_movsd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xA5>>>::value;
 //  movsd ANY [RM] r  [F2] 10 
 
 template<typename ...T, typename ...Y>
@@ -7371,7 +7489,7 @@ struct parse_instr_name<char_seq<'m','o','v','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_movsw<T...>;
 };
 template <>
-constexpr auto asm_movsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xA5>>>::value;
+constexpr auto asm_movsw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xA5>>>::value;
 //  movsx ANY [RM] r  [66] BE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_movsx = {};
 template <char... str, typename... T>
@@ -7699,7 +7817,7 @@ struct parse_instr_name<char_seq<'m','w','a','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_mwait<T...>;
 };
 template <>
-constexpr auto asm_mwait<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC9>>>::value;
+constexpr auto asm_mwait<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC9>>>::value;
 //  mwaitx ANY [NONE]   [] FB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_mwaitx = {};
 template <char... str, typename... T>
@@ -7707,7 +7825,7 @@ struct parse_instr_name<char_seq<'m','w','a','i','t','x', str...>, hold<T...>> {
     static constexpr auto value = asm_mwaitx<T...>;
 };
 template <>
-constexpr auto asm_mwaitx<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFB>>>::value;
+constexpr auto asm_mwaitx<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xFB>>>::value;
 //  neg ANY [M] 3  [] F6 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_neg = {};
 template <char... str, typename... T>
@@ -7759,7 +7877,7 @@ struct parse_instr_name<char_seq<'n','o','p', str...>, hold<T...>> {
     static constexpr auto value = asm_nop<T...>;
 };
 template <>
-constexpr auto asm_nop<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x90>>>::value;
+constexpr auto asm_nop<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x90>>>::value;
 //  nop ANY [M] 0  [66] 1F 
 
 template<typename ...T>
@@ -7793,16 +7911,28 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  nop ANY [MR] r  [66] 1F 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_nop<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x1F>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_nop<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x1F>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  nop ANY [MR] r  [] 1F 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_nop<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x1F>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_nop<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x1F>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  nop ANY [MR] r  [] 1F 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_nop<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x1F>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_nop<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -7860,17 +7990,17 @@ struct parse_instr_name<char_seq<'o','r', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_or<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x0C>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x0C>, typename disp8<Y>::value>>::value;
 //  or ANY [I]   [66] 0D 
 
 template <uint16_t Y> 
 constexpr auto asm_or<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x0D>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x0D>, typename disp16<Y>::value>>::value;
 //  or ANY [I]   [] 0D 
 
 template <uint32_t Y> 
 constexpr auto asm_or<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x0D>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x0D>, typename disp32<Y>::value>>::value;
 //  or X64 [I]   [] 0D 
 
 template <uint32_t Y> 
@@ -8018,17 +8148,17 @@ struct parse_instr_name<char_seq<'o','u','t', str...>, hold<T...>> {
 };
 template <uint8_t T> 
 constexpr auto asm_out<disp8<T>, al> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE6>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xE6>, typename disp8<T>::value>>::value;
 //  out ANY [I]   [66] E7 
 
 template <uint8_t T> 
 constexpr auto asm_out<disp8<T>, ax> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE7>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xE7>, typename disp8<T>::value>>::value;
 //  out ANY [I]   [] E7 
 
 template <uint8_t T> 
 constexpr auto asm_out<disp8<T>, eax> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xE7>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xE7>, typename disp8<T>::value>>::value;
 //  outsb ANY [NONE]   [] 6E 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_outsb = {};
 template <char... str, typename... T>
@@ -8036,7 +8166,7 @@ struct parse_instr_name<char_seq<'o','u','t','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_outsb<T...>;
 };
 template <>
-constexpr auto asm_outsb<dx, zsi> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x6E>>>::value;
+constexpr auto asm_outsb<dx, zsi> = seq_to_arr<expand_byte_seq_v< byte_seq<0x6E>>>::value;
 //  outsd ANY [NONE]   [] 6F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_outsd = {};
 template <char... str, typename... T>
@@ -8044,7 +8174,7 @@ struct parse_instr_name<char_seq<'o','u','t','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_outsd<T...>;
 };
 template <>
-constexpr auto asm_outsd<dx, zsi> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x6F>>>::value;
+constexpr auto asm_outsd<dx, zsi> = seq_to_arr<expand_byte_seq_v< byte_seq<0x6F>>>::value;
 //  outsw ANY [NONE]   [66] 6F 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_outsw = {};
 template <char... str, typename... T>
@@ -8052,7 +8182,7 @@ struct parse_instr_name<char_seq<'o','u','t','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_outsw<T...>;
 };
 template <>
-constexpr auto asm_outsw<dx, zsi> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x6F>>>::value;
+constexpr auto asm_outsw<dx, zsi> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x6F>>>::value;
 //  pabsb ANY [RM] r  [] 1C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pabsb = {};
 template <char... str, typename... T>
@@ -8482,7 +8612,7 @@ struct parse_instr_name<char_seq<'p','a','u','s','e', str...>, hold<T...>> {
     static constexpr auto value = asm_pause<T...>;
 };
 template <>
-constexpr auto asm_pause<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, typename REX<0, 0, 0, 0>::value, byte_seq<0x90>>>::value;
+constexpr auto asm_pause<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>,  byte_seq<0x90>>>::value;
 //  pavgb ANY [RM] r  [] E0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pavgb = {};
 template <char... str, typename... T>
@@ -8822,7 +8952,7 @@ struct parse_instr_name<char_seq<'p','c','o','n','f','i','g', str...>, hold<T...
     static constexpr auto value = asm_pconfig<T...>;
 };
 template <>
-constexpr auto asm_pconfig<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC5>>>::value;
+constexpr auto asm_pconfig<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC5>>>::value;
 //  pdep ANY [RVM] r  [F2] F5 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pdep = {};
 template <char... str, typename... T>
@@ -10118,7 +10248,7 @@ struct parse_instr_name<char_seq<'p','o','p','a', str...>, hold<T...>> {
     static constexpr auto value = asm_popa<T...>;
 };
 template <>
-constexpr auto asm_popa<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x61>>>::value;
+constexpr auto asm_popa<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x61>>>::value;
 //  popad X86 [NONE]   [] 61 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_popad = {};
 template <char... str, typename... T>
@@ -10126,7 +10256,7 @@ struct parse_instr_name<char_seq<'p','o','p','a','d', str...>, hold<T...>> {
     static constexpr auto value = asm_popad<T...>;
 };
 template <>
-constexpr auto asm_popad<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x61>>>::value;
+constexpr auto asm_popad<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x61>>>::value;
 //  popcnt ANY [RM] r  [66F3] B8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_popcnt = {};
 template <char... str, typename... T>
@@ -10168,7 +10298,7 @@ struct parse_instr_name<char_seq<'p','o','p','f', str...>, hold<T...>> {
     static constexpr auto value = asm_popf<T...>;
 };
 template <>
-constexpr auto asm_popf<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x9D>>>::value;
+constexpr auto asm_popf<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x9D>>>::value;
 //  popfd X86 [NONE]   [] 9D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_popfd = {};
 template <char... str, typename... T>
@@ -10176,7 +10306,7 @@ struct parse_instr_name<char_seq<'p','o','p','f','d', str...>, hold<T...>> {
     static constexpr auto value = asm_popfd<T...>;
 };
 template <>
-constexpr auto asm_popfd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9D>>>::value;
+constexpr auto asm_popfd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9D>>>::value;
 //  popfq X64 [NONE]   [] 9D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_popfq = {};
 template <char... str, typename... T>
@@ -10184,7 +10314,7 @@ struct parse_instr_name<char_seq<'p','o','p','f','q', str...>, hold<T...>> {
     static constexpr auto value = asm_popfq<T...>;
 };
 template <>
-constexpr auto asm_popfq<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9D>>>::value;
+constexpr auto asm_popfq<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9D>>>::value;
 //  por ANY [RM] r  [] EB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_por = {};
 template <char... str, typename... T>
@@ -10552,7 +10682,7 @@ struct parse_instr_name<char_seq<'p','s','m','a','s','h', str...>, hold<T...>> {
     static constexpr auto value = asm_psmash<T...>;
 };
 template <>
-constexpr auto asm_psmash<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFF>>>::value;
+constexpr auto asm_psmash<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xFF>>>::value;
 //  psrad ANY [MI] 4  [] 72 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_psrad = {};
 template <char... str, typename... T>
@@ -11159,22 +11289,22 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 
 template <uint8_t T> 
 constexpr auto asm_push<ib<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x6A>, typename ib<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x6A>, typename ib<T>::value>>::value;
 //  push ANY [I]   [66] 68 
 
 template <uint16_t T> 
 constexpr auto asm_push<iw<T>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x68>, typename iw<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x68>, typename iw<T>::value>>::value;
 //  push X86 [I]   [] 68 
 
 template <uint32_t T> 
 constexpr auto asm_push<disp32<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x68>, typename disp32<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x68>, typename disp32<T>::value>>::value;
 //  push X64 [I]   [] 68 
 
 template <uint32_t T> 
 constexpr auto asm_push<id<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x68>, typename id<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x68>, typename id<T>::value>>::value;
 //  pusha X86 [NONE]   [66] 60 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pusha = {};
 template <char... str, typename... T>
@@ -11182,7 +11312,7 @@ struct parse_instr_name<char_seq<'p','u','s','h','a', str...>, hold<T...>> {
     static constexpr auto value = asm_pusha<T...>;
 };
 template <>
-constexpr auto asm_pusha<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x60>>>::value;
+constexpr auto asm_pusha<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x60>>>::value;
 //  pushad X86 [NONE]   [] 60 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pushad = {};
 template <char... str, typename... T>
@@ -11190,7 +11320,7 @@ struct parse_instr_name<char_seq<'p','u','s','h','a','d', str...>, hold<T...>> {
     static constexpr auto value = asm_pushad<T...>;
 };
 template <>
-constexpr auto asm_pushad<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x60>>>::value;
+constexpr auto asm_pushad<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x60>>>::value;
 //  pushf ANY [NONE]   [66] 9C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pushf = {};
 template <char... str, typename... T>
@@ -11198,7 +11328,7 @@ struct parse_instr_name<char_seq<'p','u','s','h','f', str...>, hold<T...>> {
     static constexpr auto value = asm_pushf<T...>;
 };
 template <>
-constexpr auto asm_pushf<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x9C>>>::value;
+constexpr auto asm_pushf<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x9C>>>::value;
 //  pushfd X86 [NONE]   [] 9C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pushfd = {};
 template <char... str, typename... T>
@@ -11206,7 +11336,7 @@ struct parse_instr_name<char_seq<'p','u','s','h','f','d', str...>, hold<T...>> {
     static constexpr auto value = asm_pushfd<T...>;
 };
 template <>
-constexpr auto asm_pushfd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9C>>>::value;
+constexpr auto asm_pushfd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9C>>>::value;
 //  pushfq X64 [NONE]   [] 9C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pushfq = {};
 template <char... str, typename... T>
@@ -11214,7 +11344,7 @@ struct parse_instr_name<char_seq<'p','u','s','h','f','q', str...>, hold<T...>> {
     static constexpr auto value = asm_pushfq<T...>;
 };
 template <>
-constexpr auto asm_pushfq<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9C>>>::value;
+constexpr auto asm_pushfq<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9C>>>::value;
 //  pvalidate ANY [NONE]   [F2] FF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pvalidate = {};
 template <char... str, typename... T>
@@ -11222,7 +11352,7 @@ struct parse_instr_name<char_seq<'p','v','a','l','i','d','a','t','e', str...>, h
     static constexpr auto value = asm_pvalidate<T...>;
 };
 template <>
-constexpr auto asm_pvalidate<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFF>>>::value;
+constexpr auto asm_pvalidate<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>,  byte_seq<0xFF>>>::value;
 //  pxor ANY [RM] r  [] EF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_pxor = {};
 template <char... str, typename... T>
@@ -11530,7 +11660,7 @@ struct parse_instr_name<char_seq<'r','d','m','s','r', str...>, hold<T...>> {
     static constexpr auto value = asm_rdmsr<T...>;
 };
 template <>
-constexpr auto asm_rdmsr<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x32>>>::value;
+constexpr auto asm_rdmsr<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x32>>>::value;
 //  rdpid X86 [R] 7  [F3] C7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rdpid = {};
 template <char... str, typename... T>
@@ -11546,7 +11676,7 @@ struct parse_instr_name<char_seq<'r','d','p','k','r','u', str...>, hold<T...>> {
     static constexpr auto value = asm_rdpkru<T...>;
 };
 template <>
-constexpr auto asm_rdpkru<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEE>>>::value;
+constexpr auto asm_rdpkru<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xEE>>>::value;
 //  rdpmc ANY [NONE]   [] 33 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rdpmc = {};
 template <char... str, typename... T>
@@ -11554,7 +11684,7 @@ struct parse_instr_name<char_seq<'r','d','p','m','c', str...>, hold<T...>> {
     static constexpr auto value = asm_rdpmc<T...>;
 };
 template <>
-constexpr auto asm_rdpmc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x33>>>::value;
+constexpr auto asm_rdpmc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x33>>>::value;
 //  rdpru ANY [NONE]   [] FD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rdpru = {};
 template <char... str, typename... T>
@@ -11562,7 +11692,7 @@ struct parse_instr_name<char_seq<'r','d','p','r','u', str...>, hold<T...>> {
     static constexpr auto value = asm_rdpru<T...>;
 };
 template <>
-constexpr auto asm_rdpru<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFD>>>::value;
+constexpr auto asm_rdpru<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xFD>>>::value;
 //  rdrand ANY [M] 6  [66] C7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rdrand = {};
 template <char... str, typename... T>
@@ -11634,7 +11764,7 @@ struct parse_instr_name<char_seq<'r','d','t','s','c', str...>, hold<T...>> {
     static constexpr auto value = asm_rdtsc<T...>;
 };
 template <>
-constexpr auto asm_rdtsc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x31>>>::value;
+constexpr auto asm_rdtsc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x31>>>::value;
 //  rdtscp ANY [NONE]   [] F9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rdtscp = {};
 template <char... str, typename... T>
@@ -11642,7 +11772,7 @@ struct parse_instr_name<char_seq<'r','d','t','s','c','p', str...>, hold<T...>> {
     static constexpr auto value = asm_rdtscp<T...>;
 };
 template <>
-constexpr auto asm_rdtscp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF9>>>::value;
+constexpr auto asm_rdtscp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xF9>>>::value;
 //  ret ANY [NONE]   [] C3 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_ret = {};
 template <char... str, typename... T>
@@ -11650,12 +11780,12 @@ struct parse_instr_name<char_seq<'r','e','t', str...>, hold<T...>> {
     static constexpr auto value = asm_ret<T...>;
 };
 template <>
-constexpr auto asm_ret<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xC3>>>::value;
+constexpr auto asm_ret<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xC3>>>::value;
 //  ret ANY [I]   [] C2 
 
 template <uint16_t T> 
 constexpr auto asm_ret<disp16<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xC2>, typename disp16<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xC2>, typename disp16<T>::value>>::value;
 //  retf ANY [NONE]   [] CB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_retf = {};
 template <char... str, typename... T>
@@ -11663,12 +11793,12 @@ struct parse_instr_name<char_seq<'r','e','t','f', str...>, hold<T...>> {
     static constexpr auto value = asm_retf<T...>;
 };
 template <>
-constexpr auto asm_retf<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCB>>>::value;
+constexpr auto asm_retf<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xCB>>>::value;
 //  retf ANY [I]   [] CA 
 
 template <uint16_t T> 
 constexpr auto asm_retf<disp16<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xCA>, typename disp16<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xCA>, typename disp16<T>::value>>::value;
 //  rmpadjust X64 [NONE]   [F3] FE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rmpadjust = {};
 template <char... str, typename... T>
@@ -11676,7 +11806,7 @@ struct parse_instr_name<char_seq<'r','m','p','a','d','j','u','s','t', str...>, h
     static constexpr auto value = asm_rmpadjust<T...>;
 };
 template <>
-constexpr auto asm_rmpadjust<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFE>>>::value;
+constexpr auto asm_rmpadjust<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xFE>>>::value;
 //  rmpupdate X64 [NONE]   [F2] FE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rmpupdate = {};
 template <char... str, typename... T>
@@ -11684,7 +11814,7 @@ struct parse_instr_name<char_seq<'r','m','p','u','p','d','a','t','e', str...>, h
     static constexpr auto value = asm_rmpupdate<T...>;
 };
 template <>
-constexpr auto asm_rmpupdate<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xFE>>>::value;
+constexpr auto asm_rmpupdate<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>,  byte_seq<0xFE>>>::value;
 //  rol ANY [M] 0  [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rol = {};
 template <char... str, typename... T>
@@ -11988,7 +12118,7 @@ struct parse_instr_name<char_seq<'r','s','m', str...>, hold<T...>> {
     static constexpr auto value = asm_rsm<T...>;
 };
 template <>
-constexpr auto asm_rsm<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAA>>>::value;
+constexpr auto asm_rsm<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xAA>>>::value;
 //  rsqrtps ANY [RM] r  [] 52 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_rsqrtps = {};
 template <char... str, typename... T>
@@ -12038,7 +12168,7 @@ struct parse_instr_name<char_seq<'s','a','h','f', str...>, hold<T...>> {
     static constexpr auto value = asm_sahf<T...>;
 };
 template <>
-constexpr auto asm_sahf<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9E>>>::value;
+constexpr auto asm_sahf<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9E>>>::value;
 //  sal ANY [M] 4  [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sal = {};
 template <char... str, typename... T>
@@ -12270,7 +12400,7 @@ struct parse_instr_name<char_seq<'s','a','v','e','p','r','e','v','s','s','p', st
     static constexpr auto value = asm_saveprevssp<T...>;
 };
 template <>
-constexpr auto asm_saveprevssp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEA>>>::value;
+constexpr auto asm_saveprevssp<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xEA>>>::value;
 //  sbb ANY [I]   [] 1C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sbb = {};
 template <char... str, typename... T>
@@ -12279,17 +12409,17 @@ struct parse_instr_name<char_seq<'s','b','b', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_sbb<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x1C>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x1C>, typename disp8<Y>::value>>::value;
 //  sbb ANY [I]   [66] 1D 
 
 template <uint16_t Y> 
 constexpr auto asm_sbb<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x1D>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x1D>, typename disp16<Y>::value>>::value;
 //  sbb ANY [I]   [] 1D 
 
 template <uint32_t Y> 
 constexpr auto asm_sbb<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x1D>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x1D>, typename disp32<Y>::value>>::value;
 //  sbb X64 [I]   [] 1D 
 
 template <uint32_t Y> 
@@ -12408,7 +12538,7 @@ struct parse_instr_name<char_seq<'s','c','a','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_scasb<T...>;
 };
 template <>
-constexpr auto asm_scasb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAE>>>::value;
+constexpr auto asm_scasb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAE>>>::value;
 //  scasd ANY [NONE]   [] AF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_scasd = {};
 template <char... str, typename... T>
@@ -12416,7 +12546,7 @@ struct parse_instr_name<char_seq<'s','c','a','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_scasd<T...>;
 };
 template <>
-constexpr auto asm_scasd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAF>>>::value;
+constexpr auto asm_scasd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAF>>>::value;
 //  scasq X64 [NONE]   [] AF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_scasq = {};
 template <char... str, typename... T>
@@ -12432,7 +12562,7 @@ struct parse_instr_name<char_seq<'s','c','a','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_scasw<T...>;
 };
 template <>
-constexpr auto asm_scasw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAF>>>::value;
+constexpr auto asm_scasw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xAF>>>::value;
 //  seamcall ANY [NONE]   [66] CF 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_seamcall = {};
 template <char... str, typename... T>
@@ -12440,7 +12570,7 @@ struct parse_instr_name<char_seq<'s','e','a','m','c','a','l','l', str...>, hold<
     static constexpr auto value = asm_seamcall<T...>;
 };
 template <>
-constexpr auto asm_seamcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCF>>>::value;
+constexpr auto asm_seamcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>,  byte_seq<0xCF>>>::value;
 //  seamops ANY [NONE]   [66] CE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_seamops = {};
 template <char... str, typename... T>
@@ -12448,7 +12578,7 @@ struct parse_instr_name<char_seq<'s','e','a','m','o','p','s', str...>, hold<T...
     static constexpr auto value = asm_seamops<T...>;
 };
 template <>
-constexpr auto asm_seamops<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCE>>>::value;
+constexpr auto asm_seamops<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>,  byte_seq<0xCE>>>::value;
 //  seamret ANY [NONE]   [66] CD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_seamret = {};
 template <char... str, typename... T>
@@ -12456,7 +12586,7 @@ struct parse_instr_name<char_seq<'s','e','a','m','r','e','t', str...>, hold<T...
     static constexpr auto value = asm_seamret<T...>;
 };
 template <>
-constexpr auto asm_seamret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCD>>>::value;
+constexpr auto asm_seamret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>,  byte_seq<0xCD>>>::value;
 //  senduipi X64 [R] 6  [F3] C7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_senduipi = {};
 template <char... str, typename... T>
@@ -12470,7 +12600,7 @@ struct parse_instr_name<char_seq<'s','e','r','i','a','l','i','z','e', str...>, h
     static constexpr auto value = asm_serialize<T...>;
 };
 template <>
-constexpr auto asm_serialize<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>>>::value;
+constexpr auto asm_serialize<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xE8>>>::value;
 //  seta ANY [M] r  [] 97 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_seta = {};
 template <char... str, typename... T>
@@ -12884,7 +13014,7 @@ struct parse_instr_name<char_seq<'s','e','t','s','s','b','s','y', str...>, hold<
     static constexpr auto value = asm_setssbsy<T...>;
 };
 template <>
-constexpr auto asm_setssbsy<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>>>::value;
+constexpr auto asm_setssbsy<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xE8>>>::value;
 //  setz ANY [M] r  [] 94 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_setz = {};
 template <char... str, typename... T>
@@ -12906,7 +13036,7 @@ struct parse_instr_name<char_seq<'s','f','e','n','c','e', str...>, hold<T...>> {
     static constexpr auto value = asm_sfence<T...>;
 };
 template <>
-constexpr auto asm_sfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8>>>::value;
+constexpr auto asm_sfence<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0xF8>>>::value;
 //  sgdt ANY [M] 0  [] 01 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sgdt = {};
 template <char... str, typename... T>
@@ -13130,6 +13260,10 @@ struct parse_instr_name<char_seq<'s','h','l','d', str...>, hold<T...>> {
     static constexpr auto value = asm_shld<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_shld<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA5>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_shld<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xA5>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -13142,6 +13276,10 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  shld ANY [MR] r  [] A5 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_shld<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA5>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_shld<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xA5>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -13152,6 +13290,10 @@ constexpr auto asm_shld<ptr<reg32, T...>, zip<reg32>::with<Y...>, disp8<Z>> =
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xA4>, typename mrm<T...>::template value<hold<Y...>>, typename disp8<Z>::value>>::value;
 
 //  shld X64 [MR] r  [] A5 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_shld<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xA5>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_shld<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -13286,6 +13428,10 @@ struct parse_instr_name<char_seq<'s','h','r','d', str...>, hold<T...>> {
     static constexpr auto value = asm_shrd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_shrd<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAD>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_shrd<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xAD>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -13298,6 +13444,10 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  shrd ANY [MR] r  [] AD 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_shrd<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAD>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_shrd<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xAD>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -13308,6 +13458,10 @@ constexpr auto asm_shrd<ptr<reg32, T...>, zip<reg32>::with<Y...>, disp8<Z>> =
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xAC>, typename mrm<T...>::template value<hold<Y...>>, typename disp8<Z>::value>>::value;
 
 //  shrd X64 [MR] r  [] AD 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_shrd<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xAD>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_shrd<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -13372,7 +13526,7 @@ struct parse_instr_name<char_seq<'s','k','i','n','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_skinit<T...>;
 };
 template <>
-constexpr auto asm_skinit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDE>>>::value;
+constexpr auto asm_skinit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDE>>>::value;
 //  sldt ANY [M] 0  [66] 00 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sldt = {};
 template <char... str, typename... T>
@@ -13504,7 +13658,7 @@ struct parse_instr_name<char_seq<'s','t','a','c', str...>, hold<T...>> {
     static constexpr auto value = asm_stac<T...>;
 };
 template <>
-constexpr auto asm_stac<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCB>>>::value;
+constexpr auto asm_stac<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xCB>>>::value;
 //  stc ANY [NONE]   [] F9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_stc = {};
 template <char... str, typename... T>
@@ -13512,7 +13666,7 @@ struct parse_instr_name<char_seq<'s','t','c', str...>, hold<T...>> {
     static constexpr auto value = asm_stc<T...>;
 };
 template <>
-constexpr auto asm_stc<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xF9>>>::value;
+constexpr auto asm_stc<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xF9>>>::value;
 //  std ANY [NONE]   [] FD 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_std = {};
 template <char... str, typename... T>
@@ -13520,7 +13674,7 @@ struct parse_instr_name<char_seq<'s','t','d', str...>, hold<T...>> {
     static constexpr auto value = asm_std<T...>;
 };
 template <>
-constexpr auto asm_std<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xFD>>>::value;
+constexpr auto asm_std<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xFD>>>::value;
 //  stgi ANY [NONE]   [] DC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_stgi = {};
 template <char... str, typename... T>
@@ -13528,7 +13682,7 @@ struct parse_instr_name<char_seq<'s','t','g','i', str...>, hold<T...>> {
     static constexpr auto value = asm_stgi<T...>;
 };
 template <>
-constexpr auto asm_stgi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDC>>>::value;
+constexpr auto asm_stgi<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDC>>>::value;
 //  sti ANY [NONE]   [] FB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sti = {};
 template <char... str, typename... T>
@@ -13536,7 +13690,7 @@ struct parse_instr_name<char_seq<'s','t','i', str...>, hold<T...>> {
     static constexpr auto value = asm_sti<T...>;
 };
 template <>
-constexpr auto asm_sti<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xFB>>>::value;
+constexpr auto asm_sti<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xFB>>>::value;
 //  stmxcsr ANY [M] 3  [] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_stmxcsr = {};
 template <char... str, typename... T>
@@ -13558,7 +13712,7 @@ struct parse_instr_name<char_seq<'s','t','o','s','b', str...>, hold<T...>> {
     static constexpr auto value = asm_stosb<T...>;
 };
 template <>
-constexpr auto asm_stosb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAA>>>::value;
+constexpr auto asm_stosb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAA>>>::value;
 //  stosd ANY [NONE]   [] AB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_stosd = {};
 template <char... str, typename... T>
@@ -13566,7 +13720,7 @@ struct parse_instr_name<char_seq<'s','t','o','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_stosd<T...>;
 };
 template <>
-constexpr auto asm_stosd<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xAB>>>::value;
+constexpr auto asm_stosd<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xAB>>>::value;
 //  stosq X64 [NONE]   [] AB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_stosq = {};
 template <char... str, typename... T>
@@ -13582,7 +13736,7 @@ struct parse_instr_name<char_seq<'s','t','o','s','w', str...>, hold<T...>> {
     static constexpr auto value = asm_stosw<T...>;
 };
 template <>
-constexpr auto asm_stosw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xAB>>>::value;
+constexpr auto asm_stosw<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xAB>>>::value;
 //  str ANY [M] 1  [66] 00 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_str = {};
 template <char... str, typename... T>
@@ -13630,7 +13784,7 @@ struct parse_instr_name<char_seq<'s','t','u','i', str...>, hold<T...>> {
     static constexpr auto value = asm_stui<T...>;
 };
 template <>
-constexpr auto asm_stui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEF>>>::value;
+constexpr auto asm_stui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xEF>>>::value;
 //  sub ANY [I]   [] 2C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sub = {};
 template <char... str, typename... T>
@@ -13639,17 +13793,17 @@ struct parse_instr_name<char_seq<'s','u','b', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_sub<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x2C>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x2C>, typename disp8<Y>::value>>::value;
 //  sub ANY [I]   [66] 2D 
 
 template <uint16_t Y> 
 constexpr auto asm_sub<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x2D>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x2D>, typename disp16<Y>::value>>::value;
 //  sub ANY [I]   [] 2D 
 
 template <uint32_t Y> 
 constexpr auto asm_sub<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x2D>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x2D>, typename disp32<Y>::value>>::value;
 //  sub X64 [I]   [] 2D 
 
 template <uint32_t Y> 
@@ -13824,7 +13978,7 @@ struct parse_instr_name<char_seq<'s','w','a','p','g','s', str...>, hold<T...>> {
     static constexpr auto value = asm_swapgs<T...>;
 };
 template <>
-constexpr auto asm_swapgs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xF8>>>::value;
+constexpr auto asm_swapgs<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xF8>>>::value;
 //  syscall X64 [NONE]   [] 05 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_syscall = {};
 template <char... str, typename... T>
@@ -13832,7 +13986,7 @@ struct parse_instr_name<char_seq<'s','y','s','c','a','l','l', str...>, hold<T...
     static constexpr auto value = asm_syscall<T...>;
 };
 template <>
-constexpr auto asm_syscall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x05>>>::value;
+constexpr auto asm_syscall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x05>>>::value;
 //  sysenter ANY [NONE]   [] 34 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sysenter = {};
 template <char... str, typename... T>
@@ -13840,7 +13994,7 @@ struct parse_instr_name<char_seq<'s','y','s','e','n','t','e','r', str...>, hold<
     static constexpr auto value = asm_sysenter<T...>;
 };
 template <>
-constexpr auto asm_sysenter<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x34>>>::value;
+constexpr auto asm_sysenter<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x34>>>::value;
 //  sysexit ANY [NONE]   [] 35 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sysexit = {};
 template <char... str, typename... T>
@@ -13848,7 +14002,7 @@ struct parse_instr_name<char_seq<'s','y','s','e','x','i','t', str...>, hold<T...
     static constexpr auto value = asm_sysexit<T...>;
 };
 template <>
-constexpr auto asm_sysexit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x35>>>::value;
+constexpr auto asm_sysexit<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x35>>>::value;
 //  sysexitq ANY [NONE]   [] 35 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sysexitq = {};
 template <char... str, typename... T>
@@ -13864,7 +14018,7 @@ struct parse_instr_name<char_seq<'s','y','s','r','e','t', str...>, hold<T...>> {
     static constexpr auto value = asm_sysret<T...>;
 };
 template <>
-constexpr auto asm_sysret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x07>>>::value;
+constexpr auto asm_sysret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x07>>>::value;
 //  sysretq X64 [NONE]   [] 07 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_sysretq = {};
 template <char... str, typename... T>
@@ -13888,7 +14042,7 @@ struct parse_instr_name<char_seq<'t','d','c','a','l','l', str...>, hold<T...>> {
     static constexpr auto value = asm_tdcall<T...>;
 };
 template <>
-constexpr auto asm_tdcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xCC>>>::value;
+constexpr auto asm_tdcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x01>,  byte_seq<0xCC>>>::value;
 //  tdpbf16ps X64 [RMV] r  [F3] 5C 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_tdpbf16ps = {};
 template <char... str, typename... T>
@@ -13927,17 +14081,17 @@ struct parse_instr_name<char_seq<'t','e','s','t', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_test<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA8>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xA8>, typename disp8<Y>::value>>::value;
 //  test ANY [I]   [66] A9 
 
 template <uint16_t Y> 
 constexpr auto asm_test<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xA9>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xA9>, typename disp16<Y>::value>>::value;
 //  test ANY [I]   [] A9 
 
 template <uint32_t Y> 
 constexpr auto asm_test<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xA9>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xA9>, typename disp32<Y>::value>>::value;
 //  test X64 [I]   [] A9 
 
 template <uint32_t Y> 
@@ -13970,10 +14124,18 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename
 //  test ANY [MR] r  [] 84 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_test<zip<reg8>::with<T...>, zip<reg8>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x84>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_test<ptr<reg8, T...>, zip<reg8>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x84>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  test ANY [MR] r  [66] 85 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_test<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x85>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_test<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
@@ -13982,10 +14144,18 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  test ANY [MR] r  [] 85 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_test<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x85>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_test<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x85>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  test X64 [MR] r  [] 85 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_test<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x85>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_test<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -13998,7 +14168,7 @@ struct parse_instr_name<char_seq<'t','e','s','t','u','i', str...>, hold<T...>> {
     static constexpr auto value = asm_testui<T...>;
 };
 template <>
-constexpr auto asm_testui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xED>>>::value;
+constexpr auto asm_testui<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xED>>>::value;
 //  tileloadd X64 [RM] r  [F2] 4B 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_tileloadd = {};
 template <char... str, typename... T>
@@ -14041,6 +14211,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'t','i','l','e','s','t','o','r','e','d', str...>, hold<T...>> {
     static constexpr auto value = asm_tilestored<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_tilestored<zip<reg1024>::with<T...>, zip<reg512>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, disp8<is_ext_v<hold<T...>>>, disp8<0>, disp8<2>, disp8<0>, hold<T...>, disp16<128>, disp8<0xF3>>::value, byte_seq<0x4B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_tilestored<ptr<reg1024, T...>, zip<reg512>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, disp8<mrm<T...>::X>, disp8<mrm<T...>::B>, disp8<2>, disp8<0>, hold<T...>, disp16<128>, disp8<0xF3>>::value, byte_seq<0x4B>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -14166,7 +14340,7 @@ struct parse_instr_name<char_seq<'u','d','2', str...>, hold<T...>> {
     static constexpr auto value = asm_ud2<T...>;
 };
 template <>
-constexpr auto asm_ud2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x0B>>>::value;
+constexpr auto asm_ud2<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x0B>>>::value;
 //  uiret X64 [NONE]   [F3] EC 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_uiret = {};
 template <char... str, typename... T>
@@ -14174,7 +14348,7 @@ struct parse_instr_name<char_seq<'u','i','r','e','t', str...>, hold<T...>> {
     static constexpr auto value = asm_uiret<T...>;
 };
 template <>
-constexpr auto asm_uiret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xEC>>>::value;
+constexpr auto asm_uiret<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F, 0x01>,  byte_seq<0xEC>>>::value;
 //  umonitor ANY [M] 6  [F3] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_umonitor = {};
 template <char... str, typename... T>
@@ -17730,7 +17904,7 @@ struct parse_instr_name<char_seq<'v','m','c','a','l','l', str...>, hold<T...>> {
     static constexpr auto value = asm_vmcall<T...>;
 };
 template <>
-constexpr auto asm_vmcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC1>>>::value;
+constexpr auto asm_vmcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC1>>>::value;
 //  vmclear ANY [M] 6  [66] C7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmclear = {};
 template <char... str, typename... T>
@@ -17752,7 +17926,7 @@ struct parse_instr_name<char_seq<'v','m','f','u','n','c', str...>, hold<T...>> {
     static constexpr auto value = asm_vmfunc<T...>;
 };
 template <>
-constexpr auto asm_vmfunc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD4>>>::value;
+constexpr auto asm_vmfunc<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD4>>>::value;
 //  vminpd ANY [RVM] r  [66] 5D 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vminpd = {};
 template <char... str, typename... T>
@@ -17836,7 +18010,7 @@ struct parse_instr_name<char_seq<'v','m','l','a','u','n','c','h', str...>, hold<
     static constexpr auto value = asm_vmlaunch<T...>;
 };
 template <>
-constexpr auto asm_vmlaunch<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC2>>>::value;
+constexpr auto asm_vmlaunch<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC2>>>::value;
 //  vmload X86 [NONE]   [] DA 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmload = {};
 template <char... str, typename... T>
@@ -17844,7 +18018,7 @@ struct parse_instr_name<char_seq<'v','m','l','o','a','d', str...>, hold<T...>> {
     static constexpr auto value = asm_vmload<T...>;
 };
 template <>
-constexpr auto asm_vmload<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDA>>>::value;
+constexpr auto asm_vmload<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDA>>>::value;
 //  vmmcall ANY [NONE]   [] D9 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmmcall = {};
 template <char... str, typename... T>
@@ -17852,7 +18026,7 @@ struct parse_instr_name<char_seq<'v','m','m','c','a','l','l', str...>, hold<T...
     static constexpr auto value = asm_vmmcall<T...>;
 };
 template <>
-constexpr auto asm_vmmcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD9>>>::value;
+constexpr auto asm_vmmcall<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD9>>>::value;
 //  vmovapd ANY [RM] r  [66] 28 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmovapd = {};
 template <char... str, typename... T>
@@ -18058,6 +18232,10 @@ struct parse_instr_name<char_seq<'v','m','o','v','h','p','d', str...>, hold<T...
     static constexpr auto value = asm_vmovhpd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmovhpd<zip<reg64>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x17>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmovhpd<ptr<reg64, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x17>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -18077,6 +18255,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','m','o','v','h','p','s', str...>, hold<T...>> {
     static constexpr auto value = asm_vmovhps<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmovhps<zip<reg64>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x17>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmovhps<ptr<reg64, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x17>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -18108,6 +18290,10 @@ struct parse_instr_name<char_seq<'v','m','o','v','l','p','d', str...>, hold<T...
     static constexpr auto value = asm_vmovlpd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmovlpd<zip<reg64>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x13>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmovlpd<ptr<reg64, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x13>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -18127,6 +18313,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','m','o','v','l','p','s', str...>, hold<T...>> {
     static constexpr auto value = asm_vmovlps<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmovlps<zip<reg64>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x13>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmovlps<ptr<reg64, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x13>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -18180,10 +18370,18 @@ struct parse_instr_name<char_seq<'v','m','o','v','n','t','d','q', str...>, hold<
     static constexpr auto value = asm_vmovntdq<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntdq<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0xE7>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntdq<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0xE7>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  vmovntdq ANY [MR] r  [66] E7 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntdq<zip<reg64>::with<T...>, zip<reg256>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<256>, disp8<0x66>>::value, byte_seq<0xE7>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntdq<ptr<reg256, T...>, zip<reg256>::with<Y...>> = 
@@ -18220,10 +18418,18 @@ struct parse_instr_name<char_seq<'v','m','o','v','n','t','p','d', str...>, hold<
     static constexpr auto value = asm_vmovntpd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntpd<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntpd<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0x66>>::value, byte_seq<0x2B>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  vmovntpd ANY [MR] r  [66] 2B 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntpd<zip<reg64>::with<T...>, zip<reg256>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<256>, disp8<0x66>>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntpd<ptr<reg256, T...>, zip<reg256>::with<Y...>> = 
@@ -18236,10 +18442,18 @@ struct parse_instr_name<char_seq<'v','m','o','v','n','t','p','s', str...>, hold<
     static constexpr auto value = asm_vmovntps<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntps<zip<reg128>::with<T...>, zip<reg128>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntps<ptr<reg128, T...>, zip<reg128>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<128>, disp8<0>>::value, byte_seq<0x2B>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  vmovntps ANY [MR] r  [] 2B 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmovntps<zip<reg64>::with<T...>, zip<reg256>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<typename VEX<disp8<is_ext_v<hold<Y...>>>, hold<T...>, disp16<256>, disp8<0>>::value, byte_seq<0x2B>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmovntps<ptr<reg256, T...>, zip<reg256>::with<Y...>> = 
@@ -18504,10 +18718,18 @@ struct parse_instr_name<char_seq<'v','m','r','e','a','d', str...>, hold<T...>> {
     static constexpr auto value = asm_vmread<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_vmread<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x78>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_vmread<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x78>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  vmread X64 [MR] r  [] 78 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_vmread<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0x78>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_vmread<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -18520,7 +18742,7 @@ struct parse_instr_name<char_seq<'v','m','r','e','s','u','m','e', str...>, hold<
     static constexpr auto value = asm_vmresume<T...>;
 };
 template <>
-constexpr auto asm_vmresume<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC3>>>::value;
+constexpr auto asm_vmresume<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xC3>>>::value;
 //  vmrun X86 [NONE]   [] D8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmrun = {};
 template <char... str, typename... T>
@@ -18528,7 +18750,7 @@ struct parse_instr_name<char_seq<'v','m','r','u','n', str...>, hold<T...>> {
     static constexpr auto value = asm_vmrun<T...>;
 };
 template <>
-constexpr auto asm_vmrun<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD8>>>::value;
+constexpr auto asm_vmrun<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD8>>>::value;
 //  vmsave X86 [NONE]   [] DB 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmsave = {};
 template <char... str, typename... T>
@@ -18536,7 +18758,7 @@ struct parse_instr_name<char_seq<'v','m','s','a','v','e', str...>, hold<T...>> {
     static constexpr auto value = asm_vmsave<T...>;
 };
 template <>
-constexpr auto asm_vmsave<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xDB>>>::value;
+constexpr auto asm_vmsave<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xDB>>>::value;
 //  vmulpd ANY [RVM] r  [66] 59 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_vmulpd = {};
 template <char... str, typename... T>
@@ -23510,7 +23732,7 @@ struct parse_instr_name<char_seq<'w','a','i','t', str...>, hold<T...>> {
     static constexpr auto value = asm_wait<T...>;
 };
 template <>
-constexpr auto asm_wait<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x9B>>>::value;
+constexpr auto asm_wait<> = seq_to_arr<expand_byte_seq_v< byte_seq<0x9B>>>::value;
 //  wbinvd ANY [NONE]   [] 09 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_wbinvd = {};
 template <char... str, typename... T>
@@ -23518,7 +23740,7 @@ struct parse_instr_name<char_seq<'w','b','i','n','v','d', str...>, hold<T...>> {
     static constexpr auto value = asm_wbinvd<T...>;
 };
 template <>
-constexpr auto asm_wbinvd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x09>>>::value;
+constexpr auto asm_wbinvd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x09>>>::value;
 //  wbnoinvd ANY [NONE]   [F3] 09 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_wbnoinvd = {};
 template <char... str, typename... T>
@@ -23526,7 +23748,7 @@ struct parse_instr_name<char_seq<'w','b','n','o','i','n','v','d', str...>, hold<
     static constexpr auto value = asm_wbnoinvd<T...>;
 };
 template <>
-constexpr auto asm_wbnoinvd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x09>>>::value;
+constexpr auto asm_wbnoinvd<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF3>, byte_seq<0x0F>,  byte_seq<0x09>>>::value;
 //  wrfsbase X64 [M] 2  [F3] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_wrfsbase = {};
 template <char... str, typename... T>
@@ -23566,13 +23788,17 @@ struct parse_instr_name<char_seq<'w','r','m','s','r', str...>, hold<T...>> {
     static constexpr auto value = asm_wrmsr<T...>;
 };
 template <>
-constexpr auto asm_wrmsr<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, 0, 0, 0>::value, byte_seq<0x30>>>::value;
+constexpr auto asm_wrmsr<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>,  byte_seq<0x30>>>::value;
 //  wrssd ANY [MR] r  [] F6 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_wrssd = {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'w','r','s','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_wrssd<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_wrssd<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF6>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_wrssd<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xF6>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -23584,6 +23810,10 @@ struct parse_instr_name<char_seq<'w','r','s','s','q', str...>, hold<T...>> {
     static constexpr auto value = asm_wrssq<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_wrssq<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x38>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF6>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_wrssq<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F, 0x38>, typename REX<1, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xF6>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -23594,6 +23824,10 @@ struct parse_instr_name<char_seq<'w','r','u','s','s','d', str...>, hold<T...>> {
     static constexpr auto value = asm_wrussd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_wrussd<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF5>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_wrussd<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F, 0x38>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xF5>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
@@ -23603,6 +23837,10 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'w','r','u','s','s','q', str...>, hold<T...>> {
     static constexpr auto value = asm_wrussq<T...>;
 };
+template<typename ...T, typename ...Y>
+constexpr auto asm_wrussq<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F, 0x38>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xF5>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
 template<typename ...T, typename ...Y>
 constexpr auto asm_wrussq<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x66>, byte_seq<0x0F, 0x38>, typename REX<1, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xF5>, typename mrm<T...>::template value<hold<Y...>>>>::value;
@@ -23615,7 +23853,7 @@ struct parse_instr_name<char_seq<'x','a','b','o','r','t', str...>, hold<T...>> {
 };
 template <uint8_t T> 
 constexpr auto asm_xabort<disp8<T>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xC6>, typename disp8<T>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0xC6>, typename disp8<T>::value>>::value;
 //  xadd ANY [MR] r  [] C0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xadd = {};
 template <char... str, typename... T>
@@ -23623,10 +23861,18 @@ struct parse_instr_name<char_seq<'x','a','d','d', str...>, hold<T...>> {
     static constexpr auto value = asm_xadd<T...>;
 };
 template<typename ...T, typename ...Y>
+constexpr auto asm_xadd<zip<reg8>::with<T...>, zip<reg8>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC0>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_xadd<ptr<reg8, T...>, zip<reg8>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xC0>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  xadd ANY [MR] r  [66] C1 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_xadd<zip<reg16>::with<T...>, zip<reg16>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_xadd<ptr<reg16, T...>, zip<reg16>::with<Y...>> = 
@@ -23635,10 +23881,18 @@ seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq
 //  xadd ANY [MR] r  [] C1 
 
 template<typename ...T, typename ...Y>
+constexpr auto asm_xadd<zip<reg32>::with<T...>, zip<reg32>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
+
+template<typename ...T, typename ...Y>
 constexpr auto asm_xadd<ptr<reg32, T...>, zip<reg32>::with<Y...>> = 
 seq_to_arr<expand_byte_seq_v<typename byte_67h<mrm<T...>::_67h>::value, byte_seq<0x0F>, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0xC1>, typename mrm<T...>::template value<hold<Y...>>>>::value;
 
 //  xadd X64 [MR] r  [] C1 
+
+template<typename ...T, typename ...Y>
+constexpr auto asm_xadd<zip<reg64>::with<T...>, zip<reg64>::with<Y...>> = 
+  seq_to_arr<expand_byte_seq_v<byte_seq<0x0F>, typename REX<1, is_ext_v<hold<Y...>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xC1>, typename modrm<hold<T...>, hold<Y...>>::value>>::value;
 
 template<typename ...T, typename ...Y>
 constexpr auto asm_xadd<ptr<reg64, T...>, zip<reg64>::with<Y...>> = 
@@ -23651,7 +23905,7 @@ struct parse_instr_name<char_seq<'x','b','e','g','i','n', str...>, hold<T...>> {
     static constexpr auto value = asm_xbegin<T...>;
 };
 template <uint16_t T>
-constexpr auto asm_xbegin<disp16<T>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0xC7>, typename disp16<T>::value>>::value;
+constexpr auto asm_xbegin<disp16<T>> = seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0xC7>, typename disp16<T>::value>>::value;
 //  xchg ANY [O]   [66] 90 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xchg = {};
 template <char... str, typename... T>
@@ -23739,7 +23993,7 @@ struct parse_instr_name<char_seq<'x','e','n','d', str...>, hold<T...>> {
     static constexpr auto value = asm_xend<T...>;
 };
 template <>
-constexpr auto asm_xend<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD5>>>::value;
+constexpr auto asm_xend<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD5>>>::value;
 //  xgetbv ANY [NONE]   [] D0 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xgetbv = {};
 template <char... str, typename... T>
@@ -23747,7 +24001,7 @@ struct parse_instr_name<char_seq<'x','g','e','t','b','v', str...>, hold<T...>> {
     static constexpr auto value = asm_xgetbv<T...>;
 };
 template <>
-constexpr auto asm_xgetbv<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD0>>>::value;
+constexpr auto asm_xgetbv<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD0>>>::value;
 //  xlatb ANY [NONE]   [] D7 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xlatb = {};
 template <char... str, typename... T>
@@ -23755,7 +24009,7 @@ struct parse_instr_name<char_seq<'x','l','a','t','b', str...>, hold<T...>> {
     static constexpr auto value = asm_xlatb<T...>;
 };
 template <>
-constexpr auto asm_xlatb<> = seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0xD7>>>::value;
+constexpr auto asm_xlatb<> = seq_to_arr<expand_byte_seq_v< byte_seq<0xD7>>>::value;
 //  xor ANY [I]   [] 34 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xor = {};
 template <char... str, typename... T>
@@ -23764,17 +24018,17 @@ struct parse_instr_name<char_seq<'x','o','r', str...>, hold<T...>> {
 };
 template <uint8_t Y> 
 constexpr auto asm_xor<al, disp8<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x34>, typename disp8<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x34>, typename disp8<Y>::value>>::value;
 //  xor ANY [I]   [66] 35 
 
 template <uint16_t Y> 
 constexpr auto asm_xor<ax, disp16<Y>> =
-    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>, typename REX<0, 0, 0, 0>::value, byte_seq<0x35>, typename disp16<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v<byte_seq<0x66>,  byte_seq<0x35>, typename disp16<Y>::value>>::value;
 //  xor ANY [I]   [] 35 
 
 template <uint32_t Y> 
 constexpr auto asm_xor<eax, disp32<Y>> =
-    seq_to_arr<expand_byte_seq_v<typename REX<0, 0, 0, 0>::value, byte_seq<0x35>, typename disp32<Y>::value>>::value;
+    seq_to_arr<expand_byte_seq_v< byte_seq<0x35>, typename disp32<Y>::value>>::value;
 //  xor X64 [I]   [] 35 
 
 template <uint32_t Y> 
@@ -23921,7 +24175,7 @@ struct parse_instr_name<char_seq<'x','r','e','s','l','d','t','r','k', str...>, h
     static constexpr auto value = asm_xresldtrk<T...>;
 };
 template <>
-constexpr auto asm_xresldtrk<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE9>>>::value;
+constexpr auto asm_xresldtrk<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>,  byte_seq<0xE9>>>::value;
 //  xrstor ANY [M] 5  [] AE 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xrstor = {};
 template <char... str, typename... T>
@@ -24049,7 +24303,7 @@ struct parse_instr_name<char_seq<'x','s','e','t','b','v', str...>, hold<T...>> {
     static constexpr auto value = asm_xsetbv<T...>;
 };
 template <>
-constexpr auto asm_xsetbv<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD1>>>::value;
+constexpr auto asm_xsetbv<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD1>>>::value;
 //  xsusldtrk ANY [NONE]   [F2] E8 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xsusldtrk = {};
 template <char... str, typename... T>
@@ -24057,7 +24311,7 @@ struct parse_instr_name<char_seq<'x','s','u','s','l','d','t','r','k', str...>, h
     static constexpr auto value = asm_xsusldtrk<T...>;
 };
 template <>
-constexpr auto asm_xsusldtrk<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xE8>>>::value;
+constexpr auto asm_xsusldtrk<> = seq_to_arr<expand_byte_seq_v<byte_seq<0xF2>, byte_seq<0x0F, 0x01>,  byte_seq<0xE8>>>::value;
 //  xtest ANY [NONE]   [] D6 
 template<typename... T> static constexpr std::array<uint8_t, 0> asm_xtest = {};
 template <char... str, typename... T>
@@ -24065,4 +24319,4 @@ struct parse_instr_name<char_seq<'x','t','e','s','t', str...>, hold<T...>> {
     static constexpr auto value = asm_xtest<T...>;
 };
 template <>
-constexpr auto asm_xtest<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>, typename REX<0, 0, 0, 0>::value, byte_seq<0xD6>>>::value;
+constexpr auto asm_xtest<> = seq_to_arr<expand_byte_seq_v<byte_seq<0x0F, 0x01>,  byte_seq<0xD6>>>::value;
