@@ -10,6 +10,7 @@
 #include <utility>
 #include <array>
 #include <algorithm>
+#include <string_view>
 
 template <uint8_t... chars> using byte_seq = std::integer_sequence<uint8_t, chars...>;
 template <char...  chars> using char_seq = std::integer_sequence<char,  chars...>;
@@ -73,7 +74,7 @@ struct type_list<Head> {
   using head = Head;
   using tail = type_list<>;
 
-    static constexpr std::size_t sz = 1;
+  static constexpr std::size_t sz = 1;
 };
 
 template <>
@@ -84,7 +85,34 @@ struct type_list<> {
   static constexpr std::size_t sz = 0;
 };
 
+template<typename ...T>
+struct type_list_append {};
+
+template <typename... T>
+struct type_list_append<type_list<T...>> {
+  using type = type_list<T...>;
+};
+
+template <typename... T>
+struct type_list_append<type_list<T...>, type_list<>> {
+  using type = type_list<T...>;
+};
+
+template <typename ...T, typename ...Y>
+struct type_list_append<type_list<T...>, type_list<Y...>> {
+    using type = type_list<T..., Y...>;
+};
+
+template <typename T, typename... Y>
+struct type_list_append<T, Y...> {
+  using type = typename type_list_append<T, typename type_list_append<Y...>::type>::type;
+};
+
+template<typename ...T>
+using type_list_append_t = typename type_list_append<T...>::type;
+
 template <typename... T> using hold = type_list<T...>;
+
 
 template <class... Args1> struct zip {
   template <class... Args2> struct with { using type = hold<hold<Args1...>, Args2...>; };
@@ -260,6 +288,14 @@ typedef zip<reg_k>::with<reg<6>>::type k6;
 typedef zip<reg_k>::with<reg<7>>::type k7;
 
 template <typename... T> struct ptr {};
+
+template<typename T>
+using get_reg_sz = std::conditional_t<std::is_same<T, reg8>::value, std::integral_constant<uint8_t, 1>,
+                   std::conditional_t<std::is_same<T, reg16>::value, std::integral_constant<uint8_t, 2>, 
+                   std::conditional_t<std::is_same<T, reg32>::value, std::integral_constant<uint8_t, 4>,
+                   std::conditional_t<std::is_same<T, reg64>::value, std::integral_constant<uint8_t, 8>,
+                   std::conditional_t<std::is_same<T, reg128>::value, std::integral_constant<uint8_t, 16>, void>
+                   >>>>;
 
 template<std::size_t Sz, std::uint64_t N>
 struct ux{
@@ -755,7 +791,6 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp32<D>> {
 template<typename Y, typename ...T>
 using mrm_v = typename mrm<T...>::template value<Y>;
 
-
 template<typename>
 struct byte_67h {
   using value = std::integer_sequence<uint8_t>;
@@ -766,8 +801,10 @@ struct byte_67h<std::true_type> {
   using value = byte_seq<0x67>;
 };
 
+//Utils
 namespace {
-    template <char first_letter, char... chars> struct first_elem {
+    template <char first_letter, char... chars>
+    struct first_elem {
       static constexpr auto value = first_letter;
     };
 
@@ -776,173 +813,1502 @@ namespace {
       static constexpr auto value = first_letter;
     };
 
-
-    template <typename... T> struct get_elem { static constexpr char value = 0; };
-    template <char f, char... chars> struct get_elem<char_seq<f, chars...>> {
+    template <typename... T>
+    struct get_elem {
+      static constexpr char value = 0;
+    };
+    template <char f, char... chars>
+    struct get_elem<char_seq<f, chars...>> {
       static constexpr char value = f;
     };
 
-  namespace {
-      template <char a, char... b> struct _slice_ {
-        using value = std::integer_sequence<char, b...>;
-      };
-      template <std::size_t N, typename T> struct _first_elements {};
+    namespace {
+        template <char a, char... b>
+        struct _slice_ {
+          using value = std::integer_sequence<char, b...>;
+        };
+        template <std::size_t N, typename T>
+        struct _first_elements {};
 
-      template <std::size_t end, char... chars>
-      struct _first_elements<end, std::integer_sequence<char, chars...>> {
-        using value =
-            typename _first_elements<end - 1,
-                                    typename _slice_<chars...>::value>::value;
-      };
+        template <std::size_t end, char... chars>
+        struct _first_elements<end, std::integer_sequence<char, chars...>> {
+          using value =
+              typename _first_elements<end - 1,
+                                       typename _slice_<chars...>::value>::value;
+        };
 
-      template <char... chars>
-      struct _first_elements<0, std::integer_sequence<char, chars...>> {
-        using value = typename std::integer_sequence<char, chars...>;
-      };
+        template <char... chars>
+        struct _first_elements<0, std::integer_sequence<char, chars...>> {
+          using value = typename std::integer_sequence<char, chars...>;
+        };
 
-      template <std::size_t end, char... chars>
-      struct slice
-          : _first_elements<end, std::integer_sequence<char, chars...>> {};
+        template <std::size_t end, char... chars>
+        struct slice : _first_elements<end, std::integer_sequence<char, chars...>> {};
+    }  // namespace
+}
+//Utils #2
+namespace {
+    template <uint64_t x, uint64_t y>
+    struct _pow : _pow<x * x, y - 1> {};
 
-  } // namespace
+    template <uint64_t x>
+    struct _pow<x, 1> : std::integral_constant<uint64_t, x> {};
 
-  namespace {
-      namespace {
+    struct is_letter;
+    struct is_digit;
+    struct is_space;
+    struct is_identifier_char;
 
-          template <uint64_t x, uint64_t y>
-          struct _pow: _pow<x * x, y - 1>{};
+    template <char C>
+    struct is_same_as;
 
-          template <uint64_t x>
-          struct _pow<x, 1>: std::integral_constant<uint64_t, x>{};
+    template <char Symbol>
+    using is_letter_v = std::bool_constant<((Symbol >= 'A') && (Symbol <= 'Z')) ||
+                                           ((Symbol >= 'a') && (Symbol <= 'z'))>;
 
-          template<typename, char> struct skip_until{};
+    template <char Symbol>
+    using is_digit_v = std::bool_constant<(Symbol >= '0') && (Symbol <= '9')>;
 
-          template<char el, char... str, char c>
-          struct skip_until<char_seq<el, str...>, c>: skip_until<char_seq<str...>, c>{};
+    template <char Symbol>
+    using is_space_v =
+        std::bool_constant<Symbol == ' ' || Symbol == '\t' || Symbol == '\n'>;
 
-          template<char... str, char c>
-          struct skip_until<char_seq<c, str...>, c>{
-            using type = char_seq<str...>;
-          };
+    template <char Symbol>
+    using is_identifier_char_v =
+        std::bool_constant<is_letter_v<Symbol>::value ||
+                           is_digit_v<Symbol>::value || Symbol == '_' || Symbol == '.'>;
 
-          template<char c>
-          struct skip_until<char_seq<>, c>{
-            using type = char_seq<>;
-          };
+    template <typename T, char C>
+    struct find_predict;
+
+    template<char C>
+    struct find_predict<is_letter, C> {
+        using type = is_letter_v<C>;
+    };
+
+    template <char C>
+    struct find_predict<is_digit, C> {
+      using type = is_digit_v<C>;
+    };
+
+    template <char C>
+    struct find_predict<is_space, C> {
+      using type = is_space_v<C>;
+    };
+
+    template <char C>
+    struct find_predict<is_identifier_char, C> {
+      using type = is_identifier_char_v<C>;
+    };
+
+    template <char M, char C>
+    struct find_predict<is_same_as<M>, C> {
+      using type = std::bool_constant<C == M>;
+    };
+
+    template<class T, char C>
+    using find_predict_t = typename find_predict<T, C>::type;
+
+    template<typename, class> struct skip_until{};
+
+    template<char First, char... Str, class T>
+    struct skip_until<char_seq<First, Str...>, T> {
+        using type = std::conditional_t<find_predict_t<T, First>::value, char_seq<Str...>, typename skip_until<char_seq<Str...>, T>::type>;
+    };
+
+    template<class T>
+    struct skip_until<char_seq<>, T>{
+        using type = char_seq<>;
+    };
+
+    template <typename T, class Y>
+    using skip_until_t = typename skip_until<T, Y>::type;
+
+    template <typename, typename, class> struct collect_until {};
+
+    template <char... Acc, char First, char... Str, class V>
+    struct collect_until<char_seq<Acc...>, char_seq<First, Str...>, V> {
+        using type = std::conditional_t<find_predict_t<V, First>::value, char_seq<Acc...>, typename collect_until<char_seq<Acc..., First>, char_seq<Str...>, V>::type>;
+    };
+
+    template <char... Acc, class V>
+    struct collect_until<char_seq<Acc...>, char_seq<>, V> {
+      using type = char_seq<Acc...>;
+    };
+
+    template <typename T, class V>
+    using collect_until_t = typename collect_until<null_sequence<char>, T, V>::type;
+
+    template <typename, std::size_t>
+    struct skip_for {};
+
+    template <char First, char... Str, std::size_t N>
+    struct skip_for<char_seq<First, Str...>, N> {
+        using type =
+            std::conditional_t<N != 0,
+                                typename skip_for<char_seq<Str...>, (N - 1)>::type,
+                                char_seq<First, Str...>>;
+    };
+
+    template <std::size_t N>
+    struct skip_for<char_seq<>, N> {
+      using type = char_seq<>;
+    };
+
+    template <typename T, std::size_t N>
+    using skip_for_t = typename skip_for<T, N>::type;
+
+    template <typename, typename, class> struct collect_while {};
+
+    template <char... Acc, char First, char... Str, class V>
+    struct collect_while<char_seq<Acc...>, char_seq<First, Str...>, V> {
+        using nV = std::conditional_t<find_predict_t<V, First>::value, V, void>;
+        using nAcc = std::conditional_t<find_predict_t<V, First>::value, char_seq<Acc..., First>, char_seq<Acc...>>;
+        using nNext = std::conditional_t<find_predict_t<V, First>::value, char_seq<Str...>, char_seq<First, Str...>>;
+        using _local = collect_while<nAcc, nNext, nV>;
+        using type = typename _local::type;
+        using next = typename _local::next;
+    };
+
+    template <char... Acc, char First, char... Str>
+    struct collect_while<char_seq<Acc...>, char_seq<First, Str...>, void> {
+      using type = char_seq<Acc...>;
+      using next = char_seq<First, Str...>;
+    };
+
+    template <char... Acc, class V>
+    struct collect_while<char_seq<Acc...>, char_seq<>, V> {
+      using type = char_seq<Acc...>;
+       using next = char_seq<>;
+    };
+
+    template <typename T, class V>
+    using collect_while_t = typename collect_while<null_sequence<char>, T, V>::type;
+
+    template <typename T, class V>
+    using skip_while_t = typename collect_while<null_sequence<char>, T, V>::next;
+
+    namespace {
+        template <typename T, typename Y, char Char>
+        struct skip_c {};
+
+        template <char... acc_str, char a, char... str, char Char>
+        struct skip_c<char_seq<acc_str...>, char_seq<a, str...>, Char> {
+          using value =
+              typename skip_c<char_seq<acc_str..., a>, char_seq<str...>, Char>::value;
+        };
+        template <char... acc_str, char... str, char Char>
+        struct skip_c<char_seq<acc_str...>, char_seq<Char, str...>, Char> {
+          using value =
+              typename skip_c<char_seq<acc_str...>, char_seq<str...>, Char>::value;
+        };
+        template <char... acc_str, char Char>
+        struct skip_c<char_seq<acc_str...>, null_sequence<char>, Char> {
+          using value = char_seq<acc_str...>;
+        };
+
+        template <typename T, typename Y>
+        using skip_spaces = skip_c<T, Y, ' '>;
+        template <typename T, typename Y>
+        using skip_underscores = skip_c<T, Y, '_'>;
+
+        template <typename T>
+        using skip_spaces_t = typename skip_c<char_seq<>, T, ' '>::value;
+        template <typename T>
+        using skip_underscores_t = typename skip_c<char_seq<>, T, '_'>::value;
+    }
+}
 
 
-          template<typename T, char c>
-          using skip_until_t = typename skip_until<T, c>::type;
+namespace {
+template <typename T, uint64_t N>
+struct parse_num_impl : std::integral_constant<uint64_t, 0> {};
 
+template <char first, char... str, uint64_t N>
+struct parse_num_impl<char_seq<first, str...>, N> {
+  static constexpr uint64_t value = parse_num_impl<char_seq<first>, N>::value *
+                                        (_pow<N, sizeof...(str)>::value) +
+                                    parse_num_impl<char_seq<str...>, N>::value;
+};
 
-          template<typename, std::size_t> struct _skip_for{};
+template <char first, uint64_t N>
+struct parse_num_impl<char_seq<first>, N> {
+  static constexpr uint64_t value =
+      ((first >= 'A') && (first <= 'F')) ? (first - 'A' + 10) : (first - '0');
+};
 
-          template<char First, char ...Str, std::size_t N>
-          struct _skip_for<char_seq<First, Str...>, N>{
-            using type = std::conditional_t<N != 0, typename _skip_for<char_seq<Str...>, (N - 1)>::type, char_seq<First, Str...>>;
-          };
+template <typename T>
+struct parse_num : parse_num_impl<T, 10> {};
+
+template <char... str>
+struct parse_num<char_seq<str...>> : parse_num_impl<char_seq<str...>, 10> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'd', str...>>
+    : parse_num_impl<char_seq<str...>, 10> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'c', str...>>
+    : parse_num_impl<char_seq<str...>, 16> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'x', str...>>
+    : parse_num_impl<char_seq<str...>, 16> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'o', str...>>
+    : parse_num_impl<char_seq<str...>, 8> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'q', str...>>
+    : parse_num_impl<char_seq<str...>, 8> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'b', str...>>
+    : parse_num_impl<char_seq<str...>, 2> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'y', str...>>
+    : parse_num_impl<char_seq<str...>, 2> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'x', 'c', str...>>
+    : parse_num_impl<char_seq<str...>, 16> {};
+
+template <char... str>
+struct parse_num<char_seq<'0', 'h', 'c', str...>>
+    : parse_num_impl<char_seq<str...>, 16> {};
+}
+
+namespace {
+    template <typename T> struct typeDef { using type = T; };
+    template <char... S> struct _reg_impl: typeDef<void> {};
+
+    template <> struct _reg_impl<'a', 'l'> : typeDef<al> {};
+    template <> struct _reg_impl<'c', 'l'> : typeDef<cl> {};
+    template <> struct _reg_impl<'d', 'l'> : typeDef<dl> {};
+    template <> struct _reg_impl<'b', 'l'> : typeDef<bl> {};
+    template <> struct _reg_impl<'a', 'h'> : typeDef<ah> {};
+    template <> struct _reg_impl<'c', 'h'> : typeDef<ch> {};
+    template <> struct _reg_impl<'d', 'h'> : typeDef<dh> {};
+    template <> struct _reg_impl<'b', 'h'> : typeDef<bh> {};
           
-          template<std::size_t N>
-          struct _skip_for<char_seq<>, N>{
-            using type = char_seq<>;
-          };
+    template <> struct _reg_impl<'r', '8', 'l'>      : typeDef<r8l> {};
+    template <> struct _reg_impl<'r', '9', 'l'>      : typeDef<r9l> {};
+    template <> struct _reg_impl<'r', '1', '0', 'l'> : typeDef<r10l> {};
+    template <> struct _reg_impl<'r', '1', '1', 'l'> : typeDef<r11l> {};
+    template <> struct _reg_impl<'r', '1', '2', 'l'> : typeDef<r12l> {};
+    template <> struct _reg_impl<'r', '1', '3', 'l'> : typeDef<r13l> {};
+    template <> struct _reg_impl<'r', '1', '4', 'l'> : typeDef<r14l> {};
+    template <> struct _reg_impl<'r', '1', '5', 'l'> : typeDef<r15l> {};
 
-          
-          template<typename T, std::size_t N> using skip_for_t = typename _skip_for<T, N>::type;
+    template <> struct _reg_impl<'a', 'x'> : typeDef<ax> {};
+    template <> struct _reg_impl<'b', 'x'> : typeDef<bx> {};
+    template <> struct _reg_impl<'c', 'x'> : typeDef<cx> {};
+    template <> struct _reg_impl<'d', 'x'> : typeDef<dx> {};
+    template <> struct _reg_impl<'s', 'i'> : typeDef<si> {};
+    template <> struct _reg_impl<'d', 'i'> : typeDef<di> {};
+    template <> struct _reg_impl<'s', 'p'> : typeDef<sp> {};
+    template <> struct _reg_impl<'b', 'p'> : typeDef<bp> {};
 
-          template<typename, typename, char> struct collect_until{};
-          template<char ...Acc, char First, char ...Str, char V>
-          struct collect_until<char_seq<Acc...>, char_seq<First, Str...>, V> :
-              collect_until<char_seq<Acc..., First>, char_seq<Str...>, V>{};
+    template <> struct _reg_impl<'r', '8', 'w'>      : typeDef<r8w> {};
+    template <> struct _reg_impl<'r', '9', 'w'>      : typeDef<r9w> {};
+    template <> struct _reg_impl<'r', '1', '0', 'w'> : typeDef<r10w> {};
+    template <> struct _reg_impl<'r', '1', '1', 'w'> : typeDef<r11w> {};
+    template <> struct _reg_impl<'r', '1', '2', 'w'> : typeDef<r12w> {};
+    template <> struct _reg_impl<'r', '1', '3', 'w'> : typeDef<r13w> {};
+    template <> struct _reg_impl<'r', '1', '4', 'w'> : typeDef<r14w> {};
+    template <> struct _reg_impl<'r', '1', '5', 'w'> : typeDef<r15w> {};
 
-          template<char ...Acc, char ...Str, char V>
-          struct collect_until<char_seq<Acc...>, char_seq<V, Str...>, V>{
-            using type = char_seq<Acc...>;
-          };
+    template <> struct _reg_impl<'e', 'a', 'x'> : typeDef<eax> {};
+    template <> struct _reg_impl<'e', 'b', 'x'> : typeDef<ebx> {};
+    template <> struct _reg_impl<'e', 'c', 'x'> : typeDef<ecx> {};
+    template <> struct _reg_impl<'e', 'd', 'x'> : typeDef<edx> {};
+    template <> struct _reg_impl<'e', 's', 'i'> : typeDef<esi> {};
+    template <> struct _reg_impl<'e', 'd', 'i'> : typeDef<edi> {};
+    template <> struct _reg_impl<'e', 's', 'p'> : typeDef<esp> {};
+    template <> struct _reg_impl<'e', 'b', 'p'> : typeDef<ebp> {};
 
-          template<char ...Acc, char V>
-          struct collect_until<char_seq<Acc...>, char_seq<>, V>{
-            using type = char_seq<Acc...>;
-          };
+    template <> struct _reg_impl<'z', 'a', 'x'> : typeDef<zax> {};
+    template <> struct _reg_impl<'z', 'b', 'x'> : typeDef<zbx> {};
+    template <> struct _reg_impl<'z', 'c', 'x'> : typeDef<zcx> {};
+    template <> struct _reg_impl<'z', 'd', 'x'> : typeDef<zdx> {};
+    template <> struct _reg_impl<'z', 's', 'i'> : typeDef<zsi> {};
+    template <> struct _reg_impl<'z', 'd', 'i'> : typeDef<zdi> {};
+    template <> struct _reg_impl<'z', 's', 'p'> : typeDef<zsp> {};
+    template <> struct _reg_impl<'z', 'b', 'p'> : typeDef<zbp> {};
 
-          template<typename T, char c>
-          using collect_until_t = typename collect_until<null_sequence<char>, T, c>::type;
+    template <> struct _reg_impl<'r', '8', 'd'>      : typeDef<r8d> {};
+    template <> struct _reg_impl<'r', '9', 'd'>      : typeDef<r9d> {};
+    template <> struct _reg_impl<'r', '1', '0', 'd'> : typeDef<r10d> {};
+    template <> struct _reg_impl<'r', '1', '1', 'd'> : typeDef<r11d> {};
+    template <> struct _reg_impl<'r', '1', '2', 'd'> : typeDef<r12d> {};
+    template <> struct _reg_impl<'r', '1', '3', 'd'> : typeDef<r13d> {};
+    template <> struct _reg_impl<'r', '1', '4', 'd'> : typeDef<r14d> {};
+    template <> struct _reg_impl<'r', '1', '5', 'd'> : typeDef<r15d> {};
 
+    template <> struct _reg_impl<'r', 'a', 'x'> : typeDef<rax> {};
+    template <> struct _reg_impl<'r', 'b', 'x'> : typeDef<rbx> {};
+    template <> struct _reg_impl<'r', 'c', 'x'> : typeDef<rcx> {};
+    template <> struct _reg_impl<'r', 'd', 'x'> : typeDef<rdx> {};
+    template <> struct _reg_impl<'r', 's', 'i'> : typeDef<rsi> {};
+    template <> struct _reg_impl<'r', 'd', 'i'> : typeDef<rdi> {};
+    template <> struct _reg_impl<'r', 's', 'p'> : typeDef<rsp> {};
+    template <> struct _reg_impl<'r', 'b', 'p'> : typeDef<rbp> {};
 
-          namespace{
-            template <typename T, typename Y, char Char> struct skip_c {};
+    template <> struct _reg_impl<'r', '8'>      : typeDef<r8> {};
+    template <> struct _reg_impl<'r', '9'>      : typeDef<r9> {};
+    template <> struct _reg_impl<'r', '1', '0'> : typeDef<r10> {};
+    template <> struct _reg_impl<'r', '1', '1'> : typeDef<r11> {};
+    template <> struct _reg_impl<'r', '1', '2'> : typeDef<r12> {};
+    template <> struct _reg_impl<'r', '1', '3'> : typeDef<r13> {};
+    template <> struct _reg_impl<'r', '1', '4'> : typeDef<r14> {};
+    template <> struct _reg_impl<'r', '1', '5'> : typeDef<r15> {};
 
-            template <char... acc_str, char a, char... str, char Char>
-            struct skip_c<char_seq<acc_str...>, char_seq<a, str...>, Char> {
-                using value =
-                    typename skip_c<char_seq<acc_str..., a>, char_seq<str...>, Char>::value;
-            };
-            template <char... acc_str, char... str, char Char>
-            struct skip_c<char_seq<acc_str...>, char_seq<Char, str...>, Char> {
-                using value =
-                    typename skip_c<char_seq<acc_str...>, char_seq<str...>, Char>::value;
-            };
-            template <char... acc_str, char Char>
-            struct skip_c<char_seq<acc_str...>, null_sequence<char>, Char> {
-                using value = char_seq<acc_str...>;
-            };
-          }
+    template <char... chars> struct _reg_impl<'s', 't', chars...> {
+    using type = st<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
+    template <char... chars> struct _reg_impl<'m', 'm', chars...> {
+    using type = mm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
+    template <char... chars> struct _reg_impl<'x', 'm', 'm', chars...> {
+    using type = xmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
+    template <char... chars> struct _reg_impl<'y', 'm', 'm', chars...> {
+    using type = ymm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
+    template <char... chars> struct _reg_impl<'z', 'm', 'm', chars...> {
+    using type = zmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
+    template <char... chars> struct _reg_impl<'t', 'm', 'm', chars...> {
+    using type = tmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
+    };
 
-          template <typename T, typename Y> using skip_spaces = skip_c<T, Y, ' '>;
-          template <typename T, typename Y> using skip_underscores = skip_c<T, Y, '_'>;
+    template <typename T>
+    struct get_reg;
 
-          template <typename T> using skip_spaces_t = typename skip_c<char_seq<>, T, ' '>::value;
-          template <typename T> using skip_underscores_t = typename skip_c<char_seq<>, T, '_'>::value;
+    template<char... S>
+    struct get_reg<char_seq<S...>> : _reg_impl<S...> {};
 
-          template <typename T, uint64_t N>
-          struct parse_num_impl: std::integral_constant<uint64_t, 0>{};
+    template<typename T>
+    using get_reg_t = typename get_reg<T>::type;
 
-          template <char first, char... str, uint64_t N> 
-          struct parse_num_impl<char_seq<first, str...>, N> {
-            static constexpr uint64_t value =
-                parse_num_impl<char_seq<first>, N>::value * (_pow<N, sizeof...(str)>::value) +
-                                        parse_num_impl<char_seq<str...>, N>::value;
-          };
+    template<std::size_t N, typename T>
+    using _pack_value_impl = std::bool_constant<(std::numeric_limits<T>::min() <= N) && (N <= std::numeric_limits<T>::max())>;
+    template<std::size_t N>
+    using pack_value =  std::conditional_t<_pack_value_impl<N, uint8_t >::value, ub<static_cast<uint8_t >(N)>,
+                        std::conditional_t<_pack_value_impl<N, uint16_t>::value, uw<static_cast<uint16_t>(N)>, 
+                        std::conditional_t<_pack_value_impl<N, uint32_t>::value, ud<static_cast<uint32_t>(N)>,
+                        std::conditional_t<_pack_value_impl<N, uint64_t>::value, uq<static_cast<uint64_t>(N)>, 
+                        void>>>>;
+}
 
-          template <char first, uint64_t N> 
-          struct parse_num_impl<char_seq<first>, N> {
-            static constexpr uint64_t value = ((first >= 'A') && (first <= 'F')) ? (first - 'A' + 10) : (first - '0');
-          };
+namespace {
+    template<char... Str>
+    struct _word_size_impl : typeDef<void>{};
 
-          template <typename T>
-          struct parse_num: parse_num_impl<T, 10> {};
+    template<> struct _word_size_impl<'b', 'y', 't', 'e'> : typeDef<reg8> {};
+    template<> struct _word_size_impl<'w', 'o', 'r', 'd'> : typeDef<reg16> {};
+    template<> struct _word_size_impl<'d', 'w', 'o', 'r', 'd'> : typeDef<reg32> {};
+    template<> struct _word_size_impl<'q', 'w', 'o', 'r', 'd'> : typeDef<reg64> {};
+    template<> struct _word_size_impl<'t', 'w', 'o', 'r', 'd'> : typeDef<reg80> {};
+    template<> struct _word_size_impl<'z', 'w', 'o', 'r', 'd'> : typeDef<reg128> {};
 
-          template <char... str> 
-          struct parse_num<char_seq<str...>>: parse_num_impl<char_seq<str...>, 10> {};
+    template<typename T>
+    struct get_word_sz : typeDef<void> {};
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'd', str...>>: parse_num_impl<char_seq<str...>, 10> {};
+    template<char... Str>
+    struct get_word_sz<char_seq<Str...>> : _word_size_impl<Str...>{};
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'c', str...>>: parse_num_impl<char_seq<str...>, 16> {};
+    template<typename T>
+    using get_word_sz_t = typename get_word_sz<T>::type;
+}
+//lexer
+namespace {
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'x', str...>>: parse_num_impl<char_seq<str...>, 16> {};
+    enum Tokens: uint8_t{
+      BaseId = 0,
+      Identifier,
+      SizeWord,
+      Number,
+      LeftParen,
+      RightParen,
+      LeftSquare,
+      RightSquare,
+      Ptr,
+      Plus,
+      Minus,
+      Mul,
+      Div,
+      DoubleDiv,
+      Modulo,
+      DoubleModulo,
+      Dollar,
+      DoubleDollar,
+      Dup,
+      Dot,
+      Colon,
+      Comma,
+      End
+    };
+    
+    template <Tokens Id, typename Y>
+    struct Token {
+        static constexpr Tokens id = Id;
+        using data = Y;
+    };
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'o', str...>>: parse_num_impl<char_seq<str...>,  8>  {};
+    template <Tokens>  static constexpr uint8_t TokenPrec =  0;
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'q', str...>>: parse_num_impl<char_seq<str...>,  8> {};
+    template <> static constexpr uint8_t TokenPrec<Tokens::Plus> = 1;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Minus> =  1;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Mul> =  2;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Div> =  2;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Modulo> = 3;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Dup> =  4;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Dot> =  5;
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'b', str...>>: parse_num_impl<char_seq<str...>,  2> {};
+    template <Tokens> static constexpr std::string_view TokenName = "None";
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'y', str...>>: parse_num_impl<char_seq<str...>,  2> {};
+    template <> static constexpr std::string_view TokenName<Tokens::BaseId> = "BaseId"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Identifier> = "Identifier"; 
+    template <> static constexpr std::string_view TokenName<Tokens::SizeWord> = "SizeWord"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Number> = "Number"; 
+    template <> static constexpr std::string_view TokenName<Tokens::LeftParen> = "LeftParen"; 
+    template <> static constexpr std::string_view TokenName<Tokens::RightParen> = "RightParen"; 
+    template <> static constexpr std::string_view TokenName<Tokens::LeftSquare> = "LeftSquare"; 
+    template <> static constexpr std::string_view TokenName<Tokens::RightSquare> = "RightSquare"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Ptr> = "Ptr"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Plus> = "Plus"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Minus> = "Minus"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Mul> = "Mul"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Div> = "Div"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Modulo> = "Modulo"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Dollar> = "Dollar";
+    template <> static constexpr std::string_view TokenName<Tokens::DoubleDollar> = "DoubleDollar";
+    template <> static constexpr std::string_view TokenName<Tokens::Dup> = "Dup";
+    template <> static constexpr std::string_view TokenName<Tokens::Dot> = "Dot"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Colon> = "Colon"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Comma> = "Comma"; 
+    template <> static constexpr std::string_view TokenName<Tokens::End> = "End"; 
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'x', 'c', str...>>: parse_num_impl<char_seq<str...>, 16>{};
+    template <std::size_t N, std::size_t K, typename... T>
+    struct lex {};
 
-          template <char... str> 
-          struct parse_num<char_seq<'0', 'h', 'c', str...>>: parse_num_impl<char_seq<str...>, 16>{};
+    template <std::size_t N, char... Str>
+    struct lex<N, 0, char_seq<Str...>> {
+      using next = char_seq<>;
 
+      using type = hold<>;
+      using nN = std::integral_constant<std::size_t, N>;
+    };
 
+    template <std::size_t N, std::size_t Max, char... Str>
+    struct lex<N, Max, char_seq<Str...>> {
+
+      using _first_part = lex<N + 1, (Max / 2), char_seq<Str...>>;
+
+      using _next = typename _first_part::next;
+
+      using _second_part = lex<N + 1, (Max / 2) + (_next{}.size() % 2), _next>;
+
+      using nn0 = typename _first_part::nN;
+      using nn1 = typename _second_part::nN;
+      using nN = std::integral_constant<
+          std::size_t, (nn0::value > nn1::value ? nn0::value : nn1::value)>;
+      using next = typename _second_part::next;
+
+      using type = type_list_append_t<typename _first_part::type,
+                                      typename _second_part::type>;
+    };
+
+    template <std::size_t N, char FLetter, char... Str>
+    struct lex<N, 1, char_seq<FLetter, Str...>> {
+      using if_digit = std::conditional_t<
+          is_digit_v<FLetter>::value,
+              hold<Token<
+                       Tokens::Number,
+                       std::integral_constant<std::size_t, parse_num<collect_while_t<char_seq<FLetter, Str...>, is_digit>>::value>>>,
+          void>;
+      using if_word =
+          std::conditional_t<
+          std::is_same<if_digit, void>::value &&
+              ((FLetter >= 'A' && FLetter <= 'Z') ||
+               (FLetter >= 'a' && FLetter <= 'z') || FLetter == '.'),
+                  hold<Token<Tokens::Identifier, collect_while_t<char_seq<FLetter, Str...>, is_identifier_char>>>, void>;
+        using if_smth = std::conditional<!std::is_same<if_digit, void>::value, if_digit, std::conditional_t<!std::is_same<if_word, void>::value, if_word, hold<>>>;
+        using type = typename if_smth::type;
+        using next =
+            std::conditional_t<
+                !std::is_same<if_digit, void>::value,
+                skip_while_t<char_seq<FLetter, Str...>, is_digit>,
+                std::conditional_t<
+                    !std::is_same<if_word, void>::value,
+                    skip_while_t<char_seq<Str...>, is_identifier_char>,
+                char_seq<Str...>> > ;
+
+        using nN = std::integral_constant<std::size_t, N>;
+    };
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<' ', Str...>> {
+      using type = hold<>;
+      using next = char_seq<Str...>;
+
+      using nN = std::integral_constant<std::size_t, N>;
+    };
+
+    template <std::size_t N>
+    struct lex<N, 1, char_seq<>> {
+      using type = hold<>;
+      using next = char_seq<>;
+
+      using nN = std::integral_constant<std::size_t, N>;
+    };
+
+    template <std::size_t N, Tokens Tok, char ...Str> 
+    struct tok_templ {
+      using type = hold<Token<Tok, void>>;
+      using next = char_seq<Str...>;
+
+      using nN = std::integral_constant<std::size_t, N>;
+    };
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<')', Str...>>
+        : tok_templ<N, Tokens::RightParen, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'(', Str...>>
+        : tok_templ<N, Tokens::LeftParen, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'[', Str...>>
+        : tok_templ<N, Tokens::LeftSquare, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<']', Str...>>
+        : tok_templ<N, Tokens::RightSquare, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'+', Str...>>
+        : tok_templ<N, Tokens::Plus, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'-', Str...>>
+        : tok_templ<N, Tokens::Minus, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'*', Str...>>
+        : tok_templ<N, Tokens::Mul, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'/', Str...>>
+        : tok_templ<N, Tokens::Div, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'%', Str...>>
+        : tok_templ<N, Tokens::Modulo, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'$', Str...>>
+        : tok_templ<N, Tokens::Dollar, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'$', '$', Str...>>
+        : tok_templ<N, Tokens::DoubleDollar, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'d', 'u', 'p', Str...>>
+        : tok_templ<N, Tokens::Dup, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<',', Str...>>
+        : tok_templ<N, Tokens::Comma, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<':', Str...>>
+        : tok_templ<N, Tokens::Colon, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<';', Str...>>
+        : tok_templ<N, Tokens::End, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'\x00', Str...>>
+        : tok_templ<N, Tokens::End, Str...> {};
+}
+
+//ast parse
+namespace {
+    template <Tokens Opc, class L, class R>
+    struct node {
+        static constexpr Tokens id = Opc;
+        using left = L;
+        using right = R;
+    };
+
+    template <class D>
+    struct primary_node {
+        static constexpr Tokens id = Tokens::BaseId;
+        using left = D;
+    };
+
+    template <Tokens Opc, class L>
+    struct unary_node {
+        static constexpr Tokens id = Opc;
+        using left = L;
+    };
+
+    template<class Name, class Ops>
+    struct instr_node {
+        using name = Name;
+        using operands = Ops;
+    };
+
+    template<class Name, class Ops>
+    struct label_node {
+        using name = Name;
+        using data = Ops;
+    };
+
+    template <class Names>
+    struct labelref_node {
+        using name = Names;
+    };
+
+    template <typename... T>
+    struct parse_expr;
+
+    template <typename... T>
+    struct parse_paren;
+
+    template <typename... T>
+    struct parse_ptr;
+
+    template <typename... T>
+    struct parse_labelref;
+
+    template <class ...Toks>
+    struct parse_paren<hold<Toks...>> {
+        using expr = parse_expr<hold<Toks...>>;
+        using type = unary_node<Tokens::LeftParen, typename expr::type>;
+        using next = typename expr::next;
+    };
+
+    template <class... Toks>
+    struct parse_ptr<hold<Toks...>> {
+      using expr = parse_expr<hold<Toks...>>;
+      using type = unary_node<Tokens::Ptr, typename expr::type>;
+      using next = typename expr::next;
+    };
+
+    template <class Data, class... Toks>
+    struct parse_labelref<hold<Token<Tokens::Identifier, Data>, Toks...>> {
+      using type = labelref_node<Token<Tokens::Identifier, Data>>;
+      using next = hold<Toks...>;
+    };
+
+    template<typename ...T>
+    struct parse_primary;
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::Identifier, data>, Toks...>>{
+        using type = primary_node<Token<Tokens::Identifier, data>>;
+        using next = hold<Toks...>;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::Number, data>, Toks...>>{
+        using type = primary_node<Token<Tokens::Number, data>>;
+        using next = hold<Toks...>;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::LeftParen, data>, Toks...>>{
+        using expr = parse_paren<hold<Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::LeftSquare, data>, Toks...>>{
+        using expr = parse_paren<hold<Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::Ptr, data>, Toks...>> {
+        using expr = parse_ptr<hold<Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template <class... Toks>
+    struct parse_size_word;
+
+    template <class... Toks, class Data>
+    struct parse_size_word<
+        hold<Token<Tokens::SizeWord, Data>, Toks...>> {
+      using expr = parse_expr<hold<Toks...>>;
+      using type = unary_node<Tokens::SizeWord, hold<get_word_sz_t<Data>, typename expr::type>>;
+      using next = typename expr::next;
+    };
+
+    template<typename ...T>
+    struct parse_unary;
+
+    template<class ...Toks, class data>
+    struct parse_unary<hold<Token<Tokens::Identifier, data>, Toks...>> {
+        using expr = std::conditional_t<std::is_same<get_reg_t<data>, void>::value,
+            std::conditional_t<!std::is_same<get_word_sz_t<data>, void>::value,
+                parse_size_word<hold<Token<Tokens::SizeWord, data>, Toks...>>,
+                parse_labelref<hold<Token<Tokens::Identifier, data>, Toks...>>>,
+            parse_primary<hold<Token<Tokens::Identifier, data>, Toks...>>
+        >;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+    template<class ...Toks, class data>
+    struct parse_unary<hold<Token<Tokens::Number, data>, Toks...>> {
+        using expr = parse_primary<hold<Token<Tokens::Number, data>, Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_unary<hold<Token<Tokens::LeftParen, data>, Toks...>> {
+        using expr = parse_primary<hold<Token<Tokens::LeftParen, data>, Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template<class ...Toks, class data>
+    struct parse_unary<hold<Token<Tokens::LeftSquare, data>, Toks...>> {
+        using expr = parse_primary<hold<Token<Tokens::Ptr, data>, Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template <class... Toks>
+    struct parse_unary<
+        hold<Token<Tokens::Identifier, char_seq<'p', 't', 'r'>>,
+        Token<Tokens::LeftSquare, void>,
+        Toks...>> {
+        using expr = parse_primary<hold<Token<Tokens::Ptr, void>, Toks...>>;
+        using type = typename expr::type;
+        using next = typename expr::next;
+    };
+
+    template <class... Toks>
+    struct parse_unary<
+        hold<Token<Tokens::Dollar, void>, Toks...>> {
+        using type = primary_node<Token<Tokens::Dollar, void>>;
+        using next = hold<Toks...>;
+    };
+
+    template <class... Toks>
+    struct parse_unary<
+        hold<Token<Tokens::DoubleDollar, void>, Toks...>> {
+        using type = primary_node<Token<Tokens::DoubleDollar, void>>;
+        using next = hold<Toks...>;
+    };
+
+    template<Tokens Id, class ...Toks, class data>
+    struct parse_unary<hold<Token<Id, data>, Toks...>> {
+        using expr = parse_unary<hold<Toks...>>;
+        using type = unary_node<Id, typename expr::type>;
+        using next = typename expr::next;
+    };  
+
+    template<std::size_t ExprPrec, typename... T>
+    struct parse_binOp;
+
+    template <std::size_t ExprPrec, typename... T>
+    struct parse_binOp_;
+
+    template <std::size_t ExprPrec, class LHS, Tokens Id, class data,
+              class... Toks>
+    struct parse_binOp<ExprPrec, LHS,
+                       hold<Token<Id, data>, Toks...>> {
+        using is_expr_higher = std::bool_constant<(ExprPrec > TokenPrec<Id>)>;
+        using RHS = std::conditional_t<is_expr_higher::value, LHS, parse_unary<hold<Toks...>>>;
+        
+        using is_next_higher = std::bool_constant<(TokenPrec<RHS::next::head::id> > TokenPrec<Id>)>;
+        using nRHS = std::conditional_t<is_next_higher::value, 
+                parse_binOp<TokenPrec<Id>, typename RHS::type, typename RHS::next>, 
+                RHS>;
+        
+        using next0 = typename nRHS::next;
+        using type = std::conditional_t<is_expr_higher::value, LHS, typename parse_binOp<ExprPrec, node<Id, LHS, typename nRHS::type>, next0>::type>;
+        using next = std::conditional_t<is_expr_higher::value, hold<Token<Id, data>, Toks...>, typename parse_binOp<ExprPrec, node<Id, LHS, typename nRHS::next>, next0>::next>;
+
+    };
+
+    template <std::size_t ExprPrec, class LHS>
+    struct parse_binOp<ExprPrec, LHS, hold<>> {
+        using type = LHS;
+        using next = hold<>;
+    };
+
+    template <std::size_t ExprPrec, class LHS, class data, class... Toks>
+    struct parse_binOp<ExprPrec, LHS, hold<Token<Tokens::End, data>, Toks...>> {
+      using type = LHS;
+      using next = hold<>;
+    };
+
+    template <std::size_t ExprPrec, class LHS, class data, class ...Toks>
+    struct parse_binOp<ExprPrec, LHS, hold<Token<Tokens::RightParen, data>, Toks...>> {
+      using type = LHS;
+      using next = std::conditional_t<ExprPrec < 1, hold<Toks...>, hold<Token<Tokens::RightParen, data>, Toks...>>;
+    };
+
+    template <std::size_t ExprPrec, class LHS, class data, class ...Toks>
+    struct parse_binOp<ExprPrec, LHS, hold<Token<Tokens::RightSquare, data>, Toks...>> {
+      using type = LHS;
+      using next = std::conditional_t<ExprPrec < 1, hold<Toks...>, hold<Token<Tokens::RightParen, data>, Toks...>>;
+    };
+
+    template <std::size_t ExprPrec, class LHS, class data, class ...Toks>
+    struct parse_binOp<ExprPrec, LHS, hold<Token<Tokens::Comma, data>, Toks...>> {
+      using type = LHS;
+      using next = hold<Toks...>;
+    };
+    
+    template<class ...Toks> 
+    struct parse_expr<hold<Toks...>> {
+        using LHS = parse_unary<hold<Toks...>>;
+
+        using Expr = parse_binOp<0, typename LHS::type, typename LHS::next>;
+        using type = typename Expr::type;
+
+        using next = typename Expr::next;
+    };
+     
+    template <typename... T>
+    struct parse_operands;
+
+    template<class ...Acc, class Tok, class ...Toks>
+    struct parse_operands<hold<Acc...>, hold<Tok, Toks...>>{
+        using _next_ops = parse_operands<hold<Acc..., Tok>, hold<Toks...>>;
+        using type = typename _next_ops::type;
+        using next = typename _next_ops::next;
+    };
+    template <class... Acc, class data, class... Toks>
+    struct parse_operands<hold<Acc...>, hold<Token<Tokens::Comma, data>, Toks...>> {
+        using _next_ops = parse_operands<hold<>, hold<Toks...>>;
+        using type = type_list_append_t<hold<typename parse_expr<hold<Acc..., Token<Tokens::End, char_seq<>>>>::type>, typename _next_ops::type>;
+        using next = typename _next_ops::next;
+    };
+
+    template <class... Acc, class data, class... Toks>
+    struct parse_operands<hold<Acc...>, hold<Token<Tokens::End, data>, Toks...>> {
+        using type = hold<typename parse_expr<hold<Acc..., Token<Tokens::End, data>>>::type>;
+        using next = hold<Toks...>;
+    };
+
+    template <typename... T>
+    struct parse_instruction;
+
+    template<class ...Toks>
+    struct parse_instruction<hold<Toks...>> {
+        using _name = parse_primary<hold<Toks...>>;
+        using name = typename _name::type;
+
+        using next_0 = typename _name::next;
+
+        using _operand = parse_operands<hold<>, next_0>;
+        using operands = typename _operand::type;
+
+        using type = instr_node<name, operands>;
+        using next = typename _operand::next;
+    };
+
+    template<typename T>
+    struct prefix_name_sz;
+
+    template <char... Name>
+    struct prefix_name_sz<char_seq<Name...>> {
+      static constexpr std::size_t value = 1;
+    };
+
+    template<char ...Name>
+    struct prefix_name_sz<char_seq<'.', Name...>> {
+      static constexpr std::size_t value = 1 + prefix_name_sz<char_seq<Name...>>::value;
+    };
+
+    template <std::size_t, typename... T>
+    struct parse_label_or_data;
+    
+    template <char... Name, class... Toks, class data>
+    struct parse_label_or_data<
+        0, hold<Token<Tokens::Identifier, char_seq<Name...>>,
+                Token<Tokens::Colon, data>, Toks...>> {
+        using name = primary_node<Token<Tokens::Identifier,
+                                    char_seq<'g', 'l', 'o', 'b', 'a', 'l'>>>;
+        using _local = parse_label_or_data<
+          1, hold<Token<Tokens::Identifier, char_seq<Name...>>,
+                  Token<Tokens::Colon, data>, Toks...>>;
+
+        using type = hold<label_node<name, typename _local::type>>; 
+    };
+
+    template <class... Toks>
+    struct parse_label_or_data<0, hold<Toks...>> {
+        using name = primary_node<Token<Tokens::Identifier,
+                                    char_seq<'g', 'l', 'o', 'b', 'a', 'l'>>>;
+        using _local = parse_instruction<hold<Toks...>>;
+        using _next = typename _local::next;
+
+        using __local = parse_label_or_data<1, _next>;
+        using type = hold<label_node<name,type_list_append_t<hold<typename _local::type>, typename __local::type>>>;
+        using next = typename __local::next;
+    };
+
+    template <std::size_t Prefix, char... Name, class... Toks, class data>
+    struct parse_label_or_data<
+        Prefix,
+        hold<Token<Tokens::Identifier, char_seq< Name...>>,
+             Token<Tokens::Colon, data>, Toks...>> {
+
+        using name = primary_node<Token<Tokens::Identifier, char_seq<Name...>>>;
+
+        using is_exact_prefix = std::bool_constant<Prefix <= prefix_name_sz<char_seq<Name...>>::value>;
+
+        using _local = parse_label_or_data<Prefix + 1, hold<Toks...>>;
+        using _next = typename _local::next;
+
+        using __local = std::conditional_t<is_exact_prefix::value, parse_label_or_data<Prefix, _next>, _local>;
+        using _type =  hold<label_node<name, typename _local::type>>;
+
+        using type = std::conditional_t<is_exact_prefix::value, type_list_append_t<_type, typename __local::type>, hold<>>;
+        using next =
+            std::conditional_t<
+                is_exact_prefix::value, typename __local::next,
+                hold<Token<Tokens::Identifier, char_seq<Name...>>,
+                     Token<Tokens::Colon, data>, Toks...>>;
+    };
+
+    template <std::size_t, typename... T>
+    struct parse_instructions;
+
+    template <std::size_t N>
+    struct parse_instructions<N, hold<>> {
+      using next = hold<>;
+      using type = hold<>;
+    };
+
+    template <>
+    struct parse_instructions<1, hold<Token<Tokens::End, void>>>: parse_instructions<1, hold<>>{};
+
+    template <std::size_t N, class Data, class... Toks>
+    struct parse_instructions<N, hold<Token<Tokens::Identifier, Data>,
+                                      Token<Tokens::Colon, void>, Toks...>> {
+        using next = hold<Token<Tokens::Identifier, Data>,
+                          Token<Tokens::Colon, void>, Toks...>;
+        using type = hold<>;
+    };
+
+    template <class Data, class... Toks>
+    struct parse_instructions<1, hold<Token<Tokens::Identifier, Data>,
+                                      Token<Tokens::Colon, void>, Toks...>> {
+      using next = hold<Token<Tokens::Identifier, Data>,
+                        Token<Tokens::Colon, void>, Toks...>;
+      using type = hold<>;
+    };
+
+    template <class... Toks>
+    struct parse_instructions<1, hold<Toks...>> {
+      using _local = parse_instruction<hold<Toks...>>;
+      using next = typename _local::next;
+      using type = hold<typename _local::type>;
+    };
+
+    template <class... Toks>
+    struct parse_instructions<0,  hold<Toks...>> {
+      using _local = parse_instruction<hold<Toks...>>;
+      using next = typename _local::next;
+      using type = hold<typename _local::type>;
+    };
+
+    template <std::size_t N, class... Toks>
+    struct parse_instructions<N, hold<Toks...>> {
+        using _first_part = parse_instructions<N / 2, hold<Toks...>>;
+        using _second_part = parse_instructions<N / 2, typename _first_part::next>;
+        using _next = typename _second_part::next;
+
+        using _fin_part = parse_instructions<N*4, _next>;
+
+        using next = typename _fin_part::next;
+        using type = type_list_append_t<typename _first_part::type, typename _second_part::type, typename _fin_part::type>;
+    };
+
+    template <std::size_t Prefix, class... Toks>
+    struct parse_label_or_data<Prefix, hold<Toks...>> {
+        using _local = parse_instructions<4, hold<Toks...>>;
+        using _next = typename _local::next;
+
+        using __local = parse_label_or_data<Prefix, _next>;
+        using type = type_list_append_t<typename _local::type, typename __local::type>;
+        using next = typename __local::next;
+    };
+
+    template <std::size_t Prefix>
+    struct parse_label_or_data<Prefix, hold<>> {
+        using next = hold<>;
+        using type = hold<>;
+    };
+
+    template <std::size_t Prefix, class Data, class... Toks>
+    struct parse_label_or_data<Prefix, hold<Token<Tokens::End, Data>, Toks...>> {
+        using next = hold<Toks...>;
+        using type = hold<>;
+    };
+
+    template<class Toks>
+    using parse_global = parse_label_or_data<0, Toks>;
+}
+
+// AST solver
+namespace {
+    template<typename ...T>
+    struct ast_solve;
+
+    template<>
+    struct ast_solve<hold<>>{
+        using type = hold<>;
+    };
+
+    template<class Left>
+    struct ast_solve<primary_node<Left>>{
+        using type = primary_node<Left>;
+    };
+
+    template<class... Data>
+    struct ast_solve<hold<Data...>>{
+      using type = type_list_append_t<
+          hold<typename ast_solve<typename hold<Data...>::head>::type>,
+          typename ast_solve<typename hold<Data...>::tail>::type>;
+    };
+
+    template<class Name, class Data>
+    struct ast_solve<label_node<Name, Data>>{
+        using type = label_node<Name, typename ast_solve<Data>::type>;
+    };
+
+    template<class Name, class Ops>
+    struct ast_solve<instr_node<Name, Ops>>{
+        using type = instr_node<Name, typename ast_solve<Ops>::type>;
+    };
+
+    template <Tokens Id, class Op>
+    struct ast_solve<unary_node<Id, Op>>{
+        using type = unary_node<Id, typename ast_solve<Op>::type>;
+    };
+
+    template<class Op>
+    struct ast_solve<unary_node<Tokens::LeftParen, Op>>{
+        using type = typename ast_solve<Op>::type;
+    };
+
+    template <Tokens Id, class Left, class Right>
+    struct ast_solve<node<Id, Left, Right>>{
+        using type = node<Id, typename ast_solve<Left>::type, typename ast_solve<Right>::type>;
+    };
+
+    template <Tokens Id, class LData, class Right>
+    struct ast_solve<
+        node<Id, primary_node<Token<Tokens::Number, LData>>, Right>> {
+      using type = typename ast_solve<node<Id, primary_node<Token<Tokens::Number, LData>>,typename ast_solve<Right>::type>>::type;
+    };
+
+    template <Tokens Id, class Left, class RData>
+    struct ast_solve<
+        node<Id, Left, primary_node<Token<Tokens::Number, RData>>>> {
+      using type = typename ast_solve<node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Number, RData>>>>::type;
+    };
+
+    template <Tokens Id, class LData, class RData>
+    struct ast_solve<
+            node<Id, primary_node<Token<Tokens::Number, LData>>,
+             primary_node<RData>>> {
+      using type = node<Id, primary_node<Token<Tokens::Number, LData>>, primary_node<RData>>;
+    };
+
+    template <Tokens Id, class LData, class RData>
+    struct ast_solve<
+        node<Id, primary_node<LData>,
+             primary_node<Token<Tokens::Number, RData>>>> {
+      using type = node<Id, primary_node<LData>, primary_node<Token<Tokens::Number, RData>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::Plus, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+      using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value + RData::value>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::Mul, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+      using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value * RData::value>>>;
+    };
+}
+
+namespace {
+template <typename... T>
+struct parse_instr_name {
+  using value = void;
+};
+}  // namespace
+
+template<typename Name, typename P>
+struct label_info {
+    using name = Name;
+    using offset = P;
+};
+
+// code gen. first step. Claclulate sizes, label offsets
+namespace {
+
+    template <class P, std::size_t Offset = 0>
+    struct processed_instr {
+      using data = P;
+      static constexpr std::size_t offset = Offset;
+    };
+
+    template<class P, std::size_t Offset, std::size_t LocalLabelOffset>
+    struct for_second_phase_instr {
+        using _node = P;
+        static constexpr std::size_t label_offset = LocalLabelOffset;
+        static constexpr std::size_t offset = Offset;
+    };
+
+    template <class Name, class P, std::size_t Offset = 0>
+    struct processed_label {
+        using name = Name;
+        using data = P;
+        static constexpr std::size_t offset = Offset;
+    };
+
+    template<typename T> struct repack_ptr;
+
+    template<class R, class... S>
+    struct repack_ptr<ptr<R, hold<S...>>> {
+        using type = ptr<R, S...>;
+    };
+
+    template<typename ...T> struct assemble;
+    template <typename... T>
+    struct assemble_ops {using type = hold<>;};
+
+    template <class Previous, class LocalLabelOffset>
+    struct assemble<Previous, LocalLabelOffset, hold<>> {
+      using type = hold<>;
+      static constexpr std::size_t size = Previous::value;
+
+      using label_list = hold<>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class F, class ...Data>
+    struct assemble<Previous, LocalLabelOffset, hold<F, Data...>> {
+      using _first = assemble<Previous, LocalLabelOffset, F>;
+      using _next = std::integral_constant<std::size_t, _first::type::head::offset>;
+      using _second = assemble<_next, LocalLabelOffset, hold<Data...>>;
+
+      using type = type_list_append_t<typename _first::type, typename _second::type>;
+      using next = typename _second::type;
+
+      static constexpr std::size_t size = _second::size;
+
+      using label_list = type_list_append_t<typename _first::label_list, typename _second::label_list>;
+
+    };
+
+    template <class Previous, class LocalLabelOffset, class Name, class F, class ...Data>
+    struct assemble<Previous, LocalLabelOffset, label_node<Name, hold<F, Data...>>> {
+      using _first = assemble<Previous, Previous, F>;
+      using _next = std::integral_constant<std::size_t, _first::type::head::offset>;
+      using _second = assemble<_next, Previous, hold<Data...>>;
+
+      static constexpr std::size_t size = _second::size;
+      
+      using type = hold<processed_label<Name, type_list_append_t<typename _first::type, typename _second::type>, size>>;
+      using next = typename _second::type;
+        
+      using label_list = type_list_append_t<hold<label_info<typename Name::left::data, Previous>>, typename _first::label_list, typename _second::label_list>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Name>
+    struct assemble<Previous, LocalLabelOffset, label_node<Name, hold<>>> {
+        static constexpr std::size_t size = 0;
+
+        using type = hold<processed_label<Name, hold<>, Previous::value>>;
+        using next = Previous;
+
+        using label_list = hold<label_info<typename Name::left::data, Previous>>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Name, class Ops>
+    struct assemble<Previous, LocalLabelOffset, instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>> {
+      using args = assemble_ops<Previous, LocalLabelOffset, Ops>;
+      using __local = parse_instr_name<Name, typename args::type>;
+      
+      static constexpr std::size_t size =
+          Previous::value + (typename __local::value){}.size();
+      using _local = std::conditional_t<args::has_labelref::value, 
+          for_second_phase_instr<
+            instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>, 
+            Previous::value, LocalLabelOffset::value>,
+          processed_instr<typename __local::value, size>>;
+      using type = hold<_local>;
+
+      using label_list = hold<>;
+    };
+
+    template <class Previous, class LocalLabelOffset>
+    struct assemble_ops<Previous, LocalLabelOffset, hold<>> {
+        using type = hold<>;
+
+        using has_labelref = std::false_type;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Op, class... Ops>
+    struct assemble_ops<Previous, LocalLabelOffset, hold<Op, Ops...>> {
+        using _first = assemble_ops<Previous, LocalLabelOffset, Op>;
+        using _second = assemble_ops<Previous, LocalLabelOffset, hold<Ops...>>;
+        using type = type_list_append_t<typename _first::type, typename _second::type>;
+
+        using has_labelref = std::bool_constant<_first::has_labelref::value || _second::has_labelref::value>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class L, class R>
+    struct assemble_ops<Previous, LocalLabelOffset, node<Tokens::Plus, L, R>> {
+      using _left = typename assemble_ops<Previous, LocalLabelOffset, L>::type;
+      using _right = typename assemble_ops<Previous, LocalLabelOffset, R>::type;
+      using type = type_list_append_t<_left, hold<plus>, _right>;
+
+      using has_labelref = std::bool_constant<_left::has_labelref::value || _right::has_labelref::value>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class L, class R>
+    struct assemble_ops<Previous, LocalLabelOffset, node<Tokens::Mul, L, R>> {
+      using _left = typename assemble_ops<Previous, LocalLabelOffset, L>::type;
+      using _right = typename assemble_ops<Previous, LocalLabelOffset, R>::type;
+      using type = type_list_append_t<_left, hold<mul>, _right>;
+
+      using has_labelref = std::bool_constant<_left::has_labelref::value || _right::has_labelref::value>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset,
+                        primary_node<Token<Tokens::Identifier, Data>>> {
+      using type = hold<get_reg_t<Data>>;
+
+      using has_labelref = std::false_type;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::Number, Data>>> {
+      using type = hold<pack_value<Data::value>>;
+
+      using has_labelref = std::false_type;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Data>
+        struct assemble_ops<Previous, LocalLabelOffset,
+                        labelref_node<Token<Tokens::Identifier, Data>>> {
+      using type = hold<pack_value<0>>;
+      using has_labelref = std::true_type;
+    };
+
+    template<class Previous, class LocalLabelOffset>
+    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::Dollar, void>>> {
+        using type = hold<pack_value<Previous::value>>;
+        using has_labelref = std::false_type;
+    };
+
+    template<class Previous, class LocalLabelOffset>
+    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::DoubleDollar, void>>> {
+        using type = hold<pack_value<LocalLabelOffset::value>>;
+        using has_labelref = std::false_type;
+    };
+
+    template <class Previous, class LocalLabelOffset, class RegSz, class Data>
+        struct assemble_ops<Previous, LocalLabelOffset,
+                        unary_node<Tokens::SizeWord, hold<RegSz, labelref_node<Token<Tokens::Identifier, Data>>>>> {
+      using type = hold<ux<get_reg_sz<RegSz>::value, 0>>;
+      using has_labelref = std::true_type;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset, unary_node<Tokens::Ptr, Data>> {
+        using _first = assemble_ops<Previous, Data>;
+        using type = hold<typename repack_ptr<ptr<reg64, typename _first::type>>::type>;
+
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Previous, class LocalLabelOffset, class RegSz, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset, unary_node<Tokens::SizeWord, hold<RegSz, unary_node<Tokens::Ptr, Data>>>> {
+        using _first = assemble_ops<Previous, Data>;
+        using type = hold<typename repack_ptr<ptr<RegSz, typename _first::type>>::type>;
+
+        using has_labelref = typename _first::has_labelref;
+    };
+}
+
+// second stage
+namespace {
+    template<typename... T>
+    struct solve_assembled {};
+
+    template<class LabelList>
+    struct solve_assembled<LabelList, hold<>> {
+        using type = hold<>;
+    };
+
+    template<class LabelList, class First, class... Data>
+    struct solve_assembled<LabelList, hold<First, Data...>> {
+        using _first = solve_assembled<LabelList, First>;
+        using _second = solve_assembled<LabelList, hold<Data...>>;
+        using type = type_list_append_t<typename _first::type, typename _second::type>;
+    };
+
+    template<class LabelList, class Name, std::size_t N>
+    struct solve_assembled<LabelList, processed_label<Name, hold<>, N>> {
+        using type = hold<processed_label<Name, hold<>>>;
+    };
+
+    template<class LabelList, class Name, class First, class... Data, std::size_t N>
+    struct solve_assembled<LabelList, processed_label<Name, hold<First, Data...>, N>> {
+        using _first = solve_assembled<LabelList, First>;
+        using _second = solve_assembled<LabelList, hold<Data...>>;
+        using type = hold<processed_label<Name, type_list_append_t<typename _first::type, typename _second::type>>>;
+    };
+
+    template<class LabelList, class P, std::size_t N>
+    struct solve_assembled<LabelList, processed_instr<P, N>> {
+        using type = hold<processed_instr<P, N>>;
+    };
+
+    template<std::size_t Offset, std::size_t LocalLabelOffset, class LabelList>
+    struct operands_context {
+        static constexpr std::size_t offset = Offset;
+        static constexpr std::size_t label_offets = LocalLabelOffset;
+        using label_list = LabelList;
+    };
+
+    template<typename... T>
+    struct find_labeloffset;
+    
+    template<typename Name, class Offset, typename Lname, typename... Data>
+    struct find_labeloffset<Name, hold<label_info<Lname, Offset>, Data...>>{
+        using type = typename find_labeloffset<Name, hold<Data...>>::type;
+    };
+
+    template<typename Name, class Offset, typename... Data>
+    struct find_labeloffset<Name, hold<label_info<Name, Offset>, Data...>>{
+        using type = Offset;
+    };
+
+    template<typename Name>
+    struct find_labeloffset<Name, hold<>>   {
+        using type = std::integral_constant<std::size_t, 0>;
+    };
+
+    template<typename... T>
+    struct solve_ops;
+
+    template<class LabelList, class Name, class Ops, std::size_t N, std::size_t N0>
+    struct solve_assembled<LabelList, for_second_phase_instr<instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>, N, N0>> {
+        using args = solve_ops<operands_context<N, N0, LabelList>, Ops>;
+        
+        using __local = parse_instr_name<Name, typename args::type>;
+
+        static constexpr std::size_t size =
+            N + (typename __local::value) {}.size();
+        using _local = 
+            processed_instr<typename __local::value, size>;
+        using type = hold<_local>;
+    };
+
+    template <class Context>
+    struct solve_ops<Context, hold<>> {
+        using type = hold<>;
+    };
+
+    template <class Context, class Op, class... Ops>
+    struct solve_ops<Context, hold<Op, Ops...>> {
+        using _first = solve_ops<Context, Op>;
+        using _second = solve_ops<Context, hold<Ops...>>;
+        using type = type_list_append_t<typename _first::type, typename _second::type>;
+    };
+
+    template <class Context, class L, class R>
+    struct solve_ops<Context, node<Tokens::Plus, L, R>> {
+        using _left = typename solve_ops<Context, L>::type;
+        using _right = typename solve_ops<Context, R>::type;
+        using type = type_list_append_t<_left, hold<plus>, _right>;
+    };
+
+    template <class Context, class L, class R>
+    struct solve_ops<Context, node<Tokens::Mul, L, R>> {
+        using _left = typename solve_ops<Context, L>::type;
+        using _right = typename solve_ops<Context, R>::type;
+        using type = type_list_append_t<_left, hold<mul>, _right>;
+    };
+
+    template <class Context, class Data>
+    struct solve_ops<Context,
+        primary_node<Token<Tokens::Identifier, Data>>> {
+        using type = hold<get_reg_t<Data>>;
+    };
+
+    template <class Context, class Data>
+    struct solve_ops<Context, primary_node<Token<Tokens::Number, Data>>> {
+        using type = hold<pack_value<Data::value>>;
+    };
+
+    template <class Context, class Data>
+    struct solve_ops<Context,
+        labelref_node<Token<Tokens::Identifier, Data>>> {
+        using type = hold<pack_value<find_labeloffset<Data, typename Context::label_list>::type::value>>;
+    };
+
+    template<class Context>
+    struct solve_ops<Context, primary_node<Token<Tokens::Dollar, void>>> {
+        using type = hold<pack_value<Context::offset>>;
+    };
+
+    template<class Context>
+    struct solve_ops<Context, primary_node<Token<Tokens::DoubleDollar, void>>> {
+        using type = hold<pack_value<Context::label_offset>>;
+    };
+
+    template <class Context, class RegSz, class Data>
+    struct solve_ops<Context,
+        unary_node<Tokens::SizeWord, hold<RegSz, labelref_node<Token<Tokens::Identifier, Data>>>>> {
+        using type = hold<ux<get_reg_sz<RegSz>::value, find_labeloffset<Data, typename Context::label_list>::type::value>>;
+    };
+
+    template <class Context, class Data>
+    struct solve_ops<Context, unary_node<Tokens::Ptr, Data>> {
+        using _first = solve_ops<Context, Data>;
+        using type = hold<typename repack_ptr<ptr<reg64, typename _first::type>>::type>;
+    };
+
+    template <class Context, class RegSz, class Data>
+    struct solve_ops<Context, unary_node<Tokens::SizeWord, hold<RegSz, unary_node<Tokens::Ptr, Data>>>> {
+        using _first = solve_ops<Context, Data>;
+        using type = hold<typename repack_ptr<ptr<RegSz, typename _first::type>>::type>;
+    };
+}
+
+namespace {
           template<uint64_t N>
           struct make_null_seq {
             using value = expand_byte_seq_v<byte_seq<0x00>, typename make_null_seq<N - 1>::value>;
@@ -1122,15 +2488,6 @@ namespace {
                   >>>>;
           };
 
-          template<std::size_t N, typename T>
-          using _pack_value_impl = std::conditional_t<(std::numeric_limits<T>::min() <= N) && (N <= std::numeric_limits<T>::max()), std::true_type, std::false_type>;
-          template<std::size_t N>
-          using pack_value = std::conditional_t<_pack_value_impl<N, uint8_t >::value, ub<static_cast<uint8_t >(N)>,
-                             std::conditional_t<_pack_value_impl<N, uint16_t>::value, uw<static_cast<uint16_t>(N)>, 
-                             std::conditional_t<_pack_value_impl<N, uint32_t>::value, ud<static_cast<uint32_t>(N)>,
-                             std::conditional_t<_pack_value_impl<N, uint64_t>::value, uq<static_cast<uint64_t>(N)>, 
-                             void>>>>;
-
           template<typename, typename> struct fucking_struct_impl{};
           template<typename T, typename Y, uint8_t N> struct fucking_struct_impl<hold<T, ub<N>>, Y>: std::false_type{};
           template<typename T, uint8_t N> struct fucking_struct_impl<hold<T, ub<N>>, T>: std::true_type{};
@@ -1219,7 +2576,8 @@ namespace {
           };
 
       } // namespace
-      
+
+namespace {
       template <typename... T> struct parse_instr_operand {
           using value = void;  
       };
@@ -1326,7 +2684,7 @@ namespace {
                                   char_seq<'d', 'u', 'p', '(', str...>> {
           using value = typename parse_instr_operands<
               hold<T...>, hold<acc_types..., dup<unpack_value<typename parse_instr_operand<hold<T...>, char_seq<acc_str...>>::value>::value, typename parse_instr_operands<hold<T...>, hold<>, char_seq<>, char_seq<str...>>::value>>,
-              null_sequence<char>, skip_until_t<char_seq<str...>, ')'> >::value;
+              null_sequence<char>, skip_until_t<char_seq<str...>, is_same_as<')'>> >::value;
       };
 
       template <class ...T, typename... acc_types, char... acc_str, char... str>
@@ -1347,10 +2705,6 @@ namespace {
       struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<>,
                                   char_seq<';', str...>> {
         using value = hold<acc_types...>;
-      };
-
-      template <typename... T> struct parse_instr_name {
-          using value = void;
       };
 
       template <typename... T> struct parse_instr {};
@@ -1413,24 +2767,10 @@ namespace {
       struct parse_asm<N, hold<T...>, char_seq<>, char_seq<>>{
         using value = null_sequence<uint8_t>;
       };
-    } // namespace
 } // namespace
 
 //PoC Preprocessor
 namespace{
-
-  template <char Symbol>
-  using is_letter = std::bool_constant<((Symbol >= 'A') && (Symbol <= 'Z')) ||
-                                       ((Symbol >= 'a') && (Symbol <= 'z'))>;
-
-  template <char Symbol>
-  using is_digit = std::bool_constant<(Symbol >= '0') && (Symbol <= '9')>;
-
-  template <char Symbol>
-  using is_space = std::bool_constant<Symbol == ' ' || Symbol == '\t' || Symbol == '\n'>;
-
-  template <char Symbol>
-  using is_identifier_char = std::bool_constant<is_letter<Symbol>::value || is_digit<Symbol>::value || Symbol == '_'>;
 
   template<typename, typename>
   struct skip_word {};
@@ -1438,7 +2778,7 @@ namespace{
   template<char ...AStr, char Felem,  char ...Str>
   struct skip_word<char_seq<AStr...>, char_seq<Felem,Str...>> {
     using type = std::conditional_t<
-        is_identifier_char<Felem>::value,
+        is_identifier_char_v<Felem>::value,
         typename skip_word<char_seq<AStr..., Felem>, char_seq<Str...>>::type,
         char_seq<AStr...>>;
   };
@@ -1495,7 +2835,7 @@ namespace{
 
   template<char RFirst, char ...RStr>
   struct compare<char_seq<>, char_seq<RFirst, RStr...>>{
-    using type = std::bool_constant<!is_identifier_char<RFirst>::value>;
+    using type = std::bool_constant<!is_identifier_char_v<RFirst>::value>;
   };
   
   template<>
@@ -1530,7 +2870,7 @@ namespace{
   struct find_and_replace<char_seq<FindStr...>, ReplaceStr, char_seq<AStr...>,
                           char_seq<FChar, Str...>> {
   
-    using type = std::conditional_t<(!is_identifier_char<FChar>::value) && std::is_same<char_seq<FindStr...>, skip_word_t<char_seq<Str...>>>::value, 
+    using type = std::conditional_t<(!is_identifier_char_v<FChar>::value) && std::is_same<char_seq<FindStr...>, skip_word_t<char_seq<Str...>>>::value, 
             typename find_and_replace<char_seq<FindStr...>, ReplaceStr, char_expand_t<char_seq<AStr..., FChar>, ReplaceStr>, skip_for_t<char_seq<Str...>, sizeof...(FindStr)>>::type,
             typename find_and_replace<char_seq<FindStr...>, ReplaceStr, char_seq<AStr..., FChar>, char_seq<Str...>>::type>;
   };
@@ -1617,12 +2957,9 @@ namespace{
   using process_def_t = typename process_def<T, Y, 0>::type;
 
   template<char ...Str>
-  using parse_args = parse_columns_t<skip_spaces_t<collect_until_t<skip_until_t<char_seq<Str...>, '('>, ')'>>>;
-
-  
+  using parse_args = parse_columns_t<skip_spaces_t<collect_until_t<skip_until_t<char_seq<Str...>, is_same_as<'('>>, is_same_as<')'>>>>;
 
   template <typename, typename, typename> struct paste_defs_impl {};
-
 
   template<typename FDef, char ...AStr, char FStr, char ...Str>
   struct paste_defs_impl<FDef, char_seq<AStr...>, char_seq<FStr, Str...>>{
@@ -1631,7 +2968,7 @@ namespace{
             (parse_args<Str...>::sz == FDef::tail::tail::head::sz),
      typename paste_defs_impl<FDef, 
        char_expand_t<char_seq<AStr...>, typename fucking_smth<parse_args<Str...>, typename FDef::tail::head, 0>::type>, 
-       skip_for_t<char_seq<FStr, Str...>, typename FDef::head{}.size() +  collect_until_t<char_seq<Str...>, ')'>{}.size()>>::type,
+       skip_for_t<char_seq<FStr, Str...>, typename FDef::head{}.size() +  collect_until_t<char_seq<Str...>, is_same_as<')'>>{}.size()>>::type,
      typename paste_defs_impl<FDef, char_seq<AStr..., FStr>, char_seq<Str...>>::type>;
   };
   
@@ -1661,9 +2998,9 @@ namespace{
 
   template<char... Str>
   struct parse_macro_def<char_seq<Str...>>{
-    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, '('>>;
+    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, is_same_as<'('>>>;
     using args = parse_args<Str...>;
-    using def  = collect_until_t<skip_until_t<char_seq<Str...>, ')'>, ';'>;
+    using def  = collect_until_t<skip_until_t<char_seq<Str...>, is_same_as<')'>>, is_same_as<';'>>;
 
     using processed_def = process_def_t<args, def>;
 
@@ -1674,9 +3011,9 @@ namespace{
 
   template <typename ...Defs, char... Str>
   struct parse_macro_xdef<hold<Defs...>, char_seq<Str...>> {
-    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, '('>>;
+    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, is_same_as<'('>>>;
     using args = parse_args<Str...>;
-    using def = paste_defs_t<hold<Defs...>, collect_until_t<skip_until_t<char_seq<Str...>, ')'>, ';'>>;
+    using def = paste_defs_t<hold<Defs...>, collect_until_t<skip_until_t<char_seq<Str...>, is_same_as<')'>>, is_same_as<';'>>>;
 
     using processed_def = process_def_t<args, def>;
 
@@ -1687,9 +3024,20 @@ namespace{
 
   template <typename... Defs, char... Str>
   struct parse_macro_undef<hold<Defs...>, char_seq<Str...>> {
-    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, ';'>>;
+    using name = skip_spaces_t<collect_until_t<char_seq<Str...>, is_same_as<';'>>>;
 
     using type = find_and_delete_t<hold<>, hold<Defs...>, name>;
+  };
+
+  template <typename... T> struct parse_macro_alias {};
+
+  template <typename... Defs, char... Str>
+  struct parse_macro_alias<hold<Defs...>, char_seq<Str...>> {
+    using name = skip_spaces_t<collect_until_t<skip_until_t<char_seq<Str...>, is_same_as<' '>>, is_same_as<' '>>>;
+
+    using alias_name = skip_spaces_t<collect_until_t<char_seq<Str...>, is_same_as<';'>>>;
+
+    using type = hold<name, alias_name, void>;
   };
 
   template<typename, typename, typename>
@@ -1704,17 +3052,23 @@ namespace{
 
   template<typename ...Defs, char ...acc_str, char ...str>
   struct asm_preprocess<hold<Defs...>, char_seq<acc_str...>, char_seq<'%','d', 'e', 'f', 'i', 'n', 'e', ' ', str...>>{
-    using type = typename asm_preprocess<hold<typename parse_macro_def<char_seq<str...>>::type, Defs...>, char_seq<acc_str...>, skip_until_t<char_seq<str...>, ';'>>::type;
+    using type = typename asm_preprocess<hold<typename parse_macro_def<char_seq<str...>>::type, Defs...>, char_seq<acc_str...>, skip_until_t<char_seq<str...>, is_same_as<';'>>>::type;
   };
 
   template<typename ...Defs, char ...acc_str, char ...str>
   struct asm_preprocess<hold<Defs...>, char_seq<acc_str...>, char_seq<'%','x', 'd', 'e', 'f', 'i', 'n', 'e', ' ', str...>>{
-    using type = typename asm_preprocess<hold<typename parse_macro_xdef<hold<Defs...>, char_seq<str...>>::type, Defs...>, char_seq<acc_str...>, skip_until_t<char_seq<str...>, ';'>>::type;
+    using type = typename asm_preprocess<hold<typename parse_macro_xdef<hold<Defs...>, char_seq<str...>>::type, Defs...>, char_seq<acc_str...>, skip_until_t<char_seq<str...>, is_same_as<';'>>>::type;
   };
 
   template<typename ...Defs, char ...acc_str, char ...str>
   struct asm_preprocess<hold<Defs...>, char_seq<acc_str...>, char_seq<'%', 'u', 'n', 'd', 'e', 'f', ' ', str...>>{
-    using type = typename asm_preprocess<typename parse_macro_undef<hold<Defs...>, char_seq<str...>>::type, char_seq<acc_str...>, skip_until_t<char_seq<str...>, ';'>>::type;
+    using type = typename asm_preprocess<typename parse_macro_undef<hold<Defs...>, char_seq<str...>>::type, char_seq<acc_str...>, skip_until_t<char_seq<str...>, is_same_as<';'>>>::type;
+  };
+
+  
+  template<typename ...Defs, char ...acc_str, char ...str>
+  struct asm_preprocess<hold<Defs...>, char_seq<acc_str...>, char_seq<'%', 'a', 'l', 'i', 'a', 's', ' ', str...>>{
+    using type = typename asm_preprocess<typename parse_macro_alias<hold<Defs...>, char_seq<str...>>::type, char_seq<acc_str...>, skip_until_t<char_seq<str...>, is_same_as<';'>>>::type;
   };
 
   template<typename ...Defs, char ...acc_str>
@@ -1732,15 +3086,15 @@ namespace{
 
 //PoC "dx" thing
 namespace {
-  template<std::size_t Size, class... T> struct calculate_size: std::integral_constant<std::size_t, 0>{};
+    template<std::size_t Size, class... T> struct calculate_size: std::integral_constant<std::size_t, 0>{};
   
-  template<std::size_t Size, class T, class... Y>
-  struct calculate_size<Size, T, Y...>: calculate_size<Size + typename T::value{}.size(), Y...>{};
+    template<std::size_t Size, class T, class... Y>
+    struct calculate_size<Size, T, Y...>: calculate_size<Size + typename T::value{}.size(), Y...>{};
 
-  template<std::size_t Size, class T>
-  struct calculate_size<Size, T>: std::integral_constant<std::size_t, Size + typename T::value{}.size()>{};
+    template<std::size_t Size, class T>
+    struct calculate_size<Size, T>: std::integral_constant<std::size_t, Size + typename T::value{}.size()>{};
 
-  namespace {
+
     template<std::size_t, typename... T> struct _dx_impl;
     template<typename... T> struct _dx;
 
@@ -1781,28 +3135,28 @@ namespace {
 
     template<std::size_t N, class V, class... T> 
     struct _dx_impl<N, V, T...>{
-      using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value, typename make_null_seq<N - (calculate_size<0, V, T...>::value % N)>::value>;
+        using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value, typename make_null_seq<N - (calculate_size<0, V, T...>::value % N)>::value>;
     };
 
     template<class V, class... T> 
     struct _dx_impl<1, V, T...>{
-      using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value>;
+        using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value>;
     };
     template<class V, class... T> 
     struct _dx<V, T...>{
-      using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value>;
+        using value = expand_byte_seq_v<typename _dx<V>::value, typename _dx<T...>::value>;
     };
 
     template<class V> 
     struct _dx<V>{
-      using value = typename V::value;
+        using value = typename V::value;
     };
 
     template<> 
     struct _dx<>{
-      using value = byte_seq<>;
+        using value = byte_seq<>;
     };
-  }
+  
 }
 
 
@@ -1823,4 +3177,8 @@ template <std::size_t N, const char (&Input)[N]>
 using make_char_sequence = typename make_char_sequence_impl<
     N, Input, std::make_index_sequence<N>>::type;
 
-#define x86asm(str) ([](){static constexpr const char literal[] = (str); return parse_asm_v<make_char_sequence<sizeof(literal), literal>>;}())
+#define x86asm(str)                                                   \
+  ([]() {                                                             \
+    static constexpr const char literal[] = (str);                    \
+    return parse_asm_v<make_char_sequence<sizeof(literal), literal>>; \
+  }())
