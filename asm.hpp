@@ -1492,7 +1492,7 @@ namespace {
     template <class ...Toks>
     struct parse_paren<hold<Toks...>> {
         using expr = parse_expr<hold<Toks...>>;
-        using type = unary_node<Tokens::LeftParen, typename expr::type>;
+        using type = typename expr::type;
         using next = typename expr::next;
     };
 
@@ -1876,71 +1876,101 @@ namespace {
     struct ast_solve;
 
     template<>
-    struct ast_solve<hold<>>{
+    struct ast_solve<hold<>> {
         using type = hold<>;
     };
 
     template<class Left>
-    struct ast_solve<primary_node<Left>>{
+    struct ast_solve<primary_node<Left>> {
         using type = primary_node<Left>;
     };
 
     template<class... Data>
-    struct ast_solve<hold<Data...>>{
-      using type = type_list_append_t<
-          hold<typename ast_solve<typename hold<Data...>::head>::type>,
-          typename ast_solve<typename hold<Data...>::tail>::type>;
+    struct ast_solve<hold<Data...>> {
+        using type = type_list_append_t<
+            hold<typename ast_solve<typename hold<Data...>::head>::type>,
+            typename ast_solve<typename hold<Data...>::tail>::type>;
     };
 
     template<class Name, class Data>
-    struct ast_solve<label_node<Name, Data>>{
+    struct ast_solve<label_node<Name, Data>> {
         using type = label_node<Name, typename ast_solve<Data>::type>;
     };
 
     template<class Name, class Ops>
-    struct ast_solve<instr_node<Name, Ops>>{
+    struct ast_solve<instr_node<Name, Ops>> {
         using type = instr_node<Name, typename ast_solve<Ops>::type>;
     };
 
     template <Tokens Id, class Op>
-    struct ast_solve<unary_node<Id, Op>>{
+    struct ast_solve<unary_node<Id, Op>> {
         using type = unary_node<Id, typename ast_solve<Op>::type>;
     };
 
     template<class Op>
-    struct ast_solve<unary_node<Tokens::LeftParen, Op>>{
+    struct ast_solve<unary_node<Tokens::LeftParen, Op>> {
         using type = typename ast_solve<Op>::type;
     };
 
+    template <class Data>
+    struct ast_solve<primary_node<Token<Tokens::Identifier, Data>>> {
+        using type = primary_node<Token<Tokens::Identifier, Data>>;
+    };
+
+    template<class Data>
+    struct ast_solve<primary_node<Token<Tokens::Number, Data>>> {
+        using type = primary_node<Token<Tokens::Number, Data>>;
+    };
+
+    template<class RegSize, class Op>
+    struct ast_solve<unary_node<Tokens::SizeWord, hold<RegSize, Op>>> {
+        using type = unary_node<Tokens::SizeWord, hold<RegSize, typename ast_solve<Op>::type>>;
+    };
+
+    template<class Op>
+    struct ast_solve<unary_node<Tokens::Ptr, Op>> {
+        using type = unary_node<Tokens::Ptr,  typename ast_solve<Op>::type>;
+    };
+
     template <Tokens Id, class Left, class Right>
-    struct ast_solve<node<Id, Left, Right>>{
+    struct ast_solve<node<Id, Left, Right>> {
         using type = node<Id, typename ast_solve<Left>::type, typename ast_solve<Right>::type>;
     };
 
     template <Tokens Id, class LData, class Right>
     struct ast_solve<
-        node<Id, primary_node<Token<Tokens::Number, LData>>, Right>> {
-      using type = typename ast_solve<node<Id, primary_node<Token<Tokens::Number, LData>>,typename ast_solve<Right>::type>>::type;
+        node<Id, primary_node<Token<Tokens::Identifier, LData>>, Right>> {
+        using type = node<Id, primary_node<Token<Tokens::Identifier, LData>>, typename ast_solve<Right>::type>;
     };
 
-    template <Tokens Id, class Left, class RData>
+    template <Tokens Id, class RData, class Left>
+    struct ast_solve<
+        node<Id, Left, primary_node<Token<Tokens::Identifier, RData>>>> {
+        using type = node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Identifier, RData>>>;
+    };
+
+    template <Tokens Id, class LData, class RData>
+    struct ast_solve<
+        node<Id, primary_node<Token<Tokens::Identifier, LData>>, primary_node<Token<Tokens::Number, RData>>>> {
+        using type = node<Id, primary_node<Token<Tokens::Identifier, LData>>, primary_node<Token<Tokens::Number, RData>>>;
+    };
+
+    template <Tokens Id, class RData, class LData>
+    struct ast_solve<
+        node<Id, primary_node<Token<Tokens::Number, LData>>, primary_node<Token<Tokens::Identifier, RData>>>> {
+        using type = node<Id, primary_node<Token<Tokens::Number, LData>>, primary_node<Token<Tokens::Identifier, RData>>>;
+    };
+
+    template <Tokens Id, class LData, class Right>
+    struct ast_solve<
+        node<Id, primary_node<Token<Tokens::Number, LData>>, Right>> {
+        using type = typename ast_solve<node<Id, primary_node<Token<Tokens::Number, LData>>, typename ast_solve<Right>::type>>::type;
+    };
+
+    template <Tokens Id, class RData, class Left>
     struct ast_solve<
         node<Id, Left, primary_node<Token<Tokens::Number, RData>>>> {
-      using type = typename ast_solve<node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Number, RData>>>>::type;
-    };
-
-    template <Tokens Id, class LData, class RData>
-    struct ast_solve<
-            node<Id, primary_node<Token<Tokens::Number, LData>>,
-             primary_node<RData>>> {
-      using type = node<Id, primary_node<Token<Tokens::Number, LData>>, primary_node<RData>>;
-    };
-
-    template <Tokens Id, class LData, class RData>
-    struct ast_solve<
-        node<Id, primary_node<LData>,
-             primary_node<Token<Tokens::Number, RData>>>> {
-      using type = node<Id, primary_node<LData>, primary_node<Token<Tokens::Number, RData>>>;
+        using type = typename ast_solve < node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Number, RData>>>>::type;
     };
 
     template <class LData, class RData>
@@ -1952,17 +1982,38 @@ namespace {
 
     template <class LData, class RData>
     struct ast_solve<
+        node<Tokens::Minus, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value - RData::value>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
         node<Tokens::Mul, primary_node<Token<Tokens::Number, LData>>,
         primary_node<Token<Tokens::Number, RData>>>> {
       using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value * RData::value>>>;
     };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::Div, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value / RData::value>>>;
+    };
 }
 
-namespace {
-template <typename... T>
-struct parse_instr_name {
-  using value = void;
+template<std::size_t Offset, std::size_t LocalLabelOffset, class LabelList>
+struct operands_context {
+    static constexpr std::size_t offset = Offset;
+    static constexpr std::size_t label_offets = LocalLabelOffset;
+    using label_list = LabelList;
 };
+
+namespace {
+    template <typename... T>
+    struct parse_instr_name {
+        using value = void;
+    };
 }  // namespace
 
 template<typename Name, typename P>
@@ -1970,6 +2021,124 @@ struct label_info {
     using name = Name;
     using offset = P;
 };
+
+template<typename... T>
+struct find_labeloffset;
+
+template<typename Name, class Offset, typename Lname, typename... Data>
+struct find_labeloffset<Name, hold<label_info<Lname, Offset>, Data...>> {
+    using type = typename find_labeloffset<Name, hold<Data...>>::type;
+};
+
+template<typename Name, class Offset, typename... Data>
+struct find_labeloffset<Name, hold<label_info<Name, Offset>, Data...>> {
+    using type = Offset;
+};
+
+template<typename Name>
+struct find_labeloffset<Name, hold<>> {
+    using type = std::integral_constant<std::size_t, 0>;
+};
+
+namespace {
+    template<typename... T>
+    struct map_nodes;
+
+    template<class Context>
+    struct map_nodes<hold<>, Context> {
+        using type = hold<>;
+        using has_labelref = std::false_type;
+    };
+
+    template<typename First, typename... Data, class Context>
+    struct map_nodes<hold<First, Data...>, Context> {
+        using _first = map_nodes<First, Context>;
+        using _second = map_nodes<hold<Data...>, Context>;
+        using type = type_list_append_t<hold<typename _first::type>,
+            typename _second::type>;
+
+        using has_labelref = std::bool_constant<_first::has_labelref::value || _second::has_labelref::value>;
+    };
+
+    template<class Name, class Context>
+    struct map_nodes<labelref_node<Token<Tokens::Identifier, Name>>, Context> {
+        using type = primary_node<
+            Token<Tokens::Number, 
+            std::integral_constant<std::size_t, find_labeloffset<Name, typename Context::label_list>::type::value>>>;
+        using has_labelref = std::true_type;
+    };
+
+    template<class Context>
+    struct map_nodes<primary_node<Token<Tokens::Dollar, void>>, Context> {
+        using type = primary_node<
+            Token<Tokens::Number,
+            std::integral_constant<std::size_t, Context::offset>>>;
+        using has_labelref = std::false_type;
+    };
+
+    template<class Context>
+    struct map_nodes<primary_node<Token<Tokens::DoubleDollar, void>>, Context> {
+        using type = primary_node<
+            Token<Tokens::Number,
+            std::integral_constant<std::size_t, Context::label_offets>>>;
+        using has_labelref = std::false_type;
+    };
+
+    template<class Data, class Context>
+    struct map_nodes<primary_node<Token<Tokens::Identifier, Data>>, Context> {
+        using type = primary_node<Token<Tokens::Identifier, Data>>;
+        using has_labelref = std::false_type;
+    };
+
+    template<class Data, class Context>
+    struct map_nodes<primary_node<Token<Tokens::Number, Data>>, Context> {
+        using type = primary_node<Token<Tokens::Number, Data>>;
+        using has_labelref = std::false_type;
+    };
+
+    template <class Context, class Data>
+    struct map_nodes<unary_node<Tokens::Ptr, Data>, Context> {
+        using _first = map_nodes<Data, Context>;
+        using type = unary_node<Tokens::Ptr, typename _first::type>;
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Context, class Data>
+    struct map_nodes<unary_node<Tokens::LeftParen, Data>, Context> {
+        using _first = map_nodes<Data, Context>;
+        using type = unary_node<Tokens::LeftParen, typename _first::type>;
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Context, class Data>
+    struct map_nodes<unary_node<Tokens::LeftSquare, Data>, Context> {
+        using _first = map_nodes<Data, Context>;
+        using type = unary_node<Tokens::LeftSquare, typename _first::type>;
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Context, class RegSize, class Data>
+    struct map_nodes<unary_node<Tokens::SizeWord, hold<RegSize, Data>>, Context> {
+        using _first = map_nodes<Data, Context>;
+        using type = unary_node<Tokens::SizeWord, hold<RegSize, typename _first::type>>;
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Context, class RegSize, class Data>
+    struct map_nodes<unary_node<Tokens::SizeWord, hold<RegSize, unary_node<Tokens::Ptr, Data>>>, Context> {
+        using _first = map_nodes<Data, Context>;
+        using type = unary_node<Tokens::SizeWord, hold<RegSize, unary_node<Tokens::Ptr, typename _first::type>>>;
+        using has_labelref = typename _first::has_labelref;
+    };
+
+    template <class Context, Tokens Tok, class Left, class Right>
+    struct map_nodes<node<Tok, Left, Right>, Context> {
+        using _first = map_nodes<Left, Context>;
+        using _second =  map_nodes<Right, Context>;
+        using type = node<Tok, typename _first::type, typename _second::type>;
+        using has_labelref = std::bool_constant<_first::has_labelref::value || _second::has_labelref::value>;
+    };
+}
 
 // code gen. first step. Claclulate sizes, label offsets
 namespace {
@@ -2054,15 +2223,16 @@ namespace {
 
     template <class Previous, class LocalLabelOffset, class Name, class Ops>
     struct assemble<Previous, LocalLabelOffset, instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>> {
-      using args = assemble_ops<Previous, LocalLabelOffset, Ops>;
+      using mapped_args = map_nodes<Ops, operands_context<Previous::value, LocalLabelOffset::value, hold<>>>;
+      using args = assemble_ops < Previous, LocalLabelOffset, typename ast_solve<typename mapped_args::type>::type >;
       using __local = parse_instr_name<Name, typename args::type>;
       
       static constexpr std::size_t size =
-          Previous::value + (typename __local::value){}.size();
-      using _local = std::conditional_t<args::has_labelref::value, 
+          Previous::value + typename __local::value{}.size();
+      using _local = std::conditional_t<mapped_args::has_labelref::value,
           for_second_phase_instr<
             instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>, 
-            Previous::value, LocalLabelOffset::value>,
+          size, LocalLabelOffset::value>,
           processed_instr<typename __local::value, size>>;
       using type = hold<_local>;
 
@@ -2072,8 +2242,23 @@ namespace {
     template <class Previous, class LocalLabelOffset>
     struct assemble_ops<Previous, LocalLabelOffset, hold<>> {
         using type = hold<>;
+    };
 
-        using has_labelref = std::false_type;
+    template <class Previous, class LocalLabelOffset, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset,
+                        primary_node<Token<Tokens::Identifier, Data>>> {
+      using type = hold<get_reg_t<Data>>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::Number, Data>>> {
+        using type = hold<pack_value<Data::value>>;
+    };
+
+    template <class Previous, class LocalLabelOffset, class RegSz, class Data>
+    struct assemble_ops<Previous, LocalLabelOffset,
+        unary_node<Tokens::SizeWord, hold<RegSz, primary_node<Token<Tokens::Number, Data>>>>> {
+        using type = hold<ux<get_reg_sz<RegSz>::value, Data::value>>;
     };
 
     template <class Previous, class LocalLabelOffset, class Op, class... Ops>
@@ -2081,8 +2266,6 @@ namespace {
         using _first = assemble_ops<Previous, LocalLabelOffset, Op>;
         using _second = assemble_ops<Previous, LocalLabelOffset, hold<Ops...>>;
         using type = type_list_append_t<typename _first::type, typename _second::type>;
-
-        using has_labelref = std::bool_constant<_first::has_labelref::value || _second::has_labelref::value>;
     };
 
     template <class Previous, class LocalLabelOffset, class L, class R>
@@ -2090,8 +2273,6 @@ namespace {
       using _left = typename assemble_ops<Previous, LocalLabelOffset, L>::type;
       using _right = typename assemble_ops<Previous, LocalLabelOffset, R>::type;
       using type = type_list_append_t<_left, hold<plus>, _right>;
-
-      using has_labelref = std::bool_constant<_left::has_labelref::value || _right::has_labelref::value>;
     };
 
     template <class Previous, class LocalLabelOffset, class L, class R>
@@ -2099,65 +2280,18 @@ namespace {
       using _left = typename assemble_ops<Previous, LocalLabelOffset, L>::type;
       using _right = typename assemble_ops<Previous, LocalLabelOffset, R>::type;
       using type = type_list_append_t<_left, hold<mul>, _right>;
-
-      using has_labelref = std::bool_constant<_left::has_labelref::value || _right::has_labelref::value>;
-    };
-
-    template <class Previous, class LocalLabelOffset, class Data>
-    struct assemble_ops<Previous, LocalLabelOffset,
-                        primary_node<Token<Tokens::Identifier, Data>>> {
-      using type = hold<get_reg_t<Data>>;
-
-      using has_labelref = std::false_type;
-    };
-
-    template <class Previous, class LocalLabelOffset, class Data>
-    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::Number, Data>>> {
-      using type = hold<pack_value<Data::value>>;
-
-      using has_labelref = std::false_type;
-    };
-
-    template <class Previous, class LocalLabelOffset, class Data>
-        struct assemble_ops<Previous, LocalLabelOffset,
-                        labelref_node<Token<Tokens::Identifier, Data>>> {
-      using type = hold<pack_value<0>>;
-      using has_labelref = std::true_type;
-    };
-
-    template<class Previous, class LocalLabelOffset>
-    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::Dollar, void>>> {
-        using type = hold<pack_value<Previous::value>>;
-        using has_labelref = std::false_type;
-    };
-
-    template<class Previous, class LocalLabelOffset>
-    struct assemble_ops<Previous, LocalLabelOffset, primary_node<Token<Tokens::DoubleDollar, void>>> {
-        using type = hold<pack_value<LocalLabelOffset::value>>;
-        using has_labelref = std::false_type;
-    };
-
-    template <class Previous, class LocalLabelOffset, class RegSz, class Data>
-        struct assemble_ops<Previous, LocalLabelOffset,
-                        unary_node<Tokens::SizeWord, hold<RegSz, labelref_node<Token<Tokens::Identifier, Data>>>>> {
-      using type = hold<ux<get_reg_sz<RegSz>::value, 0>>;
-      using has_labelref = std::true_type;
     };
 
     template <class Previous, class LocalLabelOffset, class Data>
     struct assemble_ops<Previous, LocalLabelOffset, unary_node<Tokens::Ptr, Data>> {
-        using _first = assemble_ops<Previous, Data>;
+        using _first = assemble_ops<Previous, LocalLabelOffset, Data>;
         using type = hold<typename repack_ptr<ptr<reg64, typename _first::type>>::type>;
-
-        using has_labelref = typename _first::has_labelref;
     };
 
     template <class Previous, class LocalLabelOffset, class RegSz, class Data>
     struct assemble_ops<Previous, LocalLabelOffset, unary_node<Tokens::SizeWord, hold<RegSz, unary_node<Tokens::Ptr, Data>>>> {
-        using _first = assemble_ops<Previous, Data>;
+        using _first = assemble_ops<Previous, LocalLabelOffset, Data>;
         using type = hold<typename repack_ptr<ptr<RegSz, typename _first::type>>::type>;
-
-        using has_labelref = typename _first::has_labelref;
     };
 }
 
@@ -2195,116 +2329,26 @@ namespace {
         using type = hold<processed_instr<P, N>>;
     };
 
-    template<std::size_t Offset, std::size_t LocalLabelOffset, class LabelList>
-    struct operands_context {
-        static constexpr std::size_t offset = Offset;
-        static constexpr std::size_t label_offets = LocalLabelOffset;
-        using label_list = LabelList;
-    };
-
-    template<typename... T>
-    struct find_labeloffset;
-    
-    template<typename Name, class Offset, typename Lname, typename... Data>
-    struct find_labeloffset<Name, hold<label_info<Lname, Offset>, Data...>>{
-        using type = typename find_labeloffset<Name, hold<Data...>>::type;
-    };
-
-    template<typename Name, class Offset, typename... Data>
-    struct find_labeloffset<Name, hold<label_info<Name, Offset>, Data...>>{
-        using type = Offset;
-    };
-
-    template<typename Name>
-    struct find_labeloffset<Name, hold<>>   {
-        using type = std::integral_constant<std::size_t, 0>;
-    };
-
     template<typename... T>
     struct solve_ops;
 
     template<class LabelList, class Name, class Ops, std::size_t N, std::size_t N0>
     struct solve_assembled<LabelList, for_second_phase_instr<instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>, N, N0>> {
-        using args = solve_ops<operands_context<N, N0, LabelList>, Ops>;
+        using args = typename assemble_ops<
+            std::integral_constant<std::size_t, N>,
+            std::integral_constant<std::size_t, N0>, 
+            typename ast_solve<
+                typename map_nodes<Ops, operands_context<N, N0, LabelList>>::type
+            >::type
+        >::type;
         
-        using __local = parse_instr_name<Name, typename args::type>;
+        using __local = parse_instr_name<Name, args>;
 
         static constexpr std::size_t size =
-            N + (typename __local::value) {}.size();
+            N + typename __local::value{}.size();
         using _local = 
             processed_instr<typename __local::value, size>;
         using type = hold<_local>;
-    };
-
-    template <class Context>
-    struct solve_ops<Context, hold<>> {
-        using type = hold<>;
-    };
-
-    template <class Context, class Op, class... Ops>
-    struct solve_ops<Context, hold<Op, Ops...>> {
-        using _first = solve_ops<Context, Op>;
-        using _second = solve_ops<Context, hold<Ops...>>;
-        using type = type_list_append_t<typename _first::type, typename _second::type>;
-    };
-
-    template <class Context, class L, class R>
-    struct solve_ops<Context, node<Tokens::Plus, L, R>> {
-        using _left = typename solve_ops<Context, L>::type;
-        using _right = typename solve_ops<Context, R>::type;
-        using type = type_list_append_t<_left, hold<plus>, _right>;
-    };
-
-    template <class Context, class L, class R>
-    struct solve_ops<Context, node<Tokens::Mul, L, R>> {
-        using _left = typename solve_ops<Context, L>::type;
-        using _right = typename solve_ops<Context, R>::type;
-        using type = type_list_append_t<_left, hold<mul>, _right>;
-    };
-
-    template <class Context, class Data>
-    struct solve_ops<Context,
-        primary_node<Token<Tokens::Identifier, Data>>> {
-        using type = hold<get_reg_t<Data>>;
-    };
-
-    template <class Context, class Data>
-    struct solve_ops<Context, primary_node<Token<Tokens::Number, Data>>> {
-        using type = hold<pack_value<Data::value>>;
-    };
-
-    template <class Context, class Data>
-    struct solve_ops<Context,
-        labelref_node<Token<Tokens::Identifier, Data>>> {
-        using type = hold<pack_value<find_labeloffset<Data, typename Context::label_list>::type::value>>;
-    };
-
-    template<class Context>
-    struct solve_ops<Context, primary_node<Token<Tokens::Dollar, void>>> {
-        using type = hold<pack_value<Context::offset>>;
-    };
-
-    template<class Context>
-    struct solve_ops<Context, primary_node<Token<Tokens::DoubleDollar, void>>> {
-        using type = hold<pack_value<Context::label_offset>>;
-    };
-
-    template <class Context, class RegSz, class Data>
-    struct solve_ops<Context,
-        unary_node<Tokens::SizeWord, hold<RegSz, labelref_node<Token<Tokens::Identifier, Data>>>>> {
-        using type = hold<ux<get_reg_sz<RegSz>::value, find_labeloffset<Data, typename Context::label_list>::type::value>>;
-    };
-
-    template <class Context, class Data>
-    struct solve_ops<Context, unary_node<Tokens::Ptr, Data>> {
-        using _first = solve_ops<Context, Data>;
-        using type = hold<typename repack_ptr<ptr<reg64, typename _first::type>>::type>;
-    };
-
-    template <class Context, class RegSz, class Data>
-    struct solve_ops<Context, unary_node<Tokens::SizeWord, hold<RegSz, unary_node<Tokens::Ptr, Data>>>> {
-        using _first = solve_ops<Context, Data>;
-        using type = hold<typename repack_ptr<ptr<RegSz, typename _first::type>>::type>;
     };
 }
 
