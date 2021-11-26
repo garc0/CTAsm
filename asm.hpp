@@ -3,6 +3,7 @@
 #include <limits>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <functional>
 #include <memory>
 #include <tuple>
@@ -167,6 +168,18 @@ typedef zip<sreg>::with<reg<2>> ss;
 typedef zip<sreg>::with<reg<3>> ds;
 typedef zip<sreg>::with<reg<4>> fs;
 typedef zip<sreg>::with<reg<5>> gs;
+
+typedef zip<dreg>::with<reg<0>> db0;
+typedef zip<dreg>::with<reg<1>> db1;
+typedef zip<dreg>::with<reg<2>> db2;
+typedef zip<dreg>::with<reg<3>> db3;
+typedef zip<dreg>::with<reg<4>> db6;
+typedef zip<dreg>::with<reg<5>> db7;
+
+typedef zip<creg>::with<reg<0>> cr0;
+typedef zip<creg>::with<reg<1>> cr2;
+typedef zip<creg>::with<reg<2>> cr3;
+typedef zip<creg>::with<reg<3>> cr4;
 
 typedef zip<reg8>::with<reg<0>> al;
 typedef zip<reg8>::with<reg<1>> cl;
@@ -848,8 +861,9 @@ namespace {
 }
 //Utils #2
 namespace {
+
     template <uint64_t x, uint64_t y>
-    struct _pow : _pow<x * x, y - 1> {};
+    struct _pow : std::integral_constant<uint64_t, _pow<x, y - 1>::value * x> {};
 
     template <uint64_t x>
     struct _pow<x, 1> : std::integral_constant<uint64_t, x> {};
@@ -1084,6 +1098,13 @@ namespace {
     template <typename T> struct typeDef { using type = T; };
     template <char... S> struct _reg_impl: typeDef<void> {};
 
+    template <> struct _reg_impl<'e', 's'> : typeDef<es> {};
+    template <> struct _reg_impl<'c', 's'> : typeDef<cs> {};
+    template <> struct _reg_impl<'s', 's'> : typeDef<ss> {};
+    template <> struct _reg_impl<'d', 's'> : typeDef<ds> {};
+    template <> struct _reg_impl<'f', 's'> : typeDef<fs> {};
+    template <> struct _reg_impl<'g', 's'> : typeDef<gs> {};
+    
     template <> struct _reg_impl<'a', 'l'> : typeDef<al> {};
     template <> struct _reg_impl<'c', 'l'> : typeDef<cl> {};
     template <> struct _reg_impl<'d', 'l'> : typeDef<dl> {};
@@ -1243,6 +1264,12 @@ namespace {
       DoubleDiv,
       Modulo,
       DoubleModulo,
+      Or,
+      DoubleOr,
+      And,
+      DoubleAnd,
+      Xor,
+      DoubleXor,
       Dollar,
       DoubleDollar,
       Dup,
@@ -1265,8 +1292,14 @@ namespace {
     template <> static constexpr uint8_t TokenPrec<Tokens::Mul> =  2;
     template <> static constexpr uint8_t TokenPrec<Tokens::Div> =  2;
     template <> static constexpr uint8_t TokenPrec<Tokens::Modulo> = 3;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Dup> =  4;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Dot> =  5;
+    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleOr> = 4;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Or> = 5;
+    template <> static constexpr uint8_t TokenPrec<Tokens::And> = 6;
+    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleAnd> = 9;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Xor> = 10;
+    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleXor> = 11;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Dup> =  12;
+    template <> static constexpr uint8_t TokenPrec<Tokens::Dot> = 13;
 
     template <Tokens> static constexpr std::string_view TokenName = "None";
 
@@ -1283,6 +1316,12 @@ namespace {
     template <> static constexpr std::string_view TokenName<Tokens::Minus> = "Minus"; 
     template <> static constexpr std::string_view TokenName<Tokens::Mul> = "Mul"; 
     template <> static constexpr std::string_view TokenName<Tokens::Div> = "Div"; 
+    template <> static constexpr std::string_view TokenName<Tokens::Or> = "Or";
+    template <> static constexpr std::string_view TokenName<Tokens::DoubleOr> = "DoubleOr";
+    template <> static constexpr std::string_view TokenName<Tokens::And> = "And"; 
+    template <> static constexpr std::string_view TokenName<Tokens::DoubleAnd> = "DoubleAnd";
+    template <> static constexpr std::string_view TokenName<Tokens::Xor> = "Xor"; 
+    template <> static constexpr std::string_view TokenName<Tokens::DoubleXor> = "DoubleXor"; 
     template <> static constexpr std::string_view TokenName<Tokens::Modulo> = "Modulo"; 
     template <> static constexpr std::string_view TokenName<Tokens::Dollar> = "Dollar";
     template <> static constexpr std::string_view TokenName<Tokens::DoubleDollar> = "DoubleDollar";
@@ -1417,6 +1456,30 @@ namespace {
     template <std::size_t N, char... Str>
     struct lex<N, 1, char_seq<'$', '$', Str...>>
         : tok_templ<N, Tokens::DoubleDollar, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'|', Str...>>
+        : tok_templ<N, Tokens::Or, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'|', '|', Str...>>
+        : tok_templ<N, Tokens::DoubleOr, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'&', Str...>>
+        : tok_templ<N, Tokens::And, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'&', '&', Str...>>
+        : tok_templ<N, Tokens::DoubleAnd, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'^', Str...>>
+        : tok_templ<N, Tokens::Xor, Str...> {};
+
+    template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'^', '^', Str...>>
+        : tok_templ<N, Tokens::DoubleXor, Str...> {};
 
     template <std::size_t N, char... Str>
     struct lex<N, 1, char_seq<'d', 'u', 'p', Str...>>
@@ -1602,10 +1665,9 @@ namespace {
     };
 
     template <class... Toks>
-    struct parse_unary<
-        hold<Token<Tokens::Dollar, void>, Toks...>> {
-        using type = primary_node<Token<Tokens::Dollar, void>>;
-        using next = hold<Toks...>;
+    struct parse_unary<hold<Token<Tokens::Dollar, void>, Toks...>> {
+      using type = primary_node<Token<Tokens::Dollar, void>>;
+      using next = hold<Toks...>;
     };
 
     template <class... Toks>
@@ -2000,6 +2062,46 @@ namespace {
         primary_node<Token<Tokens::Number, RData>>>> {
         using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value / RData::value>>>;
     };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::Or, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value | RData::value>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::And, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value & RData::value>>>;
+    };
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::Xor, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value ^ RData::value>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::DoubleOr, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value | RData::value>>>;
+    };
+
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::DoubleAnd, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value & RData::value>>>;
+    };
+    template <class LData, class RData>
+    struct ast_solve<
+        node<Tokens::DoubleXor, primary_node<Token<Tokens::Number, LData>>,
+        primary_node<Token<Tokens::Number, RData>>>> {
+        using type = primary_node<Token<Tokens::Number, std::integral_constant<std::size_t, LData::value ^ RData::value>>>;
+    };
 }
 
 template<std::size_t Offset, std::size_t LocalLabelOffset, class LabelList>
@@ -2311,7 +2413,7 @@ namespace {
         using _second = solve_assembled<LabelList, hold<Data...>>;
         using type = type_list_append_t<typename _first::type, typename _second::type>;
     };
-
+        
     template<class LabelList, class Name, std::size_t N>
     struct solve_assembled<LabelList, processed_label<Name, hold<>, N>> {
         using type = hold<processed_label<Name, hold<>>>;
@@ -2349,6 +2451,39 @@ namespace {
         using _local = 
             processed_instr<typename __local::value, size>;
         using type = hold<_local>;
+    };
+}
+
+// collect assembled
+namespace {
+    template<typename T> struct collect_data;
+
+    template <> struct collect_data<hold<>> {
+      using type = std::integer_sequence<uint8_t>;
+    };
+
+    template <class Name>
+    struct collect_data<processed_label<Name, hold<>>> {
+        using type = std::integer_sequence<uint8_t>;
+    };
+    
+    template<class label>
+    struct collect_data<hold<label>> {
+      using type = typename collect_data<label>::type;
+    };
+
+    template<class First, class... Nodes>
+    struct collect_data<hold<First, Nodes...>> {
+        using type = expand_byte_seq_t<typename collect_data<First>::type, typename collect_data<hold<Nodes...>>::type>;
+    };
+
+    template<class Name, class First, class... Nodes>
+    struct collect_data<processed_label<Name, hold<First, Nodes...>>> {
+        using type = expand_byte_seq_t<typename collect_data<First>::type, typename collect_data<hold<Nodes...>>::type>;
+    };
+    template<class Data, std::size_t N>
+    struct collect_data<processed_instr<Data, N>> {
+        using type = Data;
     };
 }
 

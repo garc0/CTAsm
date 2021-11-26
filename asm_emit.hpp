@@ -1394,6 +1394,11 @@ template<uint32_t N>
 struct asm_call<hold<rel32<N>>, bool> { using value = expand_byte_seq_v<byte_seq<0xE8>, typename rel32<N>::value>; };
 //  call X86 [M] 2  [66] FF 
 
+template<uint32_t N>
+struct asm_call<hold<rel64<N>>, bool> { using value = expand_byte_seq_v<byte_seq<0xE8>, typename rel32<N>::value>; };
+//  call X86 [M] 2  [66] FF 
+
+
 template<typename ...T>
 struct asm_call<hold<zip<reg16>::with<T...>>, bool> {
   using value = expand_byte_seq_v<byte_seq<0x66>, typename REX<0, is_ext_v<hold<reg<2>>>, is_ext_v<hold<T...>>, 0>::value, byte_seq<0xFF>, typename modrm<hold<T...>, hold<reg<2>>>::value>;
@@ -7586,7 +7591,10 @@ template <>
 struct asm_monitorx<hold<>, bool> { using value = expand_byte_seq_v<byte_seq<0x0F, 0x01>, byte_seq<0xFA>>; };
 //  mov ANY [MR] r  [] 88 
 template<class T, class Enable = bool> struct asm_mov {};
-
+template <char... str, typename... T>
+struct parse_instr_name<char_seq<'m','o','v', str...>, hold<T...>> {
+    using value = typename asm_mov<hold<T...>>::value;
+};
 template<typename ...T, typename ...Y>
 struct asm_mov<hold<ptr<reg8, T...>, zip<reg8>::with<Y...>>, bool> { 
  using value = expand_byte_seq_v<typename byte_67h<typename mrm<T...>::_67h>::value, typename REX<0, is_ext_v<hold<Y...>>, mrm<T...>::X, mrm<T...>::B>::value, byte_seq<0x88>, mrm_v<hold<Y...>, T...>>;
@@ -7713,10 +7721,33 @@ struct asm_mov<hold<zip<reg64>::with<T...>, ptr<reg64, Y...>>, bool> {
  using value = expand_byte_seq_v<typename byte_67h<typename mrm<Y...>::_67h>::value, typename REX<1, is_ext_v<hold<T...>>, mrm<Y...>::X, mrm<Y...>::B>::value, byte_seq<0x8B>, mrm_v<hold<T...>, Y...>>;
 };
 
-template <char... str, typename... T>
-struct parse_instr_name<char_seq<'m', 'o', 'v', str...>, hold<T...>> {
-  using value = typename asm_mov<hold<T...>>::value;
+//  mov ANY [RM] r  [66] 8E 
+
+template<typename ...T, typename ...Y>
+struct asm_mov<hold<zip<sreg>::with<T...>, zip<reg16>::with<Y...>>, bool> {
+  using value = expand_byte_seq_v<byte_seq<0x66>, typename REX<0, is_ext_v<hold<T...>>, is_ext_v<hold<Y...>>, 0>::value, byte_seq<0x8E>, typename modrm<hold<Y...>, hold<T...>>::value>;
 };
+
+template<typename ...T, typename ...Y>
+struct asm_mov<hold<zip<sreg>::with<T...>, ptr<reg16, Y...>>, bool> { 
+ using value = expand_byte_seq_v<typename byte_67h<typename mrm<Y...>::_67h>::value, byte_seq<0x66>, typename REX<0, is_ext_v<hold<T...>>, mrm<Y...>::X, mrm<Y...>::B>::value, byte_seq<0x8E>, mrm_v<hold<T...>, Y...>>;
+};
+
+//  mov ANY [RM] r  [] 8E 
+
+template<typename ...T, typename ...Y>
+struct asm_mov<hold<zip<sreg>::with<T...>, zip<reg32>::with<Y...>>, bool> {
+  using value = expand_byte_seq_v<typename REX<0, is_ext_v<hold<T...>>, is_ext_v<hold<Y...>>, 0>::value, byte_seq<0x8E>, typename modrm<hold<Y...>, hold<T...>>::value>;
+};
+
+
+//  mov X64 [RM] r  [] 8E 
+
+template<typename ...T, typename ...Y>
+struct asm_mov<hold<zip<sreg>::with<T...>, zip<reg64>::with<Y...>>, bool> {
+  using value = expand_byte_seq_v<typename REX<1, is_ext_v<hold<T...>>, is_ext_v<hold<Y...>>, 0>::value, byte_seq<0x8E>, typename modrm<hold<Y...>, hold<T...>>::value>;
+};
+
 
 //  movapd ANY [RM] r  [66] 28 
 template<class T, class Enable = bool> struct asm_movapd {};
@@ -16095,6 +16126,8 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'t','i','l','e','r','e','l','e','a','s','e', str...>, hold<T...>> {
     using value = typename asm_tilerelease<hold<T...>>::value;
 };
+template <> struct asm_tilerelease<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, disp8<0>, disp8<0>, disp8<2>, disp8<0>, hold<reg<0>>, disp16<128>, disp8<0>>::value, byte_seq<0x49>>; };
+//  tilestored X64 [MR] r  [F3] 4B 
 template<class T, class Enable = bool> struct asm_tilestored {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'t','i','l','e','s','t','o','r','e','d', str...>, hold<T...>> {
@@ -27084,13 +27117,14 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','z','e','r','o','a','l','l', str...>, hold<T...>> {
     using value = typename asm_vzeroall<hold<T...>>::value;
 };
-
+template <> struct asm_vzeroall<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, hold<reg<0>>, disp16<256>, disp8<0>>::value, byte_seq<0x77>>; };
 //  vzeroupper ANY [NONE]   [] 77 
 template<class T, class Enable = bool> struct asm_vzeroupper {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','z','e','r','o','u','p','p','e','r', str...>, hold<T...>> {
     using value = typename asm_vzeroupper<hold<T...>>::value;
 };
+template <> struct asm_vzeroupper<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, hold<reg<0>>, disp16<128>, disp8<0>>::value, byte_seq<0x77>>; };
 //  wait ANY [NONE]   [] 9B 
 template<class T, class Enable = bool> struct asm_wait {};
 template <char... str, typename... T>
