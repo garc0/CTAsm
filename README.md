@@ -1,6 +1,5 @@
-----
+
 # CTAsm -- Compile Time Assembler for C++ (WIP)
-----
 #### Supported compilers
 * Clang (std 14-- last)
 * GCC (std 14 -- last) 
