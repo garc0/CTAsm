@@ -3356,8 +3356,16 @@ template <std::size_t N, const char (&Input)[N]>
 using make_char_sequence = typename make_char_sequence_impl<
     N, Input, std::make_index_sequence<N>>::type;
 
-#define x86asm(str)                                                   \
-  ([]() {                                                             \
-    static constexpr const char literal[] = (str);                    \
-    return parse_asm_v<make_char_sequence<sizeof(literal), literal>>; \
+#define ctasm(_str)                                                  \
+  ([]{                                                             \
+    static constexpr const char literal[] = (_str);                  \
+    using c_seq = make_char_sequence<sizeof(literal), literal>;      \
+    using toks = typename lex<0, c_seq{}.size(), c_seq>::type;         \
+    using ast = typename parse_global<toks>::type;                   \
+    using first_phase = assemble<std::integral_constant<std::size_t, 0>, \
+                                    std::integral_constant<std::size_t, 0>, ast>; \
+    using assembled = solve_assembled<typename first_phase::label_list, \
+                                      typename first_phase::type>::type; \
+    using raw_out = collect_data<assembled>::type; \
+    return seq_to_arr<raw_out>::value ; \
   }())
