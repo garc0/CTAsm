@@ -13387,16 +13387,17 @@ template <>
 struct asm_rdtscp<hold<>, bool> { using value = expand_byte_seq_v<byte_seq<0x0F, 0x01>, byte_seq<0xF9>>; };
 //  ret ANY [NONE]   [] C3 
 template<class T, class Enable = bool> struct asm_ret {};
-template <char... str, typename... T>
-struct parse_instr_name<char_seq<'r','e','t', str...>, hold<T...>> {
-    using value = typename asm_ret<hold<T...>>::value;
-};
+
 template <> struct asm_ret<hold<>, bool> { using value = expand_byte_seq_v<byte_seq<0xC3>>; };
 //  ret ANY [I]   [] C2 
 
 template <class T> 
 struct asm_ret<hold<T>, typename u16_8<T>::type> {
   using value = expand_byte_seq_v<byte_seq<0xC2>, typename u16_8<T>::value>;
+};
+template <char... str, typename... T>
+struct parse_instr_name<char_seq<'r','e','t', str...>, hold<T...>> {
+    using value = typename asm_ret<hold<T...>>::value;
 };
 //  retf ANY [NONE]   [] CB 
 template<class T, class Enable = bool> struct asm_retf {};
@@ -16125,9 +16126,7 @@ template<class T, class Enable = bool> struct asm_tilerelease {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'t','i','l','e','r','e','l','e','a','s','e', str...>, hold<T...>> {
     using value = typename asm_tilerelease<hold<T...>>::value;
-};
-template <> struct asm_tilerelease<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, disp8<0>, disp8<0>, disp8<2>, disp8<0>, hold<reg<0>>, disp16<128>, disp8<0>>::value, byte_seq<0x49>>; };
-//  tilestored X64 [MR] r  [F3] 4B 
+};//  tilestored X64 [MR] r  [F3] 4B 
 template<class T, class Enable = bool> struct asm_tilestored {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'t','i','l','e','s','t','o','r','e','d', str...>, hold<T...>> {
@@ -27117,14 +27116,12 @@ template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','z','e','r','o','a','l','l', str...>, hold<T...>> {
     using value = typename asm_vzeroall<hold<T...>>::value;
 };
-template <> struct asm_vzeroall<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, hold<reg<0>>, disp16<256>, disp8<0>>::value, byte_seq<0x77>>; };
 //  vzeroupper ANY [NONE]   [] 77 
 template<class T, class Enable = bool> struct asm_vzeroupper {};
 template <char... str, typename... T>
 struct parse_instr_name<char_seq<'v','z','e','r','o','u','p','p','e','r', str...>, hold<T...>> {
     using value = typename asm_vzeroupper<hold<T...>>::value;
 };
-template <> struct asm_vzeroupper<hold<>, bool> { using value = expand_byte_seq_v<typename VEX<disp8<0>, hold<reg<0>>, disp16<128>, disp8<0>>::value, byte_seq<0x77>>; };
 //  wait ANY [NONE]   [] 9B 
 template<class T, class Enable = bool> struct asm_wait {};
 template <char... str, typename... T>

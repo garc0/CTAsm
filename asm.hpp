@@ -376,7 +376,9 @@ struct u32_8<T, std::enable_if_t<sizeof(unpack_value<T>::value) <= 4, bool>> {
 };
 
 template <typename Ty, class Enable = bool>
-struct u16_8{};
+struct u16_8{
+  using type = void;
+};
 
 template <class T>
 struct u16_8<T, std::enable_if_t<sizeof(unpack_value<T>::value) <= 2, bool>> {
@@ -1285,51 +1287,52 @@ namespace {
         using data = Y;
     };
 
+    
     template <Tokens>  static constexpr uint8_t TokenPrec =  0;
 
-    template <> static constexpr uint8_t TokenPrec<Tokens::Plus> = 1;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Minus> =  1;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Mul> =  2;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Div> =  2;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Modulo> = 3;
-    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleOr> = 4;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Or> = 5;
-    template <> static constexpr uint8_t TokenPrec<Tokens::And> = 6;
-    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleAnd> = 9;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Xor> = 10;
-    template <> static constexpr uint8_t TokenPrec<Tokens::DoubleXor> = 11;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Dup> =  12;
-    template <> static constexpr uint8_t TokenPrec<Tokens::Dot> = 13;
+    template <> constexpr uint8_t TokenPrec<Tokens::Plus> = 1;
+    template <> constexpr uint8_t TokenPrec<Tokens::Minus> =  1;
+    template <> constexpr uint8_t TokenPrec<Tokens::Mul> =  2;
+    template <> constexpr uint8_t TokenPrec<Tokens::Div> =  2;
+    template <> constexpr uint8_t TokenPrec<Tokens::Modulo> = 3;
+    template <> constexpr uint8_t TokenPrec<Tokens::DoubleOr> = 4;
+    template <> constexpr uint8_t TokenPrec<Tokens::Or> = 5;
+    template <> constexpr uint8_t TokenPrec<Tokens::And> = 6;
+    template <> constexpr uint8_t TokenPrec<Tokens::DoubleAnd> = 9;
+    template <> constexpr uint8_t TokenPrec<Tokens::Xor> = 10;
+    template <> constexpr uint8_t TokenPrec<Tokens::DoubleXor> = 11;
+    template <> constexpr uint8_t TokenPrec<Tokens::Dup> =  12;
+    template <> constexpr uint8_t TokenPrec<Tokens::Dot> = 13;
 
     template <Tokens> static constexpr std::string_view TokenName = "None";
 
-    template <> static constexpr std::string_view TokenName<Tokens::BaseId> = "BaseId"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Identifier> = "Identifier"; 
-    template <> static constexpr std::string_view TokenName<Tokens::SizeWord> = "SizeWord"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Number> = "Number"; 
-    template <> static constexpr std::string_view TokenName<Tokens::LeftParen> = "LeftParen"; 
-    template <> static constexpr std::string_view TokenName<Tokens::RightParen> = "RightParen"; 
-    template <> static constexpr std::string_view TokenName<Tokens::LeftSquare> = "LeftSquare"; 
-    template <> static constexpr std::string_view TokenName<Tokens::RightSquare> = "RightSquare"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Ptr> = "Ptr"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Plus> = "Plus"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Minus> = "Minus"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Mul> = "Mul"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Div> = "Div"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Or> = "Or";
-    template <> static constexpr std::string_view TokenName<Tokens::DoubleOr> = "DoubleOr";
-    template <> static constexpr std::string_view TokenName<Tokens::And> = "And"; 
-    template <> static constexpr std::string_view TokenName<Tokens::DoubleAnd> = "DoubleAnd";
-    template <> static constexpr std::string_view TokenName<Tokens::Xor> = "Xor"; 
-    template <> static constexpr std::string_view TokenName<Tokens::DoubleXor> = "DoubleXor"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Modulo> = "Modulo"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Dollar> = "Dollar";
-    template <> static constexpr std::string_view TokenName<Tokens::DoubleDollar> = "DoubleDollar";
-    template <> static constexpr std::string_view TokenName<Tokens::Dup> = "Dup";
-    template <> static constexpr std::string_view TokenName<Tokens::Dot> = "Dot"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Colon> = "Colon"; 
-    template <> static constexpr std::string_view TokenName<Tokens::Comma> = "Comma"; 
-    template <> static constexpr std::string_view TokenName<Tokens::End> = "End"; 
+    template <> constexpr std::string_view TokenName<Tokens::BaseId> = "BaseId"; 
+    template <> constexpr std::string_view TokenName<Tokens::Identifier> = "Identifier"; 
+    template <> constexpr std::string_view TokenName<Tokens::SizeWord> = "SizeWord"; 
+    template <> constexpr std::string_view TokenName<Tokens::Number> = "Number"; 
+    template <> constexpr std::string_view TokenName<Tokens::LeftParen> = "LeftParen"; 
+    template <> constexpr std::string_view TokenName<Tokens::RightParen> = "RightParen"; 
+    template <> constexpr std::string_view TokenName<Tokens::LeftSquare> = "LeftSquare"; 
+    template <> constexpr std::string_view TokenName<Tokens::RightSquare> = "RightSquare"; 
+    template <> constexpr std::string_view TokenName<Tokens::Ptr> = "Ptr"; 
+    template <> constexpr std::string_view TokenName<Tokens::Plus> = "Plus"; 
+    template <> constexpr std::string_view TokenName<Tokens::Minus> = "Minus"; 
+    template <> constexpr std::string_view TokenName<Tokens::Mul> = "Mul"; 
+    template <> constexpr std::string_view TokenName<Tokens::Div> = "Div"; 
+    template <> constexpr std::string_view TokenName<Tokens::Or> = "Or";
+    template <> constexpr std::string_view TokenName<Tokens::DoubleOr> = "DoubleOr";
+    template <> constexpr std::string_view TokenName<Tokens::And> = "And"; 
+    template <> constexpr std::string_view TokenName<Tokens::DoubleAnd> = "DoubleAnd";
+    template <> constexpr std::string_view TokenName<Tokens::Xor> = "Xor"; 
+    template <> constexpr std::string_view TokenName<Tokens::DoubleXor> = "DoubleXor"; 
+    template <> constexpr std::string_view TokenName<Tokens::Modulo> = "Modulo"; 
+    template <> constexpr std::string_view TokenName<Tokens::Dollar> = "Dollar";
+    template <> constexpr std::string_view TokenName<Tokens::DoubleDollar> = "DoubleDollar";
+    template <> constexpr std::string_view TokenName<Tokens::Dup> = "Dup";
+    template <> constexpr std::string_view TokenName<Tokens::Dot> = "Dot"; 
+    template <> constexpr std::string_view TokenName<Tokens::Colon> = "Colon"; 
+    template <> constexpr std::string_view TokenName<Tokens::Comma> = "Comma"; 
+    template <> constexpr std::string_view TokenName<Tokens::End> = "End"; 
 
     template <std::size_t N, std::size_t K, typename... T>
     struct lex {};
@@ -1684,6 +1687,12 @@ namespace {
         using next = typename expr::next;
     };  
 
+    template<>
+    struct parse_unary<hold<>>{
+      using type = hold<>;
+      using next = hold<>;
+    };
+
     template<std::size_t ExprPrec, typename... T>
     struct parse_binOp;
 
@@ -1862,7 +1871,16 @@ namespace {
     };
 
     template <>
-    struct parse_instructions<1, hold<Token<Tokens::End, void>>>: parse_instructions<1, hold<>>{};
+    struct parse_instructions<1, hold<>>{
+      using next = hold<>;
+      using type = hold<>;
+    };
+
+    template <>
+    struct parse_instructions<1, hold<Token<Tokens::End, void>>>{
+      using next = hold<>;
+      using type = hold<>;
+    };
 
     template <std::size_t N, class Data, class... Toks>
     struct parse_instructions<N, hold<Token<Tokens::Identifier, Data>,
@@ -1880,6 +1898,18 @@ namespace {
       using type = hold<>;
     };
 
+    template <std::size_t N, class... Toks>
+    struct parse_instructions<N, hold<Toks...>> {
+        using _first_part = parse_instructions<N / 2, hold<Toks...>>;
+        using _second_part = parse_instructions<N / 2, typename _first_part::next>;
+        using _next = typename _second_part::next;
+
+        using _fin_part = parse_instructions<N*4, _next>;
+
+        using next = typename _fin_part::next;
+        using type = type_list_append_t<typename _first_part::type, typename _second_part::type, typename _fin_part::type>;
+    };
+
     template <class... Toks>
     struct parse_instructions<1, hold<Toks...>> {
       using _local = parse_instruction<hold<Toks...>>;
@@ -1892,18 +1922,6 @@ namespace {
       using _local = parse_instruction<hold<Toks...>>;
       using next = typename _local::next;
       using type = hold<typename _local::type>;
-    };
-
-    template <std::size_t N, class... Toks>
-    struct parse_instructions<N, hold<Toks...>> {
-        using _first_part = parse_instructions<N / 2, hold<Toks...>>;
-        using _second_part = parse_instructions<N / 2, typename _first_part::next>;
-        using _next = typename _second_part::next;
-
-        using _fin_part = parse_instructions<N*4, _next>;
-
-        using next = typename _fin_part::next;
-        using type = type_list_append_t<typename _first_part::type, typename _second_part::type, typename _fin_part::type>;
     };
 
     template <std::size_t Prefix, class... Toks>
