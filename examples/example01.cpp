@@ -1,12 +1,15 @@
 #include <iostream>
-#include <asm_emit.hpp>
-#include <asm.hpp>
+#include <ctasm.hpp>
 
 int main() {
-  auto bytes = ctasm(
-                    "label1:"
-                    "push rcx;"
-                    "ret 0;");
+ auto bytes = ctasm(
+        "example: "
+        "movdqu  xmm0, zword ptr [rdi];" 
+        "paddd   xmm0, zword ptr [rsi];" 
+        "movups  zword ptr [rdi], xmm0;"
+        "ret 0;"
+    );
+
   for (auto &i : bytes)
     std::cout << std::hex << (int)i << ' ';
   std::cout << '\n';

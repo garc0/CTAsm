@@ -5,6 +5,7 @@ include(CTest)
 enable_testing()
 
 add_subdirectory("zydis")
+add_subdirectory("include")
 
 add_executable(ctasm headonlyx86asm.cpp)
 

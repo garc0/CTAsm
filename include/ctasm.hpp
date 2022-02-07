@@ -1,3 +1,6 @@
+#ifndef CTASM_HPP
+#define CTASM_HPP
+
 #pragma once
 
 #include <limits>
@@ -12,6 +15,9 @@
 #include <array>
 #include <algorithm>
 #include <string_view>
+
+namespace ctasm
+{
 
 template <uint8_t... chars> using byte_seq = std::integer_sequence<uint8_t, chars...>;
 template <char...  chars> using char_seq = std::integer_sequence<char,  chars...>;
@@ -254,6 +260,8 @@ typedef zip<reg64>::with<reg<6>> rsi;
 typedef zip<reg64>::with<reg<7>> rdi;
 typedef zip<reg64>::with<reg<4>> rsp;
 typedef zip<reg64>::with<reg<5>> rbp;
+
+typedef zip<reg64>::with<reg<5>> rip;
 
 typedef zip<reg64>::with<reg<0>, ext> r8;
 typedef zip<reg64>::with<reg<1>, ext> r9;
@@ -715,11 +723,14 @@ template<typename ...T>
 using extract_head_v = typename extract_head<T...>::value;
 
 template <typename T>
-using is_67h_needed = 
+using _is_67h_needed = 
         typename std::conditional_t<std::is_same<T, reg32>::value, std::is_same<regs_bit, reg64>,
         typename std::conditional_t<std::is_same<T, reg16>::value, std::is_same<regs_bit, reg32>,
         typename std::conditional_t<std::is_same<T, reg8>::value,  std::is_same<regs_bit, reg16>,
                        std::false_type>>>::type;
+
+template <typename T>
+using is_67h_needed = std::conditional_t<std::is_same<_is_67h_needed<T>, std::false_type>::value, std::integer_sequence<uint8_t>, byte_seq<0x67>>;
 
 template <class Y>
 struct mrm<Y> {
@@ -806,16 +817,6 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp32<D>> {
 template<typename Y, typename ...T>
 using mrm_v = typename mrm<T...>::template value<Y>;
 
-template<typename>
-struct byte_67h {
-  using value = std::integer_sequence<uint8_t>;
-};
-
-template <>
-struct byte_67h<std::true_type> {
-  using value = byte_seq<0x67>;
-};
-
 //Utils
 namespace {
     template <char first_letter, char... chars>
@@ -828,38 +829,6 @@ namespace {
       static constexpr auto value = first_letter;
     };
 
-    template <typename... T>
-    struct get_elem {
-      static constexpr char value = 0;
-    };
-    template <char f, char... chars>
-    struct get_elem<char_seq<f, chars...>> {
-      static constexpr char value = f;
-    };
-
-    namespace {
-        template <char a, char... b>
-        struct _slice_ {
-          using value = std::integer_sequence<char, b...>;
-        };
-        template <std::size_t N, typename T>
-        struct _first_elements {};
-
-        template <std::size_t end, char... chars>
-        struct _first_elements<end, std::integer_sequence<char, chars...>> {
-          using value =
-              typename _first_elements<end - 1,
-                                       typename _slice_<chars...>::value>::value;
-        };
-
-        template <char... chars>
-        struct _first_elements<0, std::integer_sequence<char, chars...>> {
-          using value = typename std::integer_sequence<char, chars...>;
-        };
-
-        template <std::size_t end, char... chars>
-        struct slice : _first_elements<end, std::integer_sequence<char, chars...>> {};
-    }  // namespace
 }
 //Utils #2
 namespace {
@@ -1178,6 +1147,8 @@ namespace {
     template <> struct _reg_impl<'r', 'd', 'i'> : typeDef<rdi> {};
     template <> struct _reg_impl<'r', 's', 'p'> : typeDef<rsp> {};
     template <> struct _reg_impl<'r', 'b', 'p'> : typeDef<rbp> {};
+    
+    template <> struct _reg_impl<'r', 'i', 'p'> : typeDef<rip> {};
 
     template <> struct _reg_impl<'r', '8'>      : typeDef<r8> {};
     template <> struct _reg_impl<'r', '9'>      : typeDef<r9> {};
@@ -2504,467 +2475,16 @@ namespace {
         using type = Data;
     };
 }
+template<uint64_t N>
+struct make_null_seq {
+  using value = expand_byte_seq_v<byte_seq<0x00>, typename make_null_seq<N - 1>::value>;
+};
+
+template <>
+struct make_null_seq<0> {
+  using value = std::integer_sequence<uint8_t>;
+};
 
-namespace {
-          template<uint64_t N>
-          struct make_null_seq {
-            using value = expand_byte_seq_v<byte_seq<0x00>, typename make_null_seq<N - 1>::value>;
-          };
-
-          template <>
-          struct make_null_seq<0> {
-            using value = std::integer_sequence<uint8_t>;
-          };
-
-          template<typename> struct char_seq_to_v: std::integral_constant<std::size_t, 0>{};
-
-          template<char First, char... Chars> 
-          struct char_seq_to_v<char_seq<First, Chars...>>:
-            std::integral_constant<std::size_t, ((std::uint64_t)First << (8 * sizeof...(Chars))) + char_seq_to_v<char_seq<Chars...>>::value>{};
-
-          template<> 
-          struct char_seq_to_v<char_seq<>>:
-            std::integral_constant<std::size_t,  0>{};
-
-          template<typename, typename>
-          struct _parse_str_impl{};
-
-          template<char ...Acc, char First, char ...Chars>
-          struct _parse_str_impl<char_seq<Acc...>, char_seq<First, Chars...>>{
-            using type = typename _parse_str_impl<char_seq<Acc..., First>, char_seq<Chars...>>::type;
-          };
-
-          template<char ...Acc, char ...Chars>
-          struct _parse_str_impl<char_seq<Acc...>, char_seq<'\'', Chars...>>{
-            using type = char_seq<Acc...>;
-          };
-          
-          template<typename>
-          struct parse_str {};
-          
-          template<char ...Chars>
-          struct parse_str<char_seq<Chars...>>{
-            using content = typename _parse_str_impl<char_seq<>, char_seq<Chars...>>::type;
-            using type =  std::conditional_t<content{}.size() == 0, ub<0x00>,
-                          std::conditional_t<content{}.size() == 1, ub<static_cast<uint8_t >(char_seq_to_v<content>::value)>,
-                          std::conditional_t<content{}.size() == 2, uw<static_cast<uint16_t>(char_seq_to_v<content>::value)>,
-                          std::conditional_t<content{}.size() <= 4, ud<static_cast<uint32_t>(char_seq_to_v<content>::value)>,
-                          std::conditional_t<content{}.size() <= 8, uq<static_cast<uint64_t>(char_seq_to_v<content>::value)>, 
-                          void>>>>>;
-          };
-
-          template<typename T>
-          using parse_str_t = typename parse_str<T>::type;
-
-          template <typename T> struct rec_reg { using type = void; };
-
-          template <> struct rec_reg<char_seq<'a', 'l'>> { using type = al; };
-          template <> struct rec_reg<char_seq<'c', 'l'>> { using type = cl; };
-          template <> struct rec_reg<char_seq<'d', 'l'>> { using type = dl; };
-          template <> struct rec_reg<char_seq<'b', 'l'>> { using type = bl; };
-          template <> struct rec_reg<char_seq<'a', 'h'>> { using type = ah; };
-          template <> struct rec_reg<char_seq<'c', 'h'>> { using type = ch; };
-          template <> struct rec_reg<char_seq<'d', 'h'>> { using type = dh; };
-          template <> struct rec_reg<char_seq<'b', 'h'>> { using type = bh; };
-          
-          template <> struct rec_reg<char_seq<'r', '8', 'l'>>      { using type = r8l;  };
-          template <> struct rec_reg<char_seq<'r', '9', 'l'>>      { using type = r9l;  };
-          template <> struct rec_reg<char_seq<'r', '1', '0', 'l'>> { using type = r10l; };
-          template <> struct rec_reg<char_seq<'r', '1', '1', 'l'>> { using type = r11l; };
-          template <> struct rec_reg<char_seq<'r', '1', '2', 'l'>> { using type = r12l; };
-          template <> struct rec_reg<char_seq<'r', '1', '3', 'l'>> { using type = r13l; };
-          template <> struct rec_reg<char_seq<'r', '1', '4', 'l'>> { using type = r14l; };
-          template <> struct rec_reg<char_seq<'r', '1', '5', 'l'>> { using type = r15l; };
-
-          template <> struct rec_reg<char_seq<'a', 'x'>> { using type = ax; };
-          template <> struct rec_reg<char_seq<'b', 'x'>> { using type = bx; };
-          template <> struct rec_reg<char_seq<'c', 'x'>> { using type = cx; };
-          template <> struct rec_reg<char_seq<'d', 'x'>> { using type = dx; };
-          template <> struct rec_reg<char_seq<'s', 'i'>> { using type = si; };
-          template <> struct rec_reg<char_seq<'d', 'i'>> { using type = di; };
-          template <> struct rec_reg<char_seq<'s', 'p'>> { using type = sp; };
-          template <> struct rec_reg<char_seq<'b', 'p'>> { using type = bp; };
-
-          template <> struct rec_reg<char_seq<'r', '8', 'w'>>      { using type = r8w;  };
-          template <> struct rec_reg<char_seq<'r', '9', 'w'>>      { using type = r9w;  };
-          template <> struct rec_reg<char_seq<'r', '1', '0', 'w'>> { using type = r10w; };
-          template <> struct rec_reg<char_seq<'r', '1', '1', 'w'>> { using type = r11w; };
-          template <> struct rec_reg<char_seq<'r', '1', '2', 'w'>> { using type = r12w; };
-          template <> struct rec_reg<char_seq<'r', '1', '3', 'w'>> { using type = r13w; };
-          template <> struct rec_reg<char_seq<'r', '1', '4', 'w'>> { using type = r14w; };
-          template <> struct rec_reg<char_seq<'r', '1', '5', 'w'>> { using type = r15w; };
-
-          template <> struct rec_reg<char_seq<'e', 'a', 'x'>> { using type = eax; };
-          template <> struct rec_reg<char_seq<'e', 'b', 'x'>> { using type = ebx; };
-          template <> struct rec_reg<char_seq<'e', 'c', 'x'>> { using type = ecx; };
-          template <> struct rec_reg<char_seq<'e', 'd', 'x'>> { using type = edx; };
-          template <> struct rec_reg<char_seq<'e', 's', 'i'>> { using type = esi; };
-          template <> struct rec_reg<char_seq<'e', 'd', 'i'>> { using type = edi; };
-          template <> struct rec_reg<char_seq<'e', 's', 'p'>> { using type = esp; };
-          template <> struct rec_reg<char_seq<'e', 'b', 'p'>> { using type = ebp; };
-
-          template <> struct rec_reg<char_seq<'z', 'a', 'x'>> { using type = zax; };
-          template <> struct rec_reg<char_seq<'z', 'b', 'x'>> { using type = zbx; };
-          template <> struct rec_reg<char_seq<'z', 'c', 'x'>> { using type = zcx; };
-          template <> struct rec_reg<char_seq<'z', 'd', 'x'>> { using type = zdx; };
-          template <> struct rec_reg<char_seq<'z', 's', 'i'>> { using type = zsi; };
-          template <> struct rec_reg<char_seq<'z', 'd', 'i'>> { using type = zdi; };
-          template <> struct rec_reg<char_seq<'z', 's', 'p'>> { using type = zsp; };
-          template <> struct rec_reg<char_seq<'z', 'b', 'p'>> { using type = zbp; };
-
-          template <> struct rec_reg<char_seq<'r', '8', 'd'>>      { using type = r8d;  };
-          template <> struct rec_reg<char_seq<'r', '9', 'd'>>      { using type = r9d;  };
-          template <> struct rec_reg<char_seq<'r', '1', '0', 'd'>> { using type = r10d; };
-          template <> struct rec_reg<char_seq<'r', '1', '1', 'd'>> { using type = r11d; };
-          template <> struct rec_reg<char_seq<'r', '1', '2', 'd'>> { using type = r12d; };
-          template <> struct rec_reg<char_seq<'r', '1', '3', 'd'>> { using type = r13d; };
-          template <> struct rec_reg<char_seq<'r', '1', '4', 'd'>> { using type = r14d; };
-          template <> struct rec_reg<char_seq<'r', '1', '5', 'd'>> { using type = r15d; };
-
-          template <> struct rec_reg<char_seq<'r', 'a', 'x'>> { using type = rax; };
-          template <> struct rec_reg<char_seq<'r', 'b', 'x'>> { using type = rbx; };
-          template <> struct rec_reg<char_seq<'r', 'c', 'x'>> { using type = rcx; };
-          template <> struct rec_reg<char_seq<'r', 'd', 'x'>> { using type = rdx; };
-          template <> struct rec_reg<char_seq<'r', 's', 'i'>> { using type = rsi; };
-          template <> struct rec_reg<char_seq<'r', 'd', 'i'>> { using type = rdi; };
-          template <> struct rec_reg<char_seq<'r', 's', 'p'>> { using type = rsp; };
-          template <> struct rec_reg<char_seq<'r', 'b', 'p'>> { using type = rbp; };
-
-          template <> struct rec_reg<char_seq<'r', '8'>>      { using type = r8;  };
-          template <> struct rec_reg<char_seq<'r', '9'>>      { using type = r9;  };
-          template <> struct rec_reg<char_seq<'r', '1', '0'>> { using type = r10; };
-          template <> struct rec_reg<char_seq<'r', '1', '1'>> { using type = r11; };
-          template <> struct rec_reg<char_seq<'r', '1', '2'>> { using type = r12; };
-          template <> struct rec_reg<char_seq<'r', '1', '3'>> { using type = r13; };
-          template <> struct rec_reg<char_seq<'r', '1', '4'>> { using type = r14; };
-          template <> struct rec_reg<char_seq<'r', '1', '5'>> { using type = r15; };
-
-          template <char... chars> struct rec_reg<char_seq<'s', 't', chars...>> {
-            using type = st<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-          template <char... chars> struct rec_reg<char_seq<'m', 'm', chars...>> {
-            using type = mm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-          template <char... chars> struct rec_reg<char_seq<'x', 'm', 'm', chars...>> {
-            using type = xmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-          template <char... chars> struct rec_reg<char_seq<'y', 'm', 'm', chars...>> {
-            using type = ymm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-          template <char... chars> struct rec_reg<char_seq<'z', 'm', 'm', chars...>> {
-            using type = zmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-
-          template <char... chars> struct rec_reg<char_seq<'t', 'm', 'm', chars...>> {
-            using type = tmm<static_cast<uint8_t>(parse_num<char_seq<chars...>>::value)>;
-          };
-
-          template<typename T>
-          using rec_reg_t = typename rec_reg<T>::type;
-
-          template<typename...>
-          struct parse_reg_or_num {};
-
-          template <class ...T, typename reg_sz, char... chars>
-          struct parse_reg_or_num<hold<T...>, reg_sz, char_seq<chars...>>{
-              using value = 
-                  typename std::conditional_t<std::is_same<reg_sz, reg8>::value,  ub<uint8_t (parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg16>::value, uw<uint16_t(parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg32>::value, ud<uint32_t(parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg64>::value, uq<uint64_t(parse_num<char_seq<chars...>>::value)>, void
-                  >>>>;
-          };
-
-          template <class ...T, typename reg_sz, char... chars>
-          struct parse_reg_or_num<hold<T...>, reg_sz, char_seq<'-', chars...>>{
-              using value = 
-                  typename std::conditional_t<std::is_same<reg_sz, reg8>::value,  ib<-int8_t (parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg16>::value, iw<-int16_t(parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg32>::value, id<-int32_t(parse_num<char_seq<chars...>>::value)>, 
-                  typename std::conditional_t<std::is_same<reg_sz, reg64>::value, iq<-int64_t(parse_num<char_seq<chars...>>::value)>, void
-                  >>>>;
-          };
-
-          template<typename, typename> struct fucking_struct_impl{};
-          template<typename T, typename Y, uint8_t N> struct fucking_struct_impl<hold<T, ub<N>>, Y>: std::false_type{};
-          template<typename T, uint8_t N> struct fucking_struct_impl<hold<T, ub<N>>, T>: std::true_type{};
-
-          template<typename> struct fucking_unpack{};
-          template<typename T, uint8_t N> struct fucking_unpack<hold<T, ub<N>>>{
-            using value = ub<N>;
-          };
-
-          template<typename, typename> struct fucking_struct{
-            using value = void;
-          };
-
-          template<class T, class ...Y, char ...str>
-          struct fucking_struct<hold<T, Y...>, char_seq<str...>>{
-            using value = 
-              typename std::conditional_t<
-                fucking_struct_impl<T, char_seq<str...>>::value, 
-                  typename fucking_unpack<T>::value, typename fucking_struct<hold<Y...>, char_seq<str...>>::value>;
-          };
-
-          template<class T,  char ...str>
-          struct fucking_struct<hold<T>, char_seq<str...>>{
-            using value = 
-              typename std::conditional_t<
-                fucking_struct_impl<T, char_seq<str...>>::value, typename fucking_unpack<T>::value, void>;
-          };
-
-          template <class ...T, char... chars>
-          struct parse_reg_or_num<hold<T...>, char_seq<chars...>>{
-              using value =  
-                  typename std::conditional_t<!(first_elem<chars...>::value <= '9' && first_elem<chars...>::value >= '0'),
-                  typename std::conditional_t<std::is_same<rec_reg_t<char_seq<chars...>>, void>::value, typename fucking_struct<hold<T...>, char_seq<chars...>>::value , rec_reg_t<char_seq<chars...>>>,
-                                          pack_value<parse_num<char_seq<chars...>>::value>>;
-          };
-
-          template <class ...T, char... chars>
-          struct parse_reg_or_num<hold<T...>, char_seq<'-', chars...>>{
-              using value =  
-                  typename std::conditional_t<!(first_elem<chars...>::value <= '9' && first_elem<chars...>::value >= '0'),
-                                          rec_reg_t<char_seq<chars...>>,
-                                          pack_value<-parse_num<char_seq<chars...>>::value>>;
-          };
-
-          template <class ...T, char... chars>
-          struct parse_reg_or_num<hold<T...>, char_seq<'?', chars...>> {
-            using value = ub<0x00>;
-          };
-
-          template <class ...T, char... chars>
-          struct parse_reg_or_num<hold<T...>, char_seq<'\'', chars...>> {
-            using value = parse_str_t<char_seq<chars...>>;
-          };
-
-
-          template<typename ...T>
-          using parse_reg_or_num_v = typename parse_reg_or_num<T...>::value;
-
-          template <typename... T> struct parse_instr_ptr {};
-        
-          template <class ...T, typename... acc_types, char... acc_str, char... str>
-          struct parse_instr_ptr<hold<T...>, hold<acc_types...>, char_seq<acc_str...>, char_seq<'*', str...>> {
-            using value = typename parse_instr_ptr<hold<T...>, hold<acc_types..., parse_reg_or_num_v<hold<T...>, char_seq<acc_str...>>, mul>, null_sequence<char>, char_seq<str...>>::value;
-          };
-
-          template <class ...T, typename... acc_types, char... acc_str, char... str>
-          struct parse_instr_ptr<hold<T...>, hold<acc_types...>, char_seq<acc_str...>, char_seq<'+', str...>> {
-            using value = typename parse_instr_ptr<hold<T...>, hold<acc_types..., parse_reg_or_num_v<hold<T...>, char_seq<acc_str...>>, plus>, null_sequence<char>, char_seq<str...>>::value;
-          };
-
-          template <class ...T, typename... acc_types, char... acc_str, char... str>
-          struct parse_instr_ptr<hold<T...>, hold<acc_types...>, char_seq<acc_str...>, char_seq<'-', str...>> {
-            using value = typename parse_instr_ptr<hold<T...>, hold<acc_types..., parse_reg_or_num_v<hold<T...>, char_seq<acc_str...>>, plus>, char_seq<'-'>, char_seq<str...>>::value;
-          };
-
-          template <class ...T, typename... acc_types, char... acc_str, char f_symb, char... str>
-          struct parse_instr_ptr<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                char_seq<f_symb, str...>> {
-            using value = typename parse_instr_ptr<hold<T...>, hold<acc_types...>,char_seq<acc_str..., f_symb>, char_seq<str...>>::value;
-          };
-
-          template <class ...T, typename... acc_types, char... acc_str, char... str>
-          struct parse_instr_ptr<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                char_seq<']', str...>> {
-            using value = ptr<acc_types..., parse_reg_or_num_v<hold<T...>, char_seq<acc_str...>>>;
-          };
-
-      } // namespace
-
-namespace {
-      template <typename... T> struct parse_instr_operand {
-          using value = void;  
-      };
-
-      template <class ...T, char... str> 
-      struct parse_instr_operand<hold<T...>, char_seq<'[', str...>> {
-          using value =
-              typename parse_instr_ptr<hold<T...>, hold<>, null_sequence<char>,
-                                      char_seq<str...>>::value;
-      };
-
-      template <class ...T, typename reg_sz, char... str> 
-      struct parse_instr_operand<hold<T...>, reg_sz, char_seq<'[', str...>> {
-          using value =
-              typename parse_instr_ptr<hold<T...>, hold<reg_sz>, null_sequence<char>,
-                                      char_seq<str...>>::value;
-      };
-
-      template <class ...T, typename reg_sz, char... str>
-      struct parse_instr_operand<hold<T...>, reg_sz, char_seq<'p', 't', 'r', '[', str...>> {
-        using value = typename parse_instr_ptr<hold<T...>, hold<reg_sz>, null_sequence<char>,
-                                              char_seq<str...>>::value;
-      };
-
-      template <class ...T,char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'b', 'y', 't', 'e', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg8, char_seq<str...>>::value;
-      };
-
-      template <class ...T,char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg16, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'d', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg32, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'q', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg64, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'o', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg128, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'y', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg256, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'z', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg512, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str>
-      struct parse_instr_operand<hold<T...>, char_seq<'t', 'w', 'o', 'r', 'd', str...>> {
-        using value = typename parse_instr_operand<hold<T...>, reg80, char_seq<str...>>::value;
-      };
-
-      template <class ...T, char... str> 
-      struct parse_instr_operand<hold<T...>, char_seq<str...>> {
-          using value = parse_reg_or_num_v<hold<T...>, char_seq<str...>>;
-      };
-
-      template <class ...T, typename reg_sz, char... str>
-      struct parse_instr_operand<hold<T...>, reg_sz, char_seq<str...>> {
-          using value = parse_reg_or_num_v<hold<T...>, reg_sz, char_seq<str...>>;
-      };
-
-      template <typename... T> struct parse_instr_operands { using value = void; };
-
-      template <class ...T, typename... acc_types, char... acc_str, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                  char_seq<str...>> {
-          using value = typename parse_instr_operands<
-              hold<T...>, hold<acc_types...>, char_seq<acc_str..., first_elem<str...>::value>,
-              typename _slice_<str...>::value>::value;
-      };
-
-      template <class ...T, typename... acc_types, char... acc_str, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                  char_seq<',', str...>> {
-          using value = typename parse_instr_operands<
-               hold<T...>,  hold<acc_types...,
-                  typename parse_instr_operand<hold<T...>, char_seq<acc_str...>>::value>,
-              null_sequence<char>, char_seq<str...>>::value;
-      };
-
-      template <class ...T, typename... acc_types, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<>,
-                                  char_seq<',', str...>> {
-          using value = typename parse_instr_operands<
-              hold<T...>, hold<acc_types...>, char_seq<first_elem<str...>::value>,
-              typename _slice_<str...>::value>::value;
-      };
-
-      template <class ...T, typename... acc_types, char... acc_str, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                  char_seq<'d', 'u', 'p', '(', str...>> {
-          using value = typename parse_instr_operands<
-              hold<T...>, hold<acc_types..., dup<unpack_value<typename parse_instr_operand<hold<T...>, char_seq<acc_str...>>::value>::value, typename parse_instr_operands<hold<T...>, hold<>, char_seq<>, char_seq<str...>>::value>>,
-              null_sequence<char>, skip_until_t<char_seq<str...>, is_same_as<')'>> >::value;
-      };
-
-      template <class ...T, typename... acc_types, char... acc_str, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                  char_seq<';', str...>> {
-          using value = hold<acc_types...,
-                          typename parse_instr_operand<hold<T...>, char_seq<acc_str...>>::value>;
-      };
-
-      template <class ...T, typename... acc_types, char... acc_str, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<acc_str...>,
-                                  char_seq<')', str...>> {
-          using value = hold<acc_types...,
-                          typename parse_instr_operand<hold<T...>, char_seq<acc_str...>>::value>;
-      };
-
-      template <class ...T, typename... acc_types, char... str>
-      struct parse_instr_operands<hold<T...>, hold<acc_types...>, char_seq<>,
-                                  char_seq<';', str...>> {
-        using value = hold<acc_types...>;
-      };
-
-      template <typename... T> struct parse_instr {};
-
-      template <class... T, char... acc_str, char... str>
-      struct parse_instr<hold<T...>, char_seq<acc_str...>, char_seq<str...>> {
-          using value = typename parse_instr<hold<T...>, char_seq<acc_str..., first_elem<str...>::value>,
-                          typename _slice_<str...>::value>::value;
-      };
-
-      template <class... T, char... acc_str, char... str>
-      struct parse_instr<hold<T...>, char_seq<acc_str...>, char_seq<' ', str...>> {
-          using value = typename parse_instr_name<char_seq<acc_str...>,
-            typename parse_instr_operands<
-                hold<T...>, hold<>, null_sequence<char>,
-                            typename skip_spaces<null_sequence<char>, char_seq<str...>>::value>::value>::value;
-      };
-
-      template <class... T, char... acc_str, char... str>
-      struct parse_instr<hold<T...>, char_seq<acc_str...>, char_seq<';', str...>> {
-        using value = typename parse_instr_name<char_seq<acc_str...>, hold<>>::value;
-      };
-
-      template <std::size_t N, typename, typename, typename> struct parse_asm {};
-
-      template <std::size_t N, class ...T, char... acc_str, char... str> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<';', str...>> {
-        using m_v = typename parse_instr<hold<T...>, null_sequence<char>, char_seq<acc_str..., ';'>>::value;
-
-        using value = expand_byte_seq_v<m_v,
-          typename parse_asm<N + m_v{}.size(), hold<T...>, null_sequence<char>, char_seq<str...>>::value>;
-      };
-
-      template <std::size_t N, class ...T, char... acc_str, char c, char... chars> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<c, chars...>>{
-        using value = typename parse_asm<N, hold<T...>, char_seq<acc_str..., c>, char_seq<chars...>>::value;
-      };
-
-      template <std::size_t N, class ...T, char... acc_str,  char... chars> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<':', chars...>>{
-        using value = typename parse_asm<N, hold<T..., hold<char_seq<acc_str...>, ub<N>>>, char_seq<>, char_seq<chars...>>::value;
-      };
-
-      template <std::size_t N, class ...T, char... acc_str, char... str> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<'\n', str...>>{
-        using value = typename parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<';', str...>>::value; 
-      };
-
-      template <std::size_t N, class ...T, char... acc_str> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<>>{
-        using value = typename parse_instr<hold<T...>, null_sequence<char>, char_seq<acc_str..., ';'>>::value;
-      };
-
-      template <std::size_t N, class ...T, char... acc_str, char... str> 
-      struct parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<'\0', str...>>{ 
-        using value = typename parse_asm<N, hold<T...>, char_seq<acc_str...>, char_seq<>>::value;
-      };
-
-      template <std::size_t N, class ...T> 
-      struct parse_asm<N, hold<T...>, char_seq<>, char_seq<>>{
-        using value = null_sequence<uint8_t>;
-      };
-} // namespace
 
 //PoC Preprocessor
 namespace{
@@ -3356,12 +2876,6 @@ namespace {
   
 }
 
-
-template<typename>
-static constexpr std::array<uint8_t, 0> parse_asm_v = {};
-template<char... str>
-static constexpr auto parse_asm_v<char_seq<str...>> = seq_to_arr<typename parse_asm<0, hold<>, null_sequence<char>, char_seq<str...>>::value>::value;
-
 template <std::size_t N, const char (&s)[N], typename T>  
 struct make_char_sequence_impl;
 
@@ -3374,16 +2888,22 @@ template <std::size_t N, const char (&Input)[N]>
 using make_char_sequence = typename make_char_sequence_impl<
     N, Input, std::make_index_sequence<N>>::type;
 
+}
+
 #define ctasm(_str)                                                  \
-  ([]{                                                             \
+  ([]{                                                               \
+    using namespace ctasm;                                           \
     static constexpr const char literal[] = (_str);                  \
     using c_seq = make_char_sequence<sizeof(literal), literal>;      \
-    using toks = typename lex<0, c_seq{}.size(), c_seq>::type;         \
+    using toks = typename lex<0, c_seq{}.size(), c_seq>::type;       \
     using ast = typename parse_global<toks>::type;                   \
     using first_phase = assemble<std::integral_constant<std::size_t, 0>, \
-                                    std::integral_constant<std::size_t, 0>, ast>; \
+                                std::integral_constant<std::size_t, 0>, ast>; \
     using assembled = solve_assembled<typename first_phase::label_list, \
                                       typename first_phase::type>::type; \
     using raw_out = collect_data<assembled>::type; \
     return seq_to_arr<raw_out>::value ; \
   }())
+
+#include "ctasm_emit.hpp"
+#endif

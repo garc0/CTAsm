@@ -1,26 +1,29 @@
+# Ctasm -- Compile Time Assembler for C++ (WIP)
 
-# CTAsm -- Compile Time Assembler for C++ (WIP)
-#### Supported compilers
-* Clang (std 14-- last)
-* GCC (std 14 -- last) 
-* Visual C++ (std 17 -- last)
+## Idea
+Ctasm is fully implemented in C++ templates (they are turing complete) and allows you to compile assembly code in NASM syntax from a string, saving the resulting machine code to an array without traces of the source string in the program.
+### Features 
+- extends: sse, sse2, sse4_2, avx, avx2 etc...
 
-### That's why
-* That's can compile your assembler code while you compile your main code 
-* I tired of seeing raw data implementations(for example injectors) of assembler code or split my 64bit code to diff files
-* Because I can and it works
+#### Tested on
+* clang >= 12.0
+* gcc >= 11.1
+* msvc >= 19.30
 
-### What work for now:
-* *full* number of registers(8 -- 64 + extend)
-* AVX & other extends
-### How to basic use it to compile out x64 code 
+## 
+## Example 
 ``` c++
- auto bytes = ctasm("label1: "
-                    "push rcx; "
-                    "ret 0; ");
+ auto bytes = ctasm(
+        "example: "
+        "movdqu  xmm0, zword ptr [rdi];" 
+        "paddd   xmm0, zword ptr [rsi];" 
+        "movups  zword ptr [rdi], xmm0;"
+        "ret 0;"
+    );
+    
   for (auto &i : bytes)
-    std::cout << i << ' ';
+    std::cout << std::hex << (int)i << ' ';
   std::cout << '\n';
 ```
-Variable "bytes" would hold all compiled data, which you can use later. 
-All string of assembler code will disappear in binary
+## License
+Apache2
