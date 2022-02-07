@@ -1,17 +1,16 @@
 # Ctasm -- Compile Time Assembler for C++ (WIP)
 
-## Idea
+### Idea
 Ctasm is fully implemented in C++ templates (they are turing complete) and allows you to compile assembly code in NASM syntax from a string, saving the resulting machine code to an array without traces of the source string in the program.
 ### Features 
-- extends: sse, sse2, sse4_2, avx, avx2 etc...
+- extends: sse, sse2, sse4_2, avx, avx2 & etc...
 
 #### Tested on
 * clang >= 12.0
 * gcc >= 11.1
 * msvc >= 19.30
 
-## 
-## Example 
+### Example 
 ``` c++
  auto bytes = ctasm(
         "example: "
@@ -25,5 +24,5 @@ Ctasm is fully implemented in C++ templates (they are turing complete) and allow
     std::cout << std::hex << (int)i << ' ';
   std::cout << '\n';
 ```
-## License
-Apache2
+### License
+Distributed under the Apache2 License. See LICENSE for more information. 
