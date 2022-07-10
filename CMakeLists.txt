@@ -4,12 +4,11 @@ project(ctasm VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_subdirectory("zydis")
-add_subdirectory("include")
+include_directories("include")
 
-add_executable(ctasm headonlyx86asm.cpp)
+add_executable(ctasm examples/example01.cpp)
 
-target_link_libraries(ctasm PRIVATE "Zydis")
+target_link_libraries(ctasm)
 
 set_property(TARGET ctasm PROPERTY CXX_STANDARD 17)
 

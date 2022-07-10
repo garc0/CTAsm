@@ -852,7 +852,7 @@ namespace {
                                            ((Symbol >= 'a') && (Symbol <= 'z'))>;
 
     template <char Symbol>
-    using is_digit_v = std::bool_constant<(Symbol >= '0') && (Symbol <= '9')>;
+    using is_digit_v = std::bool_constant<((Symbol >= '0') && (Symbol <= '9')) || (Symbol == '_')>;
 
     template <char Symbol>
     using is_space_v =
@@ -1019,7 +1019,7 @@ struct parse_num_impl<char_seq<first, str...>, N> {
 template <char first, uint64_t N>
 struct parse_num_impl<char_seq<first>, N> {
   static constexpr uint64_t value =
-      ((first >= 'A') && (first <= 'F')) ? (first - 'A' + 10) : (first - '0');
+      ((first >= 'A') && (first <= 'F')) ? (first - 'A' + 10) : ((first == '_') ? 0 : (first - '0'));
 };
 
 template <typename T>
@@ -1225,6 +1225,7 @@ namespace {
       Identifier,
       SizeWord,
       Number,
+      Void,
       LeftParen,
       RightParen,
       LeftSquare,
@@ -1281,6 +1282,7 @@ namespace {
     template <> constexpr std::string_view TokenName<Tokens::Identifier> = "Identifier"; 
     template <> constexpr std::string_view TokenName<Tokens::SizeWord> = "SizeWord"; 
     template <> constexpr std::string_view TokenName<Tokens::Number> = "Number"; 
+    template <> constexpr std::string_view TokenName<Tokens::Void> = "VoidSpace";
     template <> constexpr std::string_view TokenName<Tokens::LeftParen> = "LeftParen"; 
     template <> constexpr std::string_view TokenName<Tokens::RightParen> = "RightParen"; 
     template <> constexpr std::string_view TokenName<Tokens::LeftSquare> = "LeftSquare"; 
@@ -1472,6 +1474,10 @@ namespace {
         : tok_templ<N, Tokens::End, Str...> {};
 
     template <std::size_t N, char... Str>
+    struct lex<N, 1, char_seq<'\n', Str...>>
+        : tok_templ<N, Tokens::End, Str...> {};
+
+    template <std::size_t N, char... Str>
     struct lex<N, 1, char_seq<'\x00', Str...>>
         : tok_templ<N, Tokens::End, Str...> {};
 }
@@ -1553,6 +1559,18 @@ namespace {
     struct parse_primary<hold<Token<Tokens::Identifier, data>, Toks...>>{
         using type = primary_node<Token<Tokens::Identifier, data>>;
         using next = hold<Toks...>;
+    }; 
+
+
+    template<class ...Toks, class data>
+    struct parse_primary<hold<Token<Tokens::End, data>, Toks...>>:
+        parse_primary<hold<Toks...>> {
+    };
+    template<class data>
+    struct parse_primary<hold<Token<Tokens::End, data>>> 
+    {
+        using type = hold<>;
+        using nenx = hold<>;
     };
 
     template<class ...Toks, class data>
@@ -1911,12 +1929,6 @@ namespace {
         using type = hold<>;
     };
 
-    template <std::size_t Prefix, class Data, class... Toks>
-    struct parse_label_or_data<Prefix, hold<Token<Tokens::End, Data>, Toks...>> {
-        using next = hold<Toks...>;
-        using type = hold<>;
-    };
-
     template<class Toks>
     using parse_global = parse_label_or_data<0, Toks>;
 }
@@ -2140,6 +2152,10 @@ namespace {
         using type = hold<>;
         using has_labelref = std::false_type;
     };
+    template<typename First, typename... Data, class Context>
+    struct map_nodes<hold<unary_node<Tokens::End, First>, Data...>, Context>:map_nodes<hold<>, Context> {
+    };
+
 
     template<typename First, typename... Data, class Context>
     struct map_nodes<hold<First, Data...>, Context> {
@@ -2383,6 +2399,21 @@ namespace {
     struct assemble_ops<Previous, LocalLabelOffset, unary_node<Tokens::SizeWord, hold<RegSz, unary_node<Tokens::Ptr, Data>>>> {
         using _first = assemble_ops<Previous, LocalLabelOffset, Data>;
         using type = hold<typename repack_ptr<ptr<RegSz, typename _first::type>>::type>;
+    };
+}
+
+namespace {
+    template<typename ...T>
+    struct paste_const {};
+
+    template<class Name, class F, class... Data>
+    struct paste_const<label_node<Name, hold<F, Data...>>>{
+        using type = typename paste_const<F>::type;
+    };
+
+    template<class Name, class Ops>
+    struct paste_const<instr_node<primary_node<Token<Tokens::Identifier, Name>>, Ops>>{
+        
     };
 }
 
@@ -2875,6 +2906,17 @@ namespace {
     };
   
 }
+
+//PoC "times" thing like "dx" thing(loeld)
+/*namespace {
+    template<std::size_t N, class... T> struct _times_impl{};
+
+
+    template<char ...Str, class Times, class... T>
+    struct parse_instr_name<char_seq<'t', 'i', 'm', 'e', 's', Str...>, hold<Times, T...>> {
+        using type = _times_impl<>;
+    };
+}*/
 
 template <std::size_t N, const char (&s)[N], typename T>  
 struct make_char_sequence_impl;

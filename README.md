@@ -12,13 +12,12 @@ Ctasm is fully implemented in C++ templates (they are turing complete) and allow
 
 ### Example 
 ``` c++
- auto bytes = ctasm(
-        "example: "
-        "movdqu  xmm0, zword ptr [rdi];" 
-        "paddd   xmm0, zword ptr [rsi];" 
-        "movups  zword ptr [rdi], xmm0;"
-        "ret 0;"
-    );
+    auto bytes = ctasm(R"(
+        movdqu xmm0, zword ptr [rdi]
+        paddd xmm0, zword ptr [rsi]
+        movups zword ptr [rdi], xmm0
+        ret
+)");
     
   for (auto &i : bytes)
     std::cout << std::hex << (int)i << ' ';
