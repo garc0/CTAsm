@@ -745,11 +745,13 @@ struct mrm<Y> {
     using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
 };
 
-template <class Y, uint8_t N>
-struct mrm<Y, plus, disp8<N>> {
+template <class Y, std::size_t M, uint32_t N>
+struct mrm<Y, plus, ux<M, N>> {
+
+    static constexpr auto sz = N > 256 ? 4 : 1;
     template <typename T>
     using value = typename 
-      modrm<disp_reg<extract_args_v<typename Y::type>, disp8<N>>,
+      modrm<disp_reg<extract_args_v<typename Y::type>, ux<sz, N>>,
             T>::value;
 
     static constexpr auto R = 0;
@@ -759,19 +761,8 @@ struct mrm<Y, plus, disp8<N>> {
     using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
 };
 
-template <class Y, uint32_t N>
-struct mrm<Y, plus, disp32<N>> {
-    template <typename T>
-    using value = typename 
-      modrm<disp_reg<extract_args_v<typename Y::type>, disp32<N>>,
-            T>::value;
-
-    static constexpr auto R = 0;
-    static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
-    static constexpr auto B = 0;
-
-    using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
-};
+template<class Y, std::size_t M, uint32_t N>
+struct mrm<ux<M, N>, plus, Y>: mrm<Y, plus, ux<M, N>> {};
 
 template <class Y, uint8_t Scale, class Z>
 struct mrm<Y, mul, disp8<Scale>, plus, Z> {
@@ -786,11 +777,13 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z> {
     using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
 };
 
-template <class Y, uint8_t Scale, class Z, uint8_t D>
-struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp8<D>> {
+template <class Y, uint8_t Scale, class Z, std::size_t M, uint8_t D>
+struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, D>> {
+
+    static constexpr auto sz = D > 255 ? 4 : 1;
     template <typename T>
     using value = typename
-        modrm<disp_SIB<disp8<Scale>, disp8<D>, extract_args_v<typename Y::type>, extract_args_v<typename Z::type>>, T>::value;
+        modrm<disp_SIB<disp8<Scale>, ux<sz, D>, extract_args_v<typename Y::type>, extract_args_v<typename Z::type>>, T>::value;
 
     static constexpr auto R = 0;
     static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
@@ -799,20 +792,24 @@ struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp8<D>> {
     using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
 };
 
-template <class Y, uint8_t Scale, class Z, uint8_t D>
-struct mrm<Y, mul, disp8<Scale>, plus, Z, plus, disp32<D>> {
-  template <typename T>
-  using value = typename
-      modrm<disp_SIB<disp8<Scale>, disp32<D>, extract_args_v<typename Y::type>,
-                     extract_args_v<typename Z::type>>,
-            T>::value;
 
-  static constexpr auto R = 0;
-  static constexpr auto X = is_ext_v<extract_args_v<typename Y::type>>;
-  static constexpr auto B = is_ext_v<extract_args_v<typename Z::type>>;
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<Y, mul, disp8<Scale>, plus, ux<M, N>, plus, Z > : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, N>> {};
 
-  using _67h = is_67h_needed<extract_head_v<typename Y::type>>;
-};
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<ux<M, N>, plus, Z, plus, Y, mul, disp8<Scale>> : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, N>> {};
+
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<Z, plus, ux<M, N>, plus,  Y, mul, disp8<Scale>> : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, N>> {};
+
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<disp8<Scale>, mul, Y, plus, ux<M, N>, plus, Z > : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, N>> {};
+
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<ux<M, N>, plus, Z, plus, disp8<Scale>, mul, Y> : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<M, N>> {};
+
+template<class Y, uint8_t Scale, class Z, std::size_t M, uint32_t N>
+struct mrm<Z, plus, ux<M, N>, plus, disp8<Scale>, mul, Y> : mrm<Y, mul, disp8<Scale>, plus, Z, plus, ux<N, N>> {};
 
 template<typename Y, typename ...T>
 using mrm_v = typename mrm<T...>::template value<Y>;
@@ -2000,6 +1997,12 @@ namespace {
         using type = node<Id, typename ast_solve<Left>::type, typename ast_solve<Right>::type>;
     };
 
+    template <Tokens Id, class LData, class RData>
+    struct ast_solve<
+        node<Id, primary_node<Token<Tokens::Identifier, LData>>, primary_node<Token<Tokens::Identifier, RData>>>> {
+        using type = node<Id, primary_node<Token<Tokens::Identifier, LData>>, primary_node<Token<Tokens::Identifier, RData>>>;
+    };
+
     template <Tokens Id, class LData, class Right>
     struct ast_solve<
         node<Id, primary_node<Token<Tokens::Identifier, LData>>, Right>> {
@@ -2011,6 +2014,7 @@ namespace {
         node<Id, Left, primary_node<Token<Tokens::Identifier, RData>>>> {
         using type = node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Identifier, RData>>>;
     };
+
 
     template <Tokens Id, class LData, class RData>
     struct ast_solve<
@@ -2030,11 +2034,11 @@ namespace {
         using type = typename ast_solve<node<Id, primary_node<Token<Tokens::Number, LData>>, typename ast_solve<Right>::type>>::type;
     };
 
-    template <Tokens Id, class RData, class Left>
+    /*template <Tokens Id, class RData, class Left>
     struct ast_solve<
         node<Id, Left, primary_node<Token<Tokens::Number, RData>>>> {
         using type = typename ast_solve < node<Id, typename ast_solve<Left>::type, primary_node<Token<Tokens::Number, RData>>>>::type;
-    };
+    };*/
 
     template <class LData, class RData>
     struct ast_solve<
